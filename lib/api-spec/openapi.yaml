@@ -3,13 +3,17 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: API specification for The Front Porch Bulletin
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: articles
+    description: Newsletter articles
+  - name: categories
+    description: Article categories
 paths:
   /healthz:
     get:
@@ -24,6 +28,182 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /articles:
+    get:
+      operationId: listArticles
+      tags: [articles]
+      summary: List all articles
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+          required: false
+        - name: featured
+          in: query
+          schema:
+            type: boolean
+          required: false
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+          required: false
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+          required: false
+      responses:
+        "200":
+          description: List of articles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  articles:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Article"
+                  total:
+                    type: integer
+                required:
+                  - articles
+                  - total
+    post:
+      operationId: createArticle
+      tags: [articles]
+      summary: Create a new article
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateArticleBody"
+      responses:
+        "201":
+          description: Article created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Article"
+
+  /articles/featured:
+    get:
+      operationId: getFeaturedArticles
+      tags: [articles]
+      summary: Get featured/headline articles
+      responses:
+        "200":
+          description: Featured articles for the front page
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  headline:
+                    $ref: "#/components/schemas/Article"
+                  secondary:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Article"
+                required:
+                  - secondary
+
+  /articles/summary:
+    get:
+      operationId: getArticlesSummary
+      tags: [articles]
+      summary: Get summary stats for all articles
+      responses:
+        "200":
+          description: Summary of article counts by category
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArticlesSummary"
+
+  /articles/{id}:
+    get:
+      operationId: getArticle
+      tags: [articles]
+      summary: Get a single article
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Article details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Article"
+        "404":
+          description: Not found
+    put:
+      operationId: updateArticle
+      tags: [articles]
+      summary: Update an article
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateArticleBody"
+      responses:
+        "200":
+          description: Updated article
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Article"
+    delete:
+      operationId: deleteArticle
+      tags: [articles]
+      summary: Delete an article
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /categories:
+    get:
+      operationId: listCategories
+      tags: [categories]
+      summary: List all categories
+      responses:
+        "200":
+          description: List of categories
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  categories:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Category"
+                required:
+                  - categories
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +214,133 @@ components:
       required:
         - status
 
+    Article:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        subtitle:
+          type: string
+          nullable: true
+        content:
+          type: string
+        author:
+          type: string
+        category:
+          type: string
+        featured:
+          type: boolean
+        publishedAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - title
+        - content
+        - author
+        - category
+        - featured
+        - publishedAt
+        - createdAt
+        - updatedAt
+
+    CreateArticleBody:
+      type: object
+      properties:
+        title:
+          type: string
+        subtitle:
+          type: string
+          nullable: true
+        content:
+          type: string
+        author:
+          type: string
+        category:
+          type: string
+        featured:
+          type: boolean
+          default: false
+        publishedAt:
+          type: string
+          format: date-time
+      required:
+        - title
+        - content
+        - author
+        - category
+
+    UpdateArticleBody:
+      type: object
+      properties:
+        title:
+          type: string
+        subtitle:
+          type: string
+          nullable: true
+        content:
+          type: string
+        author:
+          type: string
+        category:
+          type: string
+        featured:
+          type: boolean
+        publishedAt:
+          type: string
+          format: date-time
+
+    ArticlesSummary:
+      type: object
+      properties:
+        totalArticles:
+          type: integer
+        totalCategories:
+          type: integer
+        byCategory:
+          type: array
+          items:
+            type: object
+            properties:
+              category:
+                type: string
+              count:
+                type: integer
+            required:
+              - category
+              - count
+        recentCount:
+          type: integer
+      required:
+        - totalArticles
+        - totalCategories
+        - byCategory
+        - recentCount
+
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        description:
+          type: string
+          nullable: true
+        articleCount:
+          type: integer
+      required:
+        - id
+        - name
+        - slug
+        - articleCount

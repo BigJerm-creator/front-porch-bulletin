@@ -15,6 +15,23 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - **Validation**: Zod (`zod/v4`), `drizzle-zod`
 - **API codegen**: Orval (from OpenAPI spec)
 - **Build**: esbuild (CJS bundle)
+- **Frontend**: React + Vite + Tailwind CSS + shadcn/ui
+
+## Artifacts
+
+### The Front Porch Bulletin (`artifacts/front-porch-bulletin`)
+- Small-town community newsletter web app styled like an 80s/90s newspaper
+- Pages: Home (front page), Articles index, Article detail, Categories, Submit a Story, About
+- Theme: Aged newsprint aesthetic — cream backgrounds, bold serif headlines, multi-column layout
+
+### API Server (`artifacts/api-server`)
+- Handles articles and categories CRUD
+- Routes: `/api/articles`, `/api/articles/featured`, `/api/articles/summary`, `/api/categories`
+
+## Database Schema
+
+- `articles`: id, title, subtitle, content, author, category, featured, published_at, created_at, updated_at
+- `categories`: id, name, slug, description
 
 ## Key Commands
 
