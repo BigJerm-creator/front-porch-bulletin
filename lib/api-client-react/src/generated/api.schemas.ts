@@ -62,6 +62,33 @@ export interface Category {
   articleCount: number;
 }
 
+export interface AdminUser {
+  clerkUserId: string;
+  role: string;
+  grantedAt: string;
+  email?: string | null;
+  name?: string | null;
+}
+
+export type SetUserRoleBodyRole =
+  (typeof SetUserRoleBodyRole)[keyof typeof SetUserRoleBodyRole];
+
+export const SetUserRoleBodyRole = {
+  admin: "admin",
+  approved_user: "approved_user",
+} as const;
+
+export interface SetUserRoleBody {
+  role: SetUserRoleBodyRole;
+}
+
+export interface MyRoleResponse {
+  clerkUserId: string;
+  role?: string | null;
+  isAdmin: boolean;
+  isApproved: boolean;
+}
+
 export type ListArticlesParams = {
   category?: string;
   featured?: boolean;
@@ -81,4 +108,8 @@ export type GetFeaturedArticles200 = {
 
 export type ListCategories200 = {
   categories: Category[];
+};
+
+export type ListAdminUsers200 = {
+  users: AdminUser[];
 };

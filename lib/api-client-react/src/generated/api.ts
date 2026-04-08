@@ -17,14 +17,18 @@ import type {
 } from "@tanstack/react-query";
 
 import type {
+  AdminUser,
   Article,
   ArticlesSummary,
   CreateArticleBody,
   GetFeaturedArticles200,
   HealthStatus,
+  ListAdminUsers200,
   ListArticles200,
   ListArticlesParams,
   ListCategories200,
+  MyRoleResponse,
+  SetUserRoleBody,
   UpdateArticleBody,
 } from "./api.schemas";
 
@@ -38,7 +42,6 @@ type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 /**
- * Returns server health status
  * @summary Health check
  */
 export const getHealthCheckUrl = () => {
@@ -208,7 +211,7 @@ export function useListArticles<
 }
 
 /**
- * @summary Create a new article
+ * @summary Create a new article (requires auth)
  */
 export const getCreateArticleUrl = () => {
   return `/api/articles`;
@@ -227,7 +230,7 @@ export const createArticle = async (
 };
 
 export const getCreateArticleMutationOptions = <
-  TError = ErrorType<unknown>,
+  TError = ErrorType<void>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -268,13 +271,13 @@ export type CreateArticleMutationResult = NonNullable<
   Awaited<ReturnType<typeof createArticle>>
 >;
 export type CreateArticleMutationBody = BodyType<CreateArticleBody>;
-export type CreateArticleMutationError = ErrorType<unknown>;
+export type CreateArticleMutationError = ErrorType<void>;
 
 /**
- * @summary Create a new article
+ * @summary Create a new article (requires auth)
  */
 export const useCreateArticle = <
-  TError = ErrorType<unknown>,
+  TError = ErrorType<void>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -531,7 +534,7 @@ export function useGetArticle<
 }
 
 /**
- * @summary Update an article
+ * @summary Update an article (requires auth)
  */
 export const getUpdateArticleUrl = (id: number) => {
   return `/api/articles/${id}`;
@@ -551,7 +554,7 @@ export const updateArticle = async (
 };
 
 export const getUpdateArticleMutationOptions = <
-  TError = ErrorType<unknown>,
+  TError = ErrorType<void>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -592,13 +595,13 @@ export type UpdateArticleMutationResult = NonNullable<
   Awaited<ReturnType<typeof updateArticle>>
 >;
 export type UpdateArticleMutationBody = BodyType<UpdateArticleBody>;
-export type UpdateArticleMutationError = ErrorType<unknown>;
+export type UpdateArticleMutationError = ErrorType<void>;
 
 /**
- * @summary Update an article
+ * @summary Update an article (requires auth)
  */
 export const useUpdateArticle = <
-  TError = ErrorType<unknown>,
+  TError = ErrorType<void>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -618,7 +621,7 @@ export const useUpdateArticle = <
 };
 
 /**
- * @summary Delete an article
+ * @summary Delete an article (requires auth)
  */
 export const getDeleteArticleUrl = (id: number) => {
   return `/api/articles/${id}`;
@@ -635,7 +638,7 @@ export const deleteArticle = async (
 };
 
 export const getDeleteArticleMutationOptions = <
-  TError = ErrorType<unknown>,
+  TError = ErrorType<void>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -676,13 +679,13 @@ export type DeleteArticleMutationResult = NonNullable<
   Awaited<ReturnType<typeof deleteArticle>>
 >;
 
-export type DeleteArticleMutationError = ErrorType<unknown>;
+export type DeleteArticleMutationError = ErrorType<void>;
 
 /**
- * @summary Delete an article
+ * @summary Delete an article (requires auth)
  */
 export const useDeleteArticle = <
-  TError = ErrorType<unknown>,
+  TError = ErrorType<void>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -768,6 +771,319 @@ export function useListCategories<
   request?: SecondParameter<typeof customFetch>;
 }): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const queryOptions = getListCategoriesQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary List all users with roles (admin only)
+ */
+export const getListAdminUsersUrl = () => {
+  return `/api/admin/users`;
+};
+
+export const listAdminUsers = async (
+  options?: RequestInit,
+): Promise<ListAdminUsers200> => {
+  return customFetch<ListAdminUsers200>(getListAdminUsersUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListAdminUsersQueryKey = () => {
+  return [`/api/admin/users`] as const;
+};
+
+export const getListAdminUsersQueryOptions = <
+  TData = Awaited<ReturnType<typeof listAdminUsers>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listAdminUsers>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListAdminUsersQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof listAdminUsers>>> = ({
+    signal,
+  }) => listAdminUsers({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listAdminUsers>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListAdminUsersQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listAdminUsers>>
+>;
+export type ListAdminUsersQueryError = ErrorType<void>;
+
+/**
+ * @summary List all users with roles (admin only)
+ */
+
+export function useListAdminUsers<
+  TData = Awaited<ReturnType<typeof listAdminUsers>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listAdminUsers>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListAdminUsersQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Grant or update a user's role (admin only)
+ */
+export const getSetUserRoleUrl = (clerkUserId: string) => {
+  return `/api/admin/users/${clerkUserId}/role`;
+};
+
+export const setUserRole = async (
+  clerkUserId: string,
+  setUserRoleBody: SetUserRoleBody,
+  options?: RequestInit,
+): Promise<AdminUser> => {
+  return customFetch<AdminUser>(getSetUserRoleUrl(clerkUserId), {
+    ...options,
+    method: "PUT",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(setUserRoleBody),
+  });
+};
+
+export const getSetUserRoleMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof setUserRole>>,
+    TError,
+    { clerkUserId: string; data: BodyType<SetUserRoleBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof setUserRole>>,
+  TError,
+  { clerkUserId: string; data: BodyType<SetUserRoleBody> },
+  TContext
+> => {
+  const mutationKey = ["setUserRole"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof setUserRole>>,
+    { clerkUserId: string; data: BodyType<SetUserRoleBody> }
+  > = (props) => {
+    const { clerkUserId, data } = props ?? {};
+
+    return setUserRole(clerkUserId, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type SetUserRoleMutationResult = NonNullable<
+  Awaited<ReturnType<typeof setUserRole>>
+>;
+export type SetUserRoleMutationBody = BodyType<SetUserRoleBody>;
+export type SetUserRoleMutationError = ErrorType<void>;
+
+/**
+ * @summary Grant or update a user's role (admin only)
+ */
+export const useSetUserRole = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof setUserRole>>,
+    TError,
+    { clerkUserId: string; data: BodyType<SetUserRoleBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof setUserRole>>,
+  TError,
+  { clerkUserId: string; data: BodyType<SetUserRoleBody> },
+  TContext
+> => {
+  return useMutation(getSetUserRoleMutationOptions(options));
+};
+
+/**
+ * @summary Revoke a user's role (admin only)
+ */
+export const getRevokeUserRoleUrl = (clerkUserId: string) => {
+  return `/api/admin/users/${clerkUserId}/role`;
+};
+
+export const revokeUserRole = async (
+  clerkUserId: string,
+  options?: RequestInit,
+): Promise<void> => {
+  return customFetch<void>(getRevokeUserRoleUrl(clerkUserId), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getRevokeUserRoleMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof revokeUserRole>>,
+    TError,
+    { clerkUserId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof revokeUserRole>>,
+  TError,
+  { clerkUserId: string },
+  TContext
+> => {
+  const mutationKey = ["revokeUserRole"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof revokeUserRole>>,
+    { clerkUserId: string }
+  > = (props) => {
+    const { clerkUserId } = props ?? {};
+
+    return revokeUserRole(clerkUserId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RevokeUserRoleMutationResult = NonNullable<
+  Awaited<ReturnType<typeof revokeUserRole>>
+>;
+
+export type RevokeUserRoleMutationError = ErrorType<void>;
+
+/**
+ * @summary Revoke a user's role (admin only)
+ */
+export const useRevokeUserRole = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof revokeUserRole>>,
+    TError,
+    { clerkUserId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof revokeUserRole>>,
+  TError,
+  { clerkUserId: string },
+  TContext
+> => {
+  return useMutation(getRevokeUserRoleMutationOptions(options));
+};
+
+/**
+ * @summary Get the current user's role
+ */
+export const getGetMyRoleUrl = () => {
+  return `/api/admin/me`;
+};
+
+export const getMyRole = async (
+  options?: RequestInit,
+): Promise<MyRoleResponse> => {
+  return customFetch<MyRoleResponse>(getGetMyRoleUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetMyRoleQueryKey = () => {
+  return [`/api/admin/me`] as const;
+};
+
+export const getGetMyRoleQueryOptions = <
+  TData = Awaited<ReturnType<typeof getMyRole>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<Awaited<ReturnType<typeof getMyRole>>, TError, TData>;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetMyRoleQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getMyRole>>> = ({
+    signal,
+  }) => getMyRole({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getMyRole>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetMyRoleQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getMyRole>>
+>;
+export type GetMyRoleQueryError = ErrorType<void>;
+
+/**
+ * @summary Get the current user's role
+ */
+
+export function useGetMyRole<
+  TData = Awaited<ReturnType<typeof getMyRole>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<Awaited<ReturnType<typeof getMyRole>>, TError, TData>;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetMyRoleQueryOptions(options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;

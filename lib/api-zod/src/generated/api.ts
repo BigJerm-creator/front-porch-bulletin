@@ -8,7 +8,6 @@
 import * as zod from "zod";
 
 /**
- * Returns server health status
  * @summary Health check
  */
 export const HealthCheckResponse = zod.object({
@@ -47,7 +46,7 @@ export const ListArticlesResponse = zod.object({
 });
 
 /**
- * @summary Create a new article
+ * @summary Create a new article (requires auth)
  */
 export const createArticleBodyFeaturedDefault = false;
 
@@ -131,7 +130,7 @@ export const GetArticleResponse = zod.object({
 });
 
 /**
- * @summary Update an article
+ * @summary Update an article (requires auth)
  */
 export const UpdateArticleParams = zod.object({
   id: zod.coerce.number(),
@@ -161,7 +160,7 @@ export const UpdateArticleResponse = zod.object({
 });
 
 /**
- * @summary Delete an article
+ * @summary Delete an article (requires auth)
  */
 export const DeleteArticleParams = zod.object({
   id: zod.coerce.number(),
@@ -180,4 +179,55 @@ export const ListCategoriesResponse = zod.object({
       articleCount: zod.number(),
     }),
   ),
+});
+
+/**
+ * @summary List all users with roles (admin only)
+ */
+export const ListAdminUsersResponse = zod.object({
+  users: zod.array(
+    zod.object({
+      clerkUserId: zod.string(),
+      role: zod.string(),
+      grantedAt: zod.coerce.date(),
+      email: zod.string().nullish(),
+      name: zod.string().nullish(),
+    }),
+  ),
+});
+
+/**
+ * @summary Grant or update a user's role (admin only)
+ */
+export const SetUserRoleParams = zod.object({
+  clerkUserId: zod.coerce.string(),
+});
+
+export const SetUserRoleBody = zod.object({
+  role: zod.enum(["admin", "approved_user"]),
+});
+
+export const SetUserRoleResponse = zod.object({
+  clerkUserId: zod.string(),
+  role: zod.string(),
+  grantedAt: zod.coerce.date(),
+  email: zod.string().nullish(),
+  name: zod.string().nullish(),
+});
+
+/**
+ * @summary Revoke a user's role (admin only)
+ */
+export const RevokeUserRoleParams = zod.object({
+  clerkUserId: zod.coerce.string(),
+});
+
+/**
+ * @summary Get the current user's role
+ */
+export const GetMyRoleResponse = zod.object({
+  clerkUserId: zod.string(),
+  role: zod.string().nullish(),
+  isAdmin: zod.boolean(),
+  isApproved: zod.boolean(),
 });

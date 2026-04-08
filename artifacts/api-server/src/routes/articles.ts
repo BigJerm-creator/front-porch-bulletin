@@ -10,6 +10,7 @@ import {
   UpdateArticleBody,
   DeleteArticleParams,
 } from "@workspace/api-zod";
+import { requireApproved } from "../middlewares/auth";
 
 const router = Router();
 
@@ -42,7 +43,7 @@ router.get("/", async (req, res) => {
   res.json({ articles, total: countResult[0]?.count ?? 0 });
 });
 
-router.post("/", async (req, res) => {
+router.post("/", requireApproved, async (req, res) => {
   const parse = CreateArticleBody.safeParse(req.body);
   if (!parse.success) {
     res.status(400).json({ error: parse.error.message });
@@ -120,7 +121,7 @@ router.get("/:id", async (req, res) => {
   res.json(article);
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", requireApproved, async (req, res) => {
   const paramParse = UpdateArticleParams.safeParse({ id: Number(req.params.id) });
   if (!paramParse.success) {
     res.status(400).json({ error: paramParse.error.message });
@@ -151,7 +152,7 @@ router.put("/:id", async (req, res) => {
   res.json(article);
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", requireApproved, async (req, res) => {
   const parse = DeleteArticleParams.safeParse({ id: Number(req.params.id) });
   if (!parse.success) {
     res.status(400).json({ error: parse.error.message });

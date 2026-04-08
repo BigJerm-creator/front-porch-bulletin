@@ -14,13 +14,14 @@ tags:
     description: Newsletter articles
   - name: categories
     description: Article categories
+  - name: admin
+    description: Admin-only operations
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -77,7 +78,7 @@ paths:
     post:
       operationId: createArticle
       tags: [articles]
-      summary: Create a new article
+      summary: Create a new article (requires auth)
       requestBody:
         required: true
         content:
@@ -91,6 +92,8 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Article"
+        "401":
+          description: Unauthorized
 
   /articles/featured:
     get:
@@ -99,7 +102,7 @@ paths:
       summary: Get featured/headline articles
       responses:
         "200":
-          description: Featured articles for the front page
+          description: Featured articles
           content:
             application/json:
               schema:
@@ -150,7 +153,7 @@ paths:
     put:
       operationId: updateArticle
       tags: [articles]
-      summary: Update an article
+      summary: Update an article (requires auth)
       parameters:
         - name: id
           in: path
@@ -170,10 +173,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Article"
+        "401":
+          description: Unauthorized
     delete:
       operationId: deleteArticle
       tags: [articles]
-      summary: Delete an article
+      summary: Delete an article (requires auth)
       parameters:
         - name: id
           in: path
@@ -183,6 +188,8 @@ paths:
       responses:
         "204":
           description: Deleted
+        "401":
+          description: Unauthorized
 
   /categories:
     get:
@@ -203,6 +210,91 @@ paths:
                       $ref: "#/components/schemas/Category"
                 required:
                   - categories
+
+  /admin/users:
+    get:
+      operationId: listAdminUsers
+      tags: [admin]
+      summary: List all users with roles (admin only)
+      responses:
+        "200":
+          description: List of users with roles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/AdminUser"
+                required:
+                  - users
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+
+  /admin/users/{clerkUserId}/role:
+    put:
+      operationId: setUserRole
+      tags: [admin]
+      summary: Grant or update a user's role (admin only)
+      parameters:
+        - name: clerkUserId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SetUserRoleBody"
+      responses:
+        "200":
+          description: Role updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminUser"
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+    delete:
+      operationId: revokeUserRole
+      tags: [admin]
+      summary: Revoke a user's role (admin only)
+      parameters:
+        - name: clerkUserId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Role revoked
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+
+  /admin/me:
+    get:
+      operationId: getMyRole
+      tags: [admin]
+      summary: Get the current user's role
+      responses:
+        "200":
+          description: Current user's role info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MyRoleResponse"
+        "401":
+          description: Unauthorized
 
 components:
   schemas:
@@ -344,3 +436,50 @@ components:
         - name
         - slug
         - articleCount
+
+    AdminUser:
+      type: object
+      properties:
+        clerkUserId:
+          type: string
+        role:
+          type: string
+        grantedAt:
+          type: string
+          format: date-time
+        email:
+          type: string
+          nullable: true
+        name:
+          type: string
+          nullable: true
+      required:
+        - clerkUserId
+        - role
+        - grantedAt
+
+    SetUserRoleBody:
+      type: object
+      properties:
+        role:
+          type: string
+          enum: [admin, approved_user]
+      required:
+        - role
+
+    MyRoleResponse:
+      type: object
+      properties:
+        clerkUserId:
+          type: string
+        role:
+          type: string
+          nullable: true
+        isAdmin:
+          type: boolean
+        isApproved:
+          type: boolean
+      required:
+        - clerkUserId
+        - isAdmin
+        - isApproved

@@ -1,0 +1,21 @@
+import { SignIn } from '@clerk/react';
+import logo from '@assets/The_1775669458963.png';
+
+const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+export default function SignInPage() {
+  return (
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 font-serif">
+      <div className="max-w-md w-full space-y-8">
+        <div className="text-center">
+          <img src={logo} alt="The Front Porch Bulletin" className="h-16 mx-auto mb-4" />
+          <h2 className="text-3xl font-headline font-bold uppercase tracking-widest text-primary">Bulletin Staff Login</h2>
+          <div className="newspaper-divider" />
+        </div>
+        <div className="flex justify-center bg-white p-6 border-4 border-foreground shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+          <SignIn routing="path" path={`${basePath}/sign-in`} signUpUrl={`${basePath}/sign-up`} />
+        </div>
+      </div>
+    </div>
+  );
+}

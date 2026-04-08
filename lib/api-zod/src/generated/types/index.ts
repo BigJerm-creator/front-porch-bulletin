@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from "./adminUser";
 export * from "./article";
 export * from "./articlesSummary";
 export * from "./articlesSummaryByCategoryItem";
@@ -13,7 +14,11 @@ export * from "./category";
 export * from "./createArticleBody";
 export * from "./getFeaturedArticles200";
 export * from "./healthStatus";
+export * from "./listAdminUsers200";
 export * from "./listArticles200";
 export * from "./listArticlesParams";
 export * from "./listCategories200";
+export * from "./myRoleResponse";
+export * from "./setUserRoleBody";
+export * from "./setUserRoleBodyRole";
 export * from "./updateArticleBody";
