@@ -16,25 +16,6 @@ export default function Home() {
         </section>
       ) : null}
 
-      <div className="newspaper-divider" />
-
-      <section className="columns-1 md:columns-2 lg:columns-3 column-gap mt-8">
-        {isLoadingFeatured ? (
-          <>
-            <NewspaperSkeleton />
-            <NewspaperSkeleton />
-            <NewspaperSkeleton />
-          </>
-        ) : featuredData?.secondary?.length ? (
-          featuredData.secondary.map((article) => (
-            <ArticleTeaser key={article.id} article={article} />
-          ))
-        ) : (
-          <p className="font-mono text-center col-span-full py-12 italic opacity-60">
-            No stories filed in this edition.
-          </p>
-        )}
-      </section>
     </Layout>
   );
 }
