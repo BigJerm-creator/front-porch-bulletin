@@ -63,7 +63,7 @@ export default function SubmitStory() {
       <div className="max-w-2xl mx-auto">
         <header className="text-center mb-12 border-b-4 border-double border-foreground pb-8">
           <h1 className="font-headline text-4xl md:text-5xl font-bold uppercase tracking-widest mb-4">
-            Letters to the Editor
+            Letter to the Editor
           </h1>
           <p className="font-serif italic text-lg text-foreground/80">
             Have a story for the community? A recipe to share? A classified ad? Submit it below for review by our editorial team.

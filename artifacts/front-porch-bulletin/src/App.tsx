@@ -13,6 +13,7 @@ import ArticleDetail from "@/pages/ArticleDetail";
 import Categories from "@/pages/Categories";
 import SubmitStory from "@/pages/SubmitStory";
 import About from "@/pages/About";
+import NewsletterSignup from "@/pages/NewsletterSignup";
 
 import SignInPage from "@/pages/auth/SignInPage";
 import SignUpPage from "@/pages/auth/SignUpPage";
@@ -81,6 +82,7 @@ function ClerkProviderWithRoutes() {
           <Route path="/categories" component={Categories} />
           <Route path="/about" component={About} />
           <Route path="/submit" component={SubmitStory} />
+          <Route path="/newsletter" component={NewsletterSignup} />
           
           <Route path="/sign-in/*?" component={SignInPage} />
           <Route path="/sign-up/*?" component={SignUpPage} />

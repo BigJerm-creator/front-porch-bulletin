@@ -7,6 +7,7 @@ import spotlightRouter from "./spotlight";
 import churchesRouter from "./churches";
 import obituariesRouter from "./obituaries";
 import storageRouter from "./storage";
+import newsletterRouter from "./newsletter";
 
 const router: IRouter = Router();
 
@@ -18,5 +19,6 @@ router.use("/admin", adminRouter);
 router.use("/spotlight", spotlightRouter);
 router.use("/churches", churchesRouter);
 router.use("/obituaries", obituariesRouter);
+router.use("/newsletter", newsletterRouter);
 
 export default router;

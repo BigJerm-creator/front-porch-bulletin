@@ -17,13 +17,13 @@ export function Navbar() {
           </Link>
         </li>
         <li>
-          <Link href="/categories" className={`hover:underline hover:text-primary transition-colors ${location === "/categories" ? "underline text-primary" : ""}`}>
-            Letters to the Editor
+          <Link href="/submit" className={`hover:underline hover:text-primary transition-colors ${location === "/submit" ? "underline text-primary" : ""}`}>
+            Letter to the Editor
           </Link>
         </li>
         <li className="ml-auto">
-          <Link href="/submit" className={`hover:underline transition-colors ${location === "/submit" ? "bg-foreground text-background" : "bg-primary text-background"} px-3 py-1`}>
-            Make a Submission
+          <Link href="/newsletter" className={`hover:underline transition-colors ${location === "/newsletter" ? "bg-foreground text-background" : "bg-primary text-background"} px-3 py-1`}>
+            Sign Up
           </Link>
         </li>
       </ul>
