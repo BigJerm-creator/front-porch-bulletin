@@ -1,17 +1,33 @@
 import { Router } from "express";
-import { db, obituariesTable } from "@workspace/db";
-import { eq, desc } from "drizzle-orm";
+import { db, obituariesTable, articlesTable } from "@workspace/db";
+import { eq, desc, and } from "drizzle-orm";
 import { requireApproved } from "../middlewares/auth";
 
 const router = Router();
 
 router.get("/", async (_req, res) => {
-  const obituaries = await db
-    .select()
-    .from(obituariesTable)
-    .orderBy(desc(obituariesTable.createdAt));
+  const [dedicated, articleObits] = await Promise.all([
+    db.select().from(obituariesTable).orderBy(desc(obituariesTable.createdAt)),
+    db
+      .select()
+      .from(articlesTable)
+      .where(and(eq(articlesTable.category, "Obituaries"), eq(articlesTable.archived, false)))
+      .orderBy(desc(articlesTable.publishedAt)),
+  ]);
 
-  res.json({ obituaries });
+  const fromArticles = articleObits.map((a) => ({
+    id: `article-${a.id}`,
+    name: a.title,
+    birthDate: null,
+    deathDate: null,
+    hometown: null,
+    content: a.content,
+    photoUrl: a.photoUrl ?? null,
+    createdAt: a.publishedAt,
+    updatedAt: a.updatedAt,
+  }));
+
+  res.json({ obituaries: [...dedicated, ...fromArticles] });
 });
 
 router.post("/", requireApproved, async (req, res) => {

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
 import { articlesTable } from "@workspace/db";
-import { eq, desc, sql, and } from "drizzle-orm";
+import { eq, desc, sql, and, ne } from "drizzle-orm";
 import {
   ListArticlesQueryParams,
   CreateArticleBody,
@@ -69,7 +69,7 @@ router.get("/featured", async (_req, res) => {
   const articles = await db
     .select()
     .from(articlesTable)
-    .where(eq(articlesTable.archived, false))
+    .where(and(eq(articlesTable.archived, false), ne(articlesTable.category, "Obituaries")))
     .orderBy(desc(articlesTable.publishedAt))
     .limit(10);
 
