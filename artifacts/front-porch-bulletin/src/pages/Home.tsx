@@ -17,7 +17,7 @@ export default function Home() {
             <StudentSpotlight />
 
             <h2 className="font-headline text-xs uppercase tracking-widest font-bold border-b border-foreground pb-1 mb-4">
-              In This Issue
+              Upcoming Events
             </h2>
             {featuredData?.secondary && featuredData.secondary.length > 0 ? (
               <div className="space-y-5 divide-y divide-foreground/20">
