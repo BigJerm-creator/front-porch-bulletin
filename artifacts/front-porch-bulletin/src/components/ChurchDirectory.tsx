@@ -33,7 +33,7 @@ export function ChurchDirectory() {
       <h2 className="font-headline text-xs uppercase tracking-widest font-bold border-b border-foreground pb-1 mb-4">
         Church Directory
       </h2>
-      <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
         {churches.map((church) => (
           <div key={church.id} className="border-l-2 border-foreground/30 pl-3">
             <p className="font-headline font-bold text-sm leading-tight mb-0.5">{church.name}</p>
