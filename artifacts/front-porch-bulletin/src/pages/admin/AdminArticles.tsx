@@ -1,28 +1,46 @@
 import { Link } from "wouter";
-import { useListArticles, getListArticlesQueryKey, useDeleteArticle, getGetArticlesSummaryQueryKey } from "@workspace/api-client-react";
+import { useListArticles, getListArticlesQueryKey, useDeleteArticle, useArchiveArticle, getGetArticlesSummaryQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { format } from "date-fns";
-import { Trash2, Edit, PlusCircle, Star } from "lucide-react";
+import { Trash2, Edit, PlusCircle, Star, Archive, ArchiveRestore, FileText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AdminArticles() {
-  const { data, isLoading } = useListArticles({ limit: 100 }, { query: { queryKey: getListArticlesQueryKey({ limit: 100 }) } });
+  const { data, isLoading } = useListArticles({ limit: 100, includeArchived: true }, { query: { queryKey: getListArticlesQueryKey({ limit: 100, includeArchived: true }) } });
   const deleteArticle = useDeleteArticle();
+  const archiveArticle = useArchiveArticle();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+
+  const invalidate = () => {
+    queryClient.invalidateQueries({ queryKey: getListArticlesQueryKey({ limit: 100, includeArchived: true }) });
+    queryClient.invalidateQueries({ queryKey: getGetArticlesSummaryQueryKey() });
+  };
 
   const handleDelete = async (id: number) => {
     try {
       await deleteArticle.mutateAsync({ id });
       toast({ title: "Article deleted", description: "The article has been permanently removed." });
-      queryClient.invalidateQueries({ queryKey: getListArticlesQueryKey({ limit: 100 }) });
-      queryClient.invalidateQueries({ queryKey: getGetArticlesSummaryQueryKey() });
-    } catch (err) {
+      invalidate();
+    } catch {
       toast({ variant: "destructive", title: "Error", description: "Failed to delete article." });
+    }
+  };
+
+  const handleArchive = async (id: number, archived: boolean) => {
+    try {
+      await archiveArticle.mutateAsync({ id, data: { archived } });
+      toast({
+        title: archived ? "Article archived" : "Article restored",
+        description: archived ? "The article has been moved to the archive." : "The article has been restored to the publication.",
+      });
+      invalidate();
+    } catch {
+      toast({ variant: "destructive", title: "Error", description: "Failed to update article." });
     }
   };
 
@@ -48,7 +66,7 @@ export default function AdminArticles() {
         </div>
       ) : (
         <div className="border-4 border-foreground bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] overflow-x-auto">
-          <Table className="min-w-[800px]">
+          <Table className="min-w-[900px]">
             <TableHeader className="bg-[#f5f0e8] border-b-4 border-foreground">
               <TableRow className="hover:bg-transparent">
                 <TableHead className="font-headline font-bold uppercase tracking-widest text-foreground text-base py-4">Headline</TableHead>
@@ -61,9 +79,21 @@ export default function AdminArticles() {
             </TableHeader>
             <TableBody>
               {data?.articles.map((article) => (
-                <TableRow key={article.id} className="border-b-2 border-foreground/20 hover:bg-[#f5f0e8]/50 transition-colors group">
+                <TableRow
+                  key={article.id}
+                  className={`border-b-2 border-foreground/20 transition-colors group ${
+                    article.archived
+                      ? "opacity-50 bg-foreground/5 hover:opacity-70"
+                      : "hover:bg-[#f5f0e8]/50"
+                  }`}
+                >
                   <TableCell className="font-medium max-w-xs py-4">
-                    <div className="truncate font-headline font-bold text-lg leading-tight group-hover:text-primary transition-colors">{article.title}</div>
+                    <div className="flex items-center gap-2">
+                      {article.archived && (
+                        <span className="text-xs font-mono uppercase tracking-widest border border-foreground/40 px-1 text-foreground/50 shrink-0">Archived</span>
+                      )}
+                      <div className="truncate font-headline font-bold text-lg leading-tight group-hover:text-primary transition-colors">{article.title}</div>
+                    </div>
                   </TableCell>
                   <TableCell className="py-4 italic text-muted-foreground">{article.author}</TableCell>
                   <TableCell className="uppercase text-xs font-bold tracking-widest py-4">
@@ -77,10 +107,24 @@ export default function AdminArticles() {
                   </TableCell>
                   <TableCell className="text-right py-4">
                     <div className="flex justify-end gap-2">
-                      <Button variant="outline" size="sm" asChild className="rounded-none border-2 border-foreground uppercase text-xs font-bold tracking-wider h-8 hover:bg-foreground hover:text-background">
-                        <Link href={`/admin/articles/${article.id}/edit`}>
-                          <Edit className="h-3 w-3 mr-1" /> Edit
-                        </Link>
+                      {!article.archived && (
+                        <Button variant="outline" size="sm" asChild className="rounded-none border-2 border-foreground uppercase text-xs font-bold tracking-wider h-8 hover:bg-foreground hover:text-background">
+                          <Link href={`/admin/articles/${article.id}/edit`}>
+                            <Edit className="h-3 w-3 mr-1" /> Edit
+                          </Link>
+                        </Button>
+                      )}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleArchive(article.id, !article.archived)}
+                        className="rounded-none border-2 border-foreground uppercase text-xs font-bold tracking-wider h-8 px-2 hover:bg-foreground hover:text-background"
+                        title={article.archived ? "Restore from archive" : "Move to archive"}
+                      >
+                        {article.archived
+                          ? <ArchiveRestore className="h-4 w-4" />
+                          : <Archive className="h-4 w-4" />
+                        }
                       </Button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>

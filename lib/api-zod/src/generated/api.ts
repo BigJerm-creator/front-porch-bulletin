@@ -19,12 +19,16 @@ export const HealthCheckResponse = zod.object({
  */
 export const listArticlesQueryLimitDefault = 20;
 export const listArticlesQueryOffsetDefault = 0;
+export const listArticlesQueryIncludeArchivedDefault = false;
 
 export const ListArticlesQueryParams = zod.object({
   category: zod.coerce.string().optional(),
   featured: zod.coerce.boolean().optional(),
   limit: zod.coerce.number().default(listArticlesQueryLimitDefault),
   offset: zod.coerce.number().default(listArticlesQueryOffsetDefault),
+  includeArchived: zod.coerce
+    .boolean()
+    .default(listArticlesQueryIncludeArchivedDefault),
 });
 
 export const ListArticlesResponse = zod.object({
@@ -37,6 +41,7 @@ export const ListArticlesResponse = zod.object({
       author: zod.string(),
       category: zod.string(),
       featured: zod.boolean(),
+      archived: zod.boolean(),
       publishedAt: zod.coerce.date(),
       createdAt: zod.coerce.date(),
       updatedAt: zod.coerce.date(),
@@ -73,6 +78,7 @@ export const GetFeaturedArticlesResponse = zod.object({
       author: zod.string(),
       category: zod.string(),
       featured: zod.boolean(),
+      archived: zod.boolean(),
       publishedAt: zod.coerce.date(),
       createdAt: zod.coerce.date(),
       updatedAt: zod.coerce.date(),
@@ -87,6 +93,7 @@ export const GetFeaturedArticlesResponse = zod.object({
       author: zod.string(),
       category: zod.string(),
       featured: zod.boolean(),
+      archived: zod.boolean(),
       publishedAt: zod.coerce.date(),
       createdAt: zod.coerce.date(),
       updatedAt: zod.coerce.date(),
@@ -124,6 +131,7 @@ export const GetArticleResponse = zod.object({
   author: zod.string(),
   category: zod.string(),
   featured: zod.boolean(),
+  archived: zod.boolean(),
   publishedAt: zod.coerce.date(),
   createdAt: zod.coerce.date(),
   updatedAt: zod.coerce.date(),
@@ -154,6 +162,7 @@ export const UpdateArticleResponse = zod.object({
   author: zod.string(),
   category: zod.string(),
   featured: zod.boolean(),
+  archived: zod.boolean(),
   publishedAt: zod.coerce.date(),
   createdAt: zod.coerce.date(),
   updatedAt: zod.coerce.date(),
@@ -164,6 +173,31 @@ export const UpdateArticleResponse = zod.object({
  */
 export const DeleteArticleParams = zod.object({
   id: zod.coerce.number(),
+});
+
+/**
+ * @summary Toggle archived status of an article (requires auth)
+ */
+export const ArchiveArticleParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const ArchiveArticleBody = zod.object({
+  archived: zod.boolean(),
+});
+
+export const ArchiveArticleResponse = zod.object({
+  id: zod.number(),
+  title: zod.string(),
+  subtitle: zod.string().nullish(),
+  content: zod.string(),
+  author: zod.string(),
+  category: zod.string(),
+  featured: zod.boolean(),
+  archived: zod.boolean(),
+  publishedAt: zod.coerce.date(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
 });
 
 /**

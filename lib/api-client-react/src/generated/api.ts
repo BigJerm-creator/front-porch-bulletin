@@ -18,6 +18,7 @@ import type {
 
 import type {
   AdminUser,
+  ArchiveArticleBody,
   Article,
   ArticlesSummary,
   CreateArticleBody,
@@ -702,6 +703,93 @@ export const useDeleteArticle = <
   TContext
 > => {
   return useMutation(getDeleteArticleMutationOptions(options));
+};
+
+/**
+ * @summary Toggle archived status of an article (requires auth)
+ */
+export const getArchiveArticleUrl = (id: number) => {
+  return `/api/articles/${id}/archive`;
+};
+
+export const archiveArticle = async (
+  id: number,
+  archiveArticleBody: ArchiveArticleBody,
+  options?: RequestInit,
+): Promise<Article> => {
+  return customFetch<Article>(getArchiveArticleUrl(id), {
+    ...options,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(archiveArticleBody),
+  });
+};
+
+export const getArchiveArticleMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof archiveArticle>>,
+    TError,
+    { id: number; data: BodyType<ArchiveArticleBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof archiveArticle>>,
+  TError,
+  { id: number; data: BodyType<ArchiveArticleBody> },
+  TContext
+> => {
+  const mutationKey = ["archiveArticle"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof archiveArticle>>,
+    { id: number; data: BodyType<ArchiveArticleBody> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return archiveArticle(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type ArchiveArticleMutationResult = NonNullable<
+  Awaited<ReturnType<typeof archiveArticle>>
+>;
+export type ArchiveArticleMutationBody = BodyType<ArchiveArticleBody>;
+export type ArchiveArticleMutationError = ErrorType<void>;
+
+/**
+ * @summary Toggle archived status of an article (requires auth)
+ */
+export const useArchiveArticle = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof archiveArticle>>,
+    TError,
+    { id: number; data: BodyType<ArchiveArticleBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof archiveArticle>>,
+  TError,
+  { id: number; data: BodyType<ArchiveArticleBody> },
+  TContext
+> => {
+  return useMutation(getArchiveArticleMutationOptions(options));
 };
 
 /**

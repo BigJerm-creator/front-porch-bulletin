@@ -6,10 +6,6 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type ListArticlesParams = {
-  category?: string;
-  featured?: boolean;
-  limit?: number;
-  offset?: number;
-  includeArchived?: boolean;
+export type ArchiveArticleBody = {
+  archived: boolean;
 };

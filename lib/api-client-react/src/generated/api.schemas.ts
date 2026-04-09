@@ -17,6 +17,7 @@ export interface Article {
   author: string;
   category: string;
   featured: boolean;
+  archived: boolean;
   publishedAt: string;
   createdAt: string;
   updatedAt: string;
@@ -94,6 +95,7 @@ export type ListArticlesParams = {
   featured?: boolean;
   limit?: number;
   offset?: number;
+  includeArchived?: boolean;
 };
 
 export type ListArticles200 = {
@@ -104,6 +106,10 @@ export type ListArticles200 = {
 export type GetFeaturedArticles200 = {
   headline?: Article;
   secondary: Article[];
+};
+
+export type ArchiveArticleBody = {
+  archived: boolean;
 };
 
 export type ListCategories200 = {

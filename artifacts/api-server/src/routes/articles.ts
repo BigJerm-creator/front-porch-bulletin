@@ -9,6 +9,8 @@ import {
   UpdateArticleParams,
   UpdateArticleBody,
   DeleteArticleParams,
+  ArchiveArticleParams,
+  ArchiveArticleBody,
 } from "@workspace/api-zod";
 import { requireApproved } from "../middlewares/auth";
 
@@ -20,9 +22,10 @@ router.get("/", async (req, res) => {
     res.status(400).json({ error: parse.error.message });
     return;
   }
-  const { category, featured, limit = 20, offset = 0 } = parse.data;
+  const { category, featured, limit = 20, offset = 0, includeArchived = false } = parse.data;
 
   const conditions = [];
+  if (!includeArchived) conditions.push(eq(articlesTable.archived, false));
   if (category) conditions.push(eq(articlesTable.category, category));
   if (featured !== undefined) conditions.push(eq(articlesTable.featured, featured));
 
@@ -66,6 +69,7 @@ router.get("/featured", async (_req, res) => {
   const articles = await db
     .select()
     .from(articlesTable)
+    .where(eq(articlesTable.archived, false))
     .orderBy(desc(articlesTable.publishedAt))
     .limit(10);
 
@@ -141,6 +145,33 @@ router.put("/:id", requireApproved, async (req, res) => {
   const [article] = await db
     .update(articlesTable)
     .set(updateData)
+    .where(eq(articlesTable.id, paramParse.data.id))
+    .returning();
+
+  if (!article) {
+    res.status(404).json({ error: "Article not found" });
+    return;
+  }
+
+  res.json(article);
+});
+
+router.patch("/:id/archive", requireApproved, async (req, res) => {
+  const paramParse = ArchiveArticleParams.safeParse({ id: Number(req.params.id) });
+  if (!paramParse.success) {
+    res.status(400).json({ error: paramParse.error.message });
+    return;
+  }
+
+  const bodyParse = ArchiveArticleBody.safeParse(req.body);
+  if (!bodyParse.success) {
+    res.status(400).json({ error: bodyParse.error.message });
+    return;
+  }
+
+  const [article] = await db
+    .update(articlesTable)
+    .set({ archived: bodyParse.data.archived, updatedAt: new Date() })
     .where(eq(articlesTable.id, paramParse.data.id))
     .returning();
 

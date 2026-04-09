@@ -10,6 +10,7 @@ export const articlesTable = pgTable("articles", {
   author: text("author").notNull(),
   category: text("category").notNull(),
   featured: boolean("featured").notNull().default(false),
+  archived: boolean("archived").notNull().default(false),
   publishedAt: timestamp("published_at").notNull().defaultNow(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),

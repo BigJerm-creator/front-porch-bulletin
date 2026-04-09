@@ -14,6 +14,7 @@ export interface Article {
   author: string;
   category: string;
   featured: boolean;
+  archived: boolean;
   publishedAt: Date;
   createdAt: Date;
   updatedAt: Date;

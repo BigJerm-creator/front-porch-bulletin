@@ -58,6 +58,12 @@ paths:
             type: integer
             default: 0
           required: false
+        - name: includeArchived
+          in: query
+          schema:
+            type: boolean
+            default: false
+          required: false
       responses:
         "200":
           description: List of articles
@@ -188,6 +194,38 @@ paths:
       responses:
         "204":
           description: Deleted
+        "401":
+          description: Unauthorized
+
+  /articles/{id}/archive:
+    patch:
+      operationId: archiveArticle
+      tags: [articles]
+      summary: Toggle archived status of an article (requires auth)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                archived:
+                  type: boolean
+              required:
+                - archived
+      responses:
+        "200":
+          description: Updated article
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Article"
         "401":
           description: Unauthorized
 
@@ -324,6 +362,8 @@ components:
           type: string
         featured:
           type: boolean
+        archived:
+          type: boolean
         publishedAt:
           type: string
           format: date-time
@@ -340,6 +380,7 @@ components:
         - author
         - category
         - featured
+        - archived
         - publishedAt
         - createdAt
         - updatedAt

@@ -7,6 +7,7 @@
  */
 
 export * from "./adminUser";
+export * from "./archiveArticleBody";
 export * from "./article";
 export * from "./articlesSummary";
 export * from "./articlesSummaryByCategoryItem";
