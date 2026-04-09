@@ -28,7 +28,7 @@ export function Header() {
             src={logoSrc}
             alt="The Front Porch Bulletin — Where Community Comes to Gather"
             className="max-w-full mx-auto"
-            style={{ maxHeight: "180px", mixBlendMode: "multiply" }}
+            style={{ maxHeight: "260px", width: "100%", objectFit: "contain", mixBlendMode: "multiply" }}
             data-testid="header-logo"
           />
         </Link>
