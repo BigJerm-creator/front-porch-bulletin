@@ -27,7 +27,7 @@ export default function AdminArticles() {
   };
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto">
+    <div className="space-y-8">
       <header className="border-b-4 border-foreground pb-6 mb-8 flex flex-col sm:flex-row sm:justify-between sm:items-end gap-4">
         <div>
           <h1 className="text-4xl sm:text-5xl font-headline font-bold uppercase tracking-widest mb-2">Articles Desk</h1>

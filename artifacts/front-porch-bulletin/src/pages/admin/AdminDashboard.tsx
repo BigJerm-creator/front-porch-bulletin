@@ -12,7 +12,7 @@ export default function AdminDashboard() {
   const { data: roleData } = useGetMyRole({ query: { queryKey: getGetMyRoleQueryKey() } });
 
   return (
-    <div className="space-y-10 max-w-5xl mx-auto">
+    <div className="space-y-10">
       <header className="border-b-4 border-foreground pb-6 mb-8 relative">
         <div className="absolute -top-4 -left-4 text-primary opacity-10">
           <FileText className="w-32 h-32" />

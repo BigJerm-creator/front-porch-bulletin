@@ -7,7 +7,7 @@ export default function AdminCategories() {
   const { data, isLoading } = useListCategories({ query: { queryKey: getListCategoriesQueryKey() } });
 
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <div className="space-y-8">
       <header className="border-b-4 border-foreground pb-6 mb-8 flex justify-between items-end">
         <div>
           <h1 className="text-4xl sm:text-5xl font-headline font-bold uppercase tracking-widest mb-2">Sections</h1>
