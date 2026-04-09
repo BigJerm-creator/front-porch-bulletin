@@ -6,9 +6,11 @@ import adminRouter from "./admin";
 import spotlightRouter from "./spotlight";
 import churchesRouter from "./churches";
 import obituariesRouter from "./obituaries";
+import storageRouter from "./storage";
 
 const router: IRouter = Router();
 
+router.use(storageRouter);
 router.use(healthRouter);
 router.use("/articles", articlesRouter);
 router.use("/categories", categoriesRouter);

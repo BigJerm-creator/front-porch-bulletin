@@ -15,7 +15,7 @@ router.get("/", async (_req, res) => {
 });
 
 router.post("/", requireApproved, async (req, res) => {
-  const { name, address, pastor, serviceTimes, phone, sortOrder } = req.body;
+  const { name, address, pastor, serviceTimes, phone, sortOrder, photoUrl } = req.body;
   if (!name || !address || !pastor || !serviceTimes || !phone) {
     res.status(400).json({ error: "name, address, pastor, serviceTimes, and phone are required" });
     return;
@@ -23,7 +23,7 @@ router.post("/", requireApproved, async (req, res) => {
 
   const [church] = await db
     .insert(churchesTable)
-    .values({ name, address, pastor, serviceTimes, phone, sortOrder: sortOrder ?? 0 })
+    .values({ name, address, pastor, serviceTimes, phone, sortOrder: sortOrder ?? 0, photoUrl: photoUrl ?? null })
     .returning();
   res.status(201).json(church);
 });
@@ -35,7 +35,7 @@ router.put("/:id", requireApproved, async (req, res) => {
     return;
   }
 
-  const { name, address, pastor, serviceTimes, phone, sortOrder } = req.body;
+  const { name, address, pastor, serviceTimes, phone, sortOrder, photoUrl } = req.body;
   if (!name || !address || !pastor || !serviceTimes || !phone) {
     res.status(400).json({ error: "name, address, pastor, serviceTimes, and phone are required" });
     return;
@@ -43,7 +43,7 @@ router.put("/:id", requireApproved, async (req, res) => {
 
   const [church] = await db
     .update(churchesTable)
-    .set({ name, address, pastor, serviceTimes, phone, sortOrder: sortOrder ?? 0 })
+    .set({ name, address, pastor, serviceTimes, phone, sortOrder: sortOrder ?? 0, photoUrl: photoUrl ?? null })
     .where(eq(churchesTable.id, id))
     .returning();
 

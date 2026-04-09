@@ -18,6 +18,7 @@ export interface Article {
   category: string;
   featured: boolean;
   archived: boolean;
+  photoUrl?: string | null;
   publishedAt: string;
   createdAt: string;
   updatedAt: string;
@@ -30,6 +31,7 @@ export interface CreateArticleBody {
   author: string;
   category: string;
   featured?: boolean;
+  photoUrl?: string | null;
   publishedAt?: string;
 }
 
@@ -40,6 +42,7 @@ export interface UpdateArticleBody {
   author?: string;
   category?: string;
   featured?: boolean;
+  photoUrl?: string | null;
   publishedAt?: string;
 }
 
@@ -90,6 +93,17 @@ export interface MyRoleResponse {
   isApproved: boolean;
 }
 
+export interface UploadUrlRequest {
+  name: string;
+  size: number;
+  contentType: string;
+}
+
+export interface UploadUrlResponse {
+  uploadURL: string;
+  objectPath: string;
+}
+
 export interface Obituary {
   id: number;
   name: string;
@@ -97,6 +111,7 @@ export interface Obituary {
   deathDate?: string | null;
   hometown?: string | null;
   content: string;
+  photoUrl?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -107,6 +122,7 @@ export interface ObituaryBody {
   deathDate?: string | null;
   hometown?: string | null;
   content: string;
+  photoUrl?: string | null;
 }
 
 export interface Spotlight {
@@ -136,6 +152,7 @@ export interface Church {
   serviceTimes: string;
   phone: string;
   sortOrder: number;
+  photoUrl?: string | null;
   createdAt: string;
 }
 
@@ -146,6 +163,7 @@ export interface ChurchBody {
   serviceTimes: string;
   phone: string;
   sortOrder?: number;
+  photoUrl?: string | null;
 }
 
 export type ListArticlesParams = {

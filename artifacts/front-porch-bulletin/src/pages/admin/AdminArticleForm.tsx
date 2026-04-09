@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useParams } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Save } from "lucide-react";
 import { Link } from "wouter";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -25,6 +26,7 @@ const formSchema = z.object({
   publishedAt: z.string().min(1, "Publish date is required"),
 });
 
+
 type FormValues = z.infer<typeof formSchema>;
 
 export default function AdminArticleForm() {
@@ -32,6 +34,7 @@ export default function AdminArticleForm() {
   const params = useParams();
   const isEditing = !!params?.id;
   const articleId = isEditing ? parseInt(params.id!) : 0;
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -68,6 +71,7 @@ export default function AdminArticleForm() {
         featured: article.featured,
         publishedAt: article.publishedAt.split('T')[0],
       });
+      setPhotoUrl(article.photoUrl ?? null);
     }
   }, [isEditing, article, form]);
 
@@ -75,6 +79,7 @@ export default function AdminArticleForm() {
     try {
       const formattedValues = {
         ...values,
+        photoUrl,
         publishedAt: new Date(values.publishedAt).toISOString(),
       };
 
@@ -228,6 +233,14 @@ export default function AdminArticleForm() {
                 </FormItem>
               )}
             />
+
+            <div className="border-2 border-foreground/20 p-4 bg-[#f5f0e8]">
+              <ImageUpload
+                value={photoUrl}
+                onChange={setPhotoUrl}
+                label="Lead Photo (optional)"
+              />
+            </div>
 
             <FormField
               control={form.control}

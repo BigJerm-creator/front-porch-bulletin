@@ -13,6 +13,7 @@ export interface Obituary {
   deathDate?: string | null;
   hometown?: string | null;
   content: string;
+  photoUrl?: string | null;
   createdAt: Date;
   updatedAt: Date;
 }

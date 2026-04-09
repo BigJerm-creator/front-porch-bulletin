@@ -17,6 +17,7 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - **Build**: esbuild (CJS bundle)
 - **Frontend**: React + Vite + Tailwind CSS + shadcn/ui
 - **Auth**: Clerk (whitelabel)
+- **Object Storage**: Replit GCS-backed object storage (presigned upload URL flow)
 
 ## Artifacts
 
@@ -24,18 +25,36 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - Small-town community newsletter web app styled like an 80s/90s newspaper
 - **Public pages**: Home (front page), Articles index, Article detail, Categories, Submit a Story, About
 - **Auth pages**: /sign-in, /sign-up (Clerk-powered, newspaper-styled)
-- **Admin pages** (requires login + role): /admin, /admin/articles, /admin/articles/new, /admin/articles/:id/edit, /admin/categories, /admin/users
+- **Admin pages** (requires login + role):
+  - /admin — Dashboard with section cards and live counts
+  - /admin/articles, /admin/articles/new, /admin/articles/:id/edit
+  - /admin/categories, /admin/users
+  - /admin/spotlight — Student Spotlight editor
+  - /admin/obituaries — Obituaries management
+  - /admin/churches — Church Directory management
 
 ### API Server (`artifacts/api-server`)
-- Public routes: `GET /api/articles`, `GET /api/articles/featured`, `GET /api/articles/summary`, `GET /api/categories`
-- Protected routes (require approved/admin role): `POST /api/articles`, `PUT /api/articles/:id`, `DELETE /api/articles/:id`
-- Admin routes: `GET /api/admin/me`, `GET /api/admin/users`, `PUT /api/admin/users/:id/role`, `DELETE /api/admin/users/:id/role`
+- Public routes: `GET /api/articles`, `GET /api/articles/:id`, `GET /api/articles/summary`, `GET /api/categories`, `GET /api/spotlight`, `GET /api/churches`, `GET /api/obituaries`
+- Protected routes (require approved/admin role): create/update/delete for all content types
+- Admin routes: `GET /api/admin/me`, `GET /api/admin/users`, user role management
+- Storage routes: `POST /api/storage/uploads/request-url` (returns presigned GCS URL + objectPath), `GET /api/storage/objects/*` (serves stored objects)
 
 ## Database Schema
 
-- `articles`: id, title, subtitle, content, author, category, featured, published_at, created_at, updated_at
+- `articles`: id, title, subtitle, content, author, category, featured, archived, photo_url, published_at, created_at, updated_at
 - `categories`: id, name, slug, description
 - `user_roles`: id, clerk_user_id (unique), role (admin|approved_user), granted_at
+- `student_spotlight`: id, name, school, grade, description, photo_url, updated_at
+- `obituaries`: id, name, birth_date, death_date, hometown, content, photo_url, created_at, updated_at
+- `churches`: id, name, address, pastor, service_times, phone, sort_order, photo_url, created_at
+
+## Image Upload
+
+- Reusable `ImageUpload` component at `src/components/admin/ImageUpload.tsx`
+- Presigned URL flow: POST metadata → receive GCS upload URL + objectPath → PUT file directly to GCS
+- objectPath stored in DB (e.g. `/objects/uploads/uuid`)
+- Served via `GET /api/storage/objects/*`
+- Used in: AdminArticleForm (lead photo), AdminSpotlight (student photo), AdminObituaries, AdminChurches
 
 ## Auth & User Management
 

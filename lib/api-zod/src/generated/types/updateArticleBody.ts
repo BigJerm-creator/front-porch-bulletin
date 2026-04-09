@@ -13,5 +13,6 @@ export interface UpdateArticleBody {
   author?: string;
   category?: string;
   featured?: boolean;
+  photoUrl?: string | null;
   publishedAt?: Date;
 }

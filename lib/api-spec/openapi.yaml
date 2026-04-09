@@ -16,6 +16,8 @@ tags:
     description: Article categories
   - name: admin
     description: Admin-only operations
+  - name: Storage
+    description: Object storage upload and serving endpoints.
 paths:
   /healthz:
     get:
@@ -228,6 +230,51 @@ paths:
                 $ref: "#/components/schemas/Article"
         "401":
           description: Unauthorized
+
+  /storage/uploads/request-url:
+    post:
+      tags: [Storage]
+      operationId: requestUploadUrl
+      summary: Request a presigned URL for file upload
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadUrlRequest'
+      responses:
+        '200':
+          description: Presigned upload URL generated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadUrlResponse'
+        '400':
+          description: Missing or invalid required fields.
+        '500':
+          description: Failed to generate upload URL.
+
+  /storage/objects/{objectPath}:
+    get:
+      tags: [Storage]
+      operationId: getStorageObject
+      summary: Serve an object entity
+      parameters:
+        - name: objectPath
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Object content.
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Object not found.
 
   /obituaries:
     get:
@@ -560,6 +607,9 @@ components:
           type: boolean
         archived:
           type: boolean
+        photoUrl:
+          type: string
+          nullable: true
         publishedAt:
           type: string
           format: date-time
@@ -598,6 +648,9 @@ components:
         featured:
           type: boolean
           default: false
+        photoUrl:
+          type: string
+          nullable: true
         publishedAt:
           type: string
           format: date-time
@@ -623,6 +676,9 @@ components:
           type: string
         featured:
           type: boolean
+        photoUrl:
+          type: string
+          nullable: true
         publishedAt:
           type: string
           format: date-time
@@ -721,6 +777,26 @@ components:
         - isAdmin
         - isApproved
 
+    UploadUrlRequest:
+      type: object
+      required: [name, size, contentType]
+      properties:
+        name:
+          type: string
+        size:
+          type: integer
+        contentType:
+          type: string
+
+    UploadUrlResponse:
+      type: object
+      required: [uploadURL, objectPath]
+      properties:
+        uploadURL:
+          type: string
+        objectPath:
+          type: string
+
     Obituary:
       type: object
       properties:
@@ -739,6 +815,9 @@ components:
           nullable: true
         content:
           type: string
+        photoUrl:
+          type: string
+          nullable: true
         createdAt:
           type: string
           format: date-time
@@ -768,6 +847,9 @@ components:
           nullable: true
         content:
           type: string
+        photoUrl:
+          type: string
+          nullable: true
       required:
         - name
         - content
@@ -840,6 +922,9 @@ components:
           type: string
         sortOrder:
           type: integer
+        photoUrl:
+          type: string
+          nullable: true
         createdAt:
           type: string
           format: date-time
@@ -868,6 +953,9 @@ components:
           type: string
         sortOrder:
           type: integer
+        photoUrl:
+          type: string
+          nullable: true
       required:
         - name
         - address

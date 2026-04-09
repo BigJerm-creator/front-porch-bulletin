@@ -11,6 +11,7 @@ export const articlesTable = pgTable("articles", {
   category: text("category").notNull(),
   featured: boolean("featured").notNull().default(false),
   archived: boolean("archived").notNull().default(false),
+  photoUrl: text("photo_url"),
   publishedAt: timestamp("published_at").notNull().defaultNow(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),

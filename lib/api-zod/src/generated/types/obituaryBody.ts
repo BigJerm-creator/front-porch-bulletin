@@ -12,4 +12,5 @@ export interface ObituaryBody {
   deathDate?: string | null;
   hometown?: string | null;
   content: string;
+  photoUrl?: string | null;
 }

@@ -8,8 +8,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { Trash2, Edit, PlusCircle, X, Save, ChevronDown, ChevronUp } from "lucide-react";
 import type { Obituary } from "@workspace/api-client-react";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 
-const emptyForm = { name: "", birthDate: "", deathDate: "", hometown: "", content: "" };
+const emptyForm = { name: "", birthDate: "", deathDate: "", hometown: "", content: "", photoUrl: null as string | null };
 
 function FormCard({
   form,
@@ -52,6 +53,13 @@ function FormCard({
             placeholder="Write the obituary text here..."
           />
         </div>
+        <div className="col-span-2">
+          <ImageUpload
+            value={form.photoUrl}
+            onChange={(url) => setForm({ ...form, photoUrl: url })}
+            label="Photo (optional)"
+          />
+        </div>
       </div>
       <div className="flex gap-3 pt-2 border-t-2 border-foreground/20">
         <Button onClick={onSave} disabled={saving} className="rounded-none border-2 border-transparent bg-primary text-primary-foreground uppercase tracking-widest font-bold h-10 px-5 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 transition-all">
@@ -89,6 +97,7 @@ export default function AdminObituaries() {
       deathDate: obit.deathDate ?? "",
       hometown: obit.hometown ?? "",
       content: obit.content,
+      photoUrl: obit.photoUrl ?? null,
     });
   };
 
@@ -106,6 +115,7 @@ export default function AdminObituaries() {
         deathDate: form.deathDate || null,
         hometown: form.hometown || null,
         content: form.content,
+        photoUrl: form.photoUrl,
       };
       if (editingId !== null) {
         await updateObituary.mutateAsync({ id: editingId, data: payload });

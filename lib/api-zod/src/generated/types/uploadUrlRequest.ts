@@ -6,12 +6,8 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export interface ChurchBody {
+export interface UploadUrlRequest {
   name: string;
-  address: string;
-  pastor: string;
-  serviceTimes: string;
-  phone: string;
-  sortOrder?: number;
-  photoUrl?: string | null;
+  size: number;
+  contentType: string;
 }

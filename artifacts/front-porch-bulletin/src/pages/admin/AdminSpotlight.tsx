@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { Save, User } from "lucide-react";
+import { ImageUpload } from "@/components/admin/ImageUpload";
 
 export default function AdminSpotlight() {
   const { data, isLoading } = useGetSpotlight({ query: { queryKey: getGetSpotlightQueryKey() } });
@@ -114,15 +115,11 @@ export default function AdminSpotlight() {
                 placeholder="Write a brief description of the student's achievement..."
               />
             </div>
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-widest mb-1">Photo URL <span className="text-foreground/40 normal-case tracking-normal font-normal">(optional)</span></label>
-              <Input
-                className="rounded-none border-2 border-foreground font-mono text-sm"
-                value={form.photoUrl}
-                onChange={(e) => setForm({ ...form, photoUrl: e.target.value })}
-                placeholder="https://..."
-              />
-            </div>
+            <ImageUpload
+              value={form.photoUrl || null}
+              onChange={(url) => setForm({ ...form, photoUrl: url ?? "" })}
+              label="Photo (optional)"
+            />
           </div>
 
           <div className="space-y-4">

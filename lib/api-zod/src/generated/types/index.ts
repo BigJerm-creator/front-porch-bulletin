@@ -31,3 +31,5 @@ export * from "./setUserRoleBodyRole";
 export * from "./spotlight";
 export * from "./spotlightBody";
 export * from "./updateArticleBody";
+export * from "./uploadUrlRequest";
+export * from "./uploadUrlResponse";

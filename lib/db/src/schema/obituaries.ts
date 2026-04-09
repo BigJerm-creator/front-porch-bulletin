@@ -7,6 +7,7 @@ export const obituariesTable = pgTable("obituaries", {
   deathDate: date("death_date"),
   hometown: text("hometown"),
   content: text("content").notNull(),
+  photoUrl: text("photo_url"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

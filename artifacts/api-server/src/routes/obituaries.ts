@@ -15,7 +15,7 @@ router.get("/", async (_req, res) => {
 });
 
 router.post("/", requireApproved, async (req, res) => {
-  const { name, birthDate, deathDate, hometown, content } = req.body;
+  const { name, birthDate, deathDate, hometown, content, photoUrl } = req.body;
   if (!name || !content) {
     res.status(400).json({ error: "name and content are required" });
     return;
@@ -23,7 +23,7 @@ router.post("/", requireApproved, async (req, res) => {
 
   const [obituary] = await db
     .insert(obituariesTable)
-    .values({ name, birthDate: birthDate ?? null, deathDate: deathDate ?? null, hometown: hometown ?? null, content })
+    .values({ name, birthDate: birthDate ?? null, deathDate: deathDate ?? null, hometown: hometown ?? null, content, photoUrl: photoUrl ?? null })
     .returning();
   res.status(201).json(obituary);
 });
@@ -35,7 +35,7 @@ router.put("/:id", requireApproved, async (req, res) => {
     return;
   }
 
-  const { name, birthDate, deathDate, hometown, content } = req.body;
+  const { name, birthDate, deathDate, hometown, content, photoUrl } = req.body;
   if (!name || !content) {
     res.status(400).json({ error: "name and content are required" });
     return;
@@ -43,7 +43,7 @@ router.put("/:id", requireApproved, async (req, res) => {
 
   const [obituary] = await db
     .update(obituariesTable)
-    .set({ name, birthDate: birthDate ?? null, deathDate: deathDate ?? null, hometown: hometown ?? null, content, updatedAt: new Date() })
+    .set({ name, birthDate: birthDate ?? null, deathDate: deathDate ?? null, hometown: hometown ?? null, content, photoUrl: photoUrl ?? null, updatedAt: new Date() })
     .where(eq(obituariesTable.id, id))
     .returning();
 
