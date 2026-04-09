@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useGetFeaturedArticles } from "@workspace/api-client-react";
 import { Layout } from "@/components/layout/Layout";
 import { ArticleTeaser } from "@/components/ArticleTeaser";
@@ -7,6 +8,14 @@ import { ChurchDirectory } from "@/components/ChurchDirectory";
 
 export default function Home() {
   const { data: featuredData, isLoading } = useGetFeaturedArticles();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("print") === "1" && !isLoading) {
+      const timer = setTimeout(() => window.print(), 800);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading]);
 
   return (
     <Layout>

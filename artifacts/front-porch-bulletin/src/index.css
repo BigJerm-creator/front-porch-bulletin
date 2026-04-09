@@ -146,3 +146,48 @@
   margin-top: 0.2rem;
   font-weight: bold;
 }
+
+@media print {
+  @page {
+    size: 11in 14in;
+    margin: 0.5in;
+  }
+
+  /* Hide nav, header top-bar, and any non-editorial chrome */
+  .no-print,
+  nav,
+  header .no-print {
+    display: none !important;
+  }
+
+  body {
+    background-image: none !important;
+    background-color: #fff !important;
+    color: #000 !important;
+    font-size: 10pt;
+  }
+
+  /* Keep newspaper columns flowing naturally across the 11x14 page */
+  .newspaper-divider {
+    border-color: #000;
+  }
+
+  a {
+    color: inherit !important;
+    text-decoration: none !important;
+  }
+
+  img {
+    max-width: 100% !important;
+    page-break-inside: avoid;
+  }
+
+  h1, h2, h3, h4 {
+    page-break-after: avoid;
+  }
+
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+}
