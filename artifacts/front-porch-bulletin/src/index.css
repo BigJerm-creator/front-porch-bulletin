@@ -153,10 +153,15 @@
     margin: 0.5in;
   }
 
-  /* Hide nav, header top-bar, and any non-editorial chrome */
+  /* Page 2 starts here — forces a clean page break */
+  .print-page-two {
+    break-before: page !important;
+    page-break-before: always !important;
+  }
+
+  /* Hide nav, sign-up button, and other screen-only chrome */
   .no-print,
-  nav,
-  header .no-print {
+  nav {
     display: none !important;
   }
 
@@ -164,10 +169,39 @@
     background-image: none !important;
     background-color: #fff !important;
     color: #000 !important;
-    font-size: 10pt;
+    font-size: 9pt;
   }
 
-  /* Keep newspaper columns flowing naturally across the 11x14 page */
+  /* Shrink logo so page 1 header takes less vertical space */
+  header img {
+    max-height: 160px !important;
+    width: auto !important;
+  }
+
+  /* Tighten up the header padding */
+  header {
+    margin-bottom: 0.1in !important;
+  }
+
+  /* Secondary article excerpts: 2 lines max in print */
+  .line-clamp-4 {
+    -webkit-line-clamp: 2 !important;
+  }
+
+  /* Featured article content: cap height to avoid page-1 overflow */
+  .columns-2 {
+    max-height: 3.8in;
+    overflow: hidden;
+  }
+
+  /* Student spotlight photo: cap height */
+  img[alt]:not([alt=""]) {
+    max-height: 1.8in;
+    width: auto;
+    object-fit: cover;
+  }
+
+  /* Keep newspaper column rules visible */
   .newspaper-divider {
     border-color: #000;
   }
@@ -180,14 +214,21 @@
   img {
     max-width: 100% !important;
     page-break-inside: avoid;
+    break-inside: avoid;
   }
 
   h1, h2, h3, h4 {
     page-break-after: avoid;
+    break-after: avoid;
   }
 
   p {
     orphans: 3;
     widows: 3;
+  }
+
+  /* Footer stays on page 2 */
+  footer {
+    break-before: avoid;
   }
 }
