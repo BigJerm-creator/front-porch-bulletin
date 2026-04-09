@@ -9,16 +9,18 @@ export function Header() {
   return (
     <header className="mb-4">
       <div className="flex justify-between items-center border-b border-foreground pb-2 mb-2 text-xs font-mono uppercase tracking-widest">
-        <Show when="signed-in">
-          <Link href="/admin" className="border border-foreground px-2 py-0.5 hover:bg-foreground hover:text-background transition-colors" data-testid="link-admin">
-            Admin
-          </Link>
-        </Show>
-        <Show when="signed-out">
-          <Link href="/sign-in" className="border border-foreground px-2 py-0.5 hover:bg-foreground hover:text-background transition-colors" data-testid="link-staff-login">
-            Staff Login
-          </Link>
-        </Show>
+        <div className="print:hidden">
+          <Show when="signed-in">
+            <Link href="/admin" className="border border-foreground px-2 py-0.5 hover:bg-foreground hover:text-background transition-colors" data-testid="link-admin">
+              Admin
+            </Link>
+          </Show>
+          <Show when="signed-out">
+            <Link href="/sign-in" className="border border-foreground px-2 py-0.5 hover:bg-foreground hover:text-background transition-colors" data-testid="link-staff-login">
+              Staff Login
+            </Link>
+          </Show>
+        </div>
         <span>{formatDate(today)}</span>
         <span>Page 1</span>
       </div>
