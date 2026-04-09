@@ -229,6 +229,121 @@ paths:
         "401":
           description: Unauthorized
 
+  /spotlight:
+    get:
+      operationId: getSpotlight
+      tags: [spotlight]
+      summary: Get the current student spotlight
+      responses:
+        "200":
+          description: Current spotlight or null
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Spotlight"
+        "404":
+          description: No spotlight set
+    put:
+      operationId: updateSpotlight
+      tags: [spotlight]
+      summary: Replace the student spotlight (requires auth)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SpotlightBody"
+      responses:
+        "200":
+          description: Updated spotlight
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Spotlight"
+        "401":
+          description: Unauthorized
+
+  /churches:
+    get:
+      operationId: listChurches
+      tags: [churches]
+      summary: List all churches
+      responses:
+        "200":
+          description: List of churches
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  churches:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Church"
+                required:
+                  - churches
+    post:
+      operationId: createChurch
+      tags: [churches]
+      summary: Add a church (requires auth)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChurchBody"
+      responses:
+        "201":
+          description: Created church
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Church"
+        "401":
+          description: Unauthorized
+
+  /churches/{id}:
+    put:
+      operationId: updateChurch
+      tags: [churches]
+      summary: Update a church (requires auth)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChurchBody"
+      responses:
+        "200":
+          description: Updated church
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Church"
+        "401":
+          description: Unauthorized
+    delete:
+      operationId: deleteChurch
+      tags: [churches]
+      summary: Delete a church (requires auth)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "401":
+          description: Unauthorized
+
   /categories:
     get:
       operationId: listCategories
@@ -524,3 +639,106 @@ components:
         - clerkUserId
         - isAdmin
         - isApproved
+
+    Spotlight:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        school:
+          type: string
+        grade:
+          type: string
+        description:
+          type: string
+        photoUrl:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - school
+        - grade
+        - description
+        - createdAt
+        - updatedAt
+
+    SpotlightBody:
+      type: object
+      properties:
+        name:
+          type: string
+        school:
+          type: string
+        grade:
+          type: string
+        description:
+          type: string
+        photoUrl:
+          type: string
+          nullable: true
+      required:
+        - name
+        - school
+        - grade
+        - description
+
+    Church:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        address:
+          type: string
+        pastor:
+          type: string
+        serviceTimes:
+          type: string
+        phone:
+          type: string
+        sortOrder:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - address
+        - pastor
+        - serviceTimes
+        - phone
+        - sortOrder
+        - createdAt
+
+    ChurchBody:
+      type: object
+      properties:
+        name:
+          type: string
+        address:
+          type: string
+        pastor:
+          type: string
+        serviceTimes:
+          type: string
+        phone:
+          type: string
+        sortOrder:
+          type: integer
+      required:
+        - name
+        - address
+        - pastor
+        - serviceTimes
+        - phone

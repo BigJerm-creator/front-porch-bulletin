@@ -201,6 +201,106 @@ export const ArchiveArticleResponse = zod.object({
 });
 
 /**
+ * @summary Get the current student spotlight
+ */
+export const GetSpotlightResponse = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  school: zod.string(),
+  grade: zod.string(),
+  description: zod.string(),
+  photoUrl: zod.string().nullish(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Replace the student spotlight (requires auth)
+ */
+export const UpdateSpotlightBody = zod.object({
+  name: zod.string(),
+  school: zod.string(),
+  grade: zod.string(),
+  description: zod.string(),
+  photoUrl: zod.string().nullish(),
+});
+
+export const UpdateSpotlightResponse = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  school: zod.string(),
+  grade: zod.string(),
+  description: zod.string(),
+  photoUrl: zod.string().nullish(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+
+/**
+ * @summary List all churches
+ */
+export const ListChurchesResponse = zod.object({
+  churches: zod.array(
+    zod.object({
+      id: zod.number(),
+      name: zod.string(),
+      address: zod.string(),
+      pastor: zod.string(),
+      serviceTimes: zod.string(),
+      phone: zod.string(),
+      sortOrder: zod.number(),
+      createdAt: zod.coerce.date(),
+    }),
+  ),
+});
+
+/**
+ * @summary Add a church (requires auth)
+ */
+export const CreateChurchBody = zod.object({
+  name: zod.string(),
+  address: zod.string(),
+  pastor: zod.string(),
+  serviceTimes: zod.string(),
+  phone: zod.string(),
+  sortOrder: zod.number().optional(),
+});
+
+/**
+ * @summary Update a church (requires auth)
+ */
+export const UpdateChurchParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const UpdateChurchBody = zod.object({
+  name: zod.string(),
+  address: zod.string(),
+  pastor: zod.string(),
+  serviceTimes: zod.string(),
+  phone: zod.string(),
+  sortOrder: zod.number().optional(),
+});
+
+export const UpdateChurchResponse = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  address: zod.string(),
+  pastor: zod.string(),
+  serviceTimes: zod.string(),
+  phone: zod.string(),
+  sortOrder: zod.number(),
+  createdAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Delete a church (requires auth)
+ */
+export const DeleteChurchParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+/**
  * @summary List all categories
  */
 export const ListCategoriesResponse = zod.object({

@@ -90,6 +90,45 @@ export interface MyRoleResponse {
   isApproved: boolean;
 }
 
+export interface Spotlight {
+  id: number;
+  name: string;
+  school: string;
+  grade: string;
+  description: string;
+  photoUrl?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface SpotlightBody {
+  name: string;
+  school: string;
+  grade: string;
+  description: string;
+  photoUrl?: string | null;
+}
+
+export interface Church {
+  id: number;
+  name: string;
+  address: string;
+  pastor: string;
+  serviceTimes: string;
+  phone: string;
+  sortOrder: number;
+  createdAt: string;
+}
+
+export interface ChurchBody {
+  name: string;
+  address: string;
+  pastor: string;
+  serviceTimes: string;
+  phone: string;
+  sortOrder?: number;
+}
+
 export type ListArticlesParams = {
   category?: string;
   featured?: boolean;
@@ -110,6 +149,10 @@ export type GetFeaturedArticles200 = {
 
 export type ArchiveArticleBody = {
   archived: boolean;
+};
+
+export type ListChurches200 = {
+  churches: Church[];
 };
 
 export type ListCategories200 = {

@@ -1,7 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { useClerk, useUser } from "@clerk/react";
 import { useGetMyRole, getGetMyRoleQueryKey } from "@workspace/api-client-react";
-import { FileText, Tags, Users, LogOut, LayoutDashboard } from "lucide-react";
+import { FileText, Tags, Users, LogOut, LayoutDashboard, Star, Church } from "lucide-react";
 import logoSrc from "@assets/The_1775669458963.png";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -14,6 +14,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
     { href: "/admin/articles", label: "Articles", icon: FileText },
     { href: "/admin/categories", label: "Categories", icon: Tags },
+    { href: "/admin/spotlight", label: "Spotlight", icon: Star },
+    { href: "/admin/churches", label: "Churches", icon: Church },
   ];
 
   if (roleData?.isAdmin) {

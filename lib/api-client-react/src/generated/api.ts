@@ -21,6 +21,8 @@ import type {
   ArchiveArticleBody,
   Article,
   ArticlesSummary,
+  Church,
+  ChurchBody,
   CreateArticleBody,
   GetFeaturedArticles200,
   HealthStatus,
@@ -28,8 +30,11 @@ import type {
   ListArticles200,
   ListArticlesParams,
   ListCategories200,
+  ListChurches200,
   MyRoleResponse,
   SetUserRoleBody,
+  Spotlight,
+  SpotlightBody,
   UpdateArticleBody,
 } from "./api.schemas";
 
@@ -790,6 +795,499 @@ export const useArchiveArticle = <
   TContext
 > => {
   return useMutation(getArchiveArticleMutationOptions(options));
+};
+
+/**
+ * @summary Get the current student spotlight
+ */
+export const getGetSpotlightUrl = () => {
+  return `/api/spotlight`;
+};
+
+export const getSpotlight = async (
+  options?: RequestInit,
+): Promise<Spotlight> => {
+  return customFetch<Spotlight>(getGetSpotlightUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetSpotlightQueryKey = () => {
+  return [`/api/spotlight`] as const;
+};
+
+export const getGetSpotlightQueryOptions = <
+  TData = Awaited<ReturnType<typeof getSpotlight>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getSpotlight>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetSpotlightQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getSpotlight>>> = ({
+    signal,
+  }) => getSpotlight({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getSpotlight>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetSpotlightQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getSpotlight>>
+>;
+export type GetSpotlightQueryError = ErrorType<void>;
+
+/**
+ * @summary Get the current student spotlight
+ */
+
+export function useGetSpotlight<
+  TData = Awaited<ReturnType<typeof getSpotlight>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getSpotlight>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetSpotlightQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Replace the student spotlight (requires auth)
+ */
+export const getUpdateSpotlightUrl = () => {
+  return `/api/spotlight`;
+};
+
+export const updateSpotlight = async (
+  spotlightBody: SpotlightBody,
+  options?: RequestInit,
+): Promise<Spotlight> => {
+  return customFetch<Spotlight>(getUpdateSpotlightUrl(), {
+    ...options,
+    method: "PUT",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(spotlightBody),
+  });
+};
+
+export const getUpdateSpotlightMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateSpotlight>>,
+    TError,
+    { data: BodyType<SpotlightBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateSpotlight>>,
+  TError,
+  { data: BodyType<SpotlightBody> },
+  TContext
+> => {
+  const mutationKey = ["updateSpotlight"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateSpotlight>>,
+    { data: BodyType<SpotlightBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return updateSpotlight(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateSpotlightMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateSpotlight>>
+>;
+export type UpdateSpotlightMutationBody = BodyType<SpotlightBody>;
+export type UpdateSpotlightMutationError = ErrorType<void>;
+
+/**
+ * @summary Replace the student spotlight (requires auth)
+ */
+export const useUpdateSpotlight = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateSpotlight>>,
+    TError,
+    { data: BodyType<SpotlightBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateSpotlight>>,
+  TError,
+  { data: BodyType<SpotlightBody> },
+  TContext
+> => {
+  return useMutation(getUpdateSpotlightMutationOptions(options));
+};
+
+/**
+ * @summary List all churches
+ */
+export const getListChurchesUrl = () => {
+  return `/api/churches`;
+};
+
+export const listChurches = async (
+  options?: RequestInit,
+): Promise<ListChurches200> => {
+  return customFetch<ListChurches200>(getListChurchesUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListChurchesQueryKey = () => {
+  return [`/api/churches`] as const;
+};
+
+export const getListChurchesQueryOptions = <
+  TData = Awaited<ReturnType<typeof listChurches>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listChurches>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListChurchesQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof listChurches>>> = ({
+    signal,
+  }) => listChurches({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listChurches>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListChurchesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listChurches>>
+>;
+export type ListChurchesQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List all churches
+ */
+
+export function useListChurches<
+  TData = Awaited<ReturnType<typeof listChurches>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listChurches>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListChurchesQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Add a church (requires auth)
+ */
+export const getCreateChurchUrl = () => {
+  return `/api/churches`;
+};
+
+export const createChurch = async (
+  churchBody: ChurchBody,
+  options?: RequestInit,
+): Promise<Church> => {
+  return customFetch<Church>(getCreateChurchUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(churchBody),
+  });
+};
+
+export const getCreateChurchMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createChurch>>,
+    TError,
+    { data: BodyType<ChurchBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createChurch>>,
+  TError,
+  { data: BodyType<ChurchBody> },
+  TContext
+> => {
+  const mutationKey = ["createChurch"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createChurch>>,
+    { data: BodyType<ChurchBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createChurch(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateChurchMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createChurch>>
+>;
+export type CreateChurchMutationBody = BodyType<ChurchBody>;
+export type CreateChurchMutationError = ErrorType<void>;
+
+/**
+ * @summary Add a church (requires auth)
+ */
+export const useCreateChurch = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createChurch>>,
+    TError,
+    { data: BodyType<ChurchBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof createChurch>>,
+  TError,
+  { data: BodyType<ChurchBody> },
+  TContext
+> => {
+  return useMutation(getCreateChurchMutationOptions(options));
+};
+
+/**
+ * @summary Update a church (requires auth)
+ */
+export const getUpdateChurchUrl = (id: number) => {
+  return `/api/churches/${id}`;
+};
+
+export const updateChurch = async (
+  id: number,
+  churchBody: ChurchBody,
+  options?: RequestInit,
+): Promise<Church> => {
+  return customFetch<Church>(getUpdateChurchUrl(id), {
+    ...options,
+    method: "PUT",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(churchBody),
+  });
+};
+
+export const getUpdateChurchMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateChurch>>,
+    TError,
+    { id: number; data: BodyType<ChurchBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateChurch>>,
+  TError,
+  { id: number; data: BodyType<ChurchBody> },
+  TContext
+> => {
+  const mutationKey = ["updateChurch"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateChurch>>,
+    { id: number; data: BodyType<ChurchBody> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return updateChurch(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateChurchMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateChurch>>
+>;
+export type UpdateChurchMutationBody = BodyType<ChurchBody>;
+export type UpdateChurchMutationError = ErrorType<void>;
+
+/**
+ * @summary Update a church (requires auth)
+ */
+export const useUpdateChurch = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateChurch>>,
+    TError,
+    { id: number; data: BodyType<ChurchBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateChurch>>,
+  TError,
+  { id: number; data: BodyType<ChurchBody> },
+  TContext
+> => {
+  return useMutation(getUpdateChurchMutationOptions(options));
+};
+
+/**
+ * @summary Delete a church (requires auth)
+ */
+export const getDeleteChurchUrl = (id: number) => {
+  return `/api/churches/${id}`;
+};
+
+export const deleteChurch = async (
+  id: number,
+  options?: RequestInit,
+): Promise<void> => {
+  return customFetch<void>(getDeleteChurchUrl(id), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getDeleteChurchMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteChurch>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteChurch>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  const mutationKey = ["deleteChurch"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteChurch>>,
+    { id: number }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return deleteChurch(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteChurchMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteChurch>>
+>;
+
+export type DeleteChurchMutationError = ErrorType<void>;
+
+/**
+ * @summary Delete a church (requires auth)
+ */
+export const useDeleteChurch = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteChurch>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof deleteChurch>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  return useMutation(getDeleteChurchMutationOptions(options));
 };
 
 /**
