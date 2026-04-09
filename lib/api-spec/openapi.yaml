@@ -229,6 +229,87 @@ paths:
         "401":
           description: Unauthorized
 
+  /obituaries:
+    get:
+      operationId: listObituaries
+      tags: [obituaries]
+      summary: List all obituaries
+      responses:
+        "200":
+          description: List of obituaries
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  obituaries:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Obituary"
+                required:
+                  - obituaries
+    post:
+      operationId: createObituary
+      tags: [obituaries]
+      summary: Create an obituary (requires auth)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ObituaryBody"
+      responses:
+        "201":
+          description: Created obituary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Obituary"
+        "401":
+          description: Unauthorized
+
+  /obituaries/{id}:
+    put:
+      operationId: updateObituary
+      tags: [obituaries]
+      summary: Update an obituary (requires auth)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ObituaryBody"
+      responses:
+        "200":
+          description: Updated obituary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Obituary"
+        "401":
+          description: Unauthorized
+    delete:
+      operationId: deleteObituary
+      tags: [obituaries]
+      summary: Delete an obituary (requires auth)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "401":
+          description: Unauthorized
+
   /spotlight:
     get:
       operationId: getSpotlight
@@ -639,6 +720,57 @@ components:
         - clerkUserId
         - isAdmin
         - isApproved
+
+    Obituary:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        birthDate:
+          type: string
+          nullable: true
+        deathDate:
+          type: string
+          nullable: true
+        hometown:
+          type: string
+          nullable: true
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - content
+        - createdAt
+        - updatedAt
+
+    ObituaryBody:
+      type: object
+      properties:
+        name:
+          type: string
+        birthDate:
+          type: string
+          nullable: true
+        deathDate:
+          type: string
+          nullable: true
+        hometown:
+          type: string
+          nullable: true
+        content:
+          type: string
+      required:
+        - name
+        - content
 
     Spotlight:
       type: object
