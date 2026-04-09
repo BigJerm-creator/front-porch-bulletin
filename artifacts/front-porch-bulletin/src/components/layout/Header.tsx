@@ -9,8 +9,6 @@ export function Header() {
   return (
     <header className="mb-4">
       <div className="flex justify-between items-center border-b border-foreground pb-2 mb-2 text-xs font-mono uppercase tracking-widest">
-        <span>Vol. CXXIV... No. 42</span>
-        <span>{formatDate(today)}</span>
         <Show when="signed-in">
           <Link href="/admin" className="border border-foreground px-2 py-0.5 hover:bg-foreground hover:text-background transition-colors" data-testid="link-admin">
             Admin
@@ -21,6 +19,8 @@ export function Header() {
             Staff Login
           </Link>
         </Show>
+        <span>{formatDate(today)}</span>
+        <span>Page 1</span>
       </div>
       <div className="text-center py-4">
         <Link href="/" className="inline-block hover:opacity-90 transition-opacity">
