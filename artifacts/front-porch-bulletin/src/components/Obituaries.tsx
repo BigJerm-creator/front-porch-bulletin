@@ -1,3 +1,4 @@
+import { Link } from "wouter";
 import { useListObituaries, getListObituariesQueryKey } from "@workspace/api-client-react";
 
 function formatDate(dateStr: string | null | undefined) {
@@ -54,10 +55,18 @@ export function Obituaries() {
           const death = formatDate(obit.deathDate);
           const dates = [birth, death].filter(Boolean).join(" \u2013 ");
           const meta = [dates, obit.hometown].filter(Boolean).join(" \u00b7 ");
+          const idStr = String(obit.id);
+          const articleId = idStr.startsWith("article-") ? idStr.replace("article-", "") : null;
           return (
-            <article key={String(obit.id)} className="pt-5 first:pt-0">
+            <article key={idStr} className="pt-5 first:pt-0">
               <h3 className="font-headline font-bold leading-tight text-foreground text-xl md:text-2xl mb-2">
-                {obit.name}
+                {articleId ? (
+                  <Link href={`/articles/${articleId}`} className="hover:underline underline-offset-4 decoration-1">
+                    {obit.name}
+                  </Link>
+                ) : (
+                  obit.name
+                )}
               </h3>
               {meta && (
                 <div className="flex items-center gap-2 text-xs font-mono mb-3 text-foreground/70 uppercase tracking-wide">
