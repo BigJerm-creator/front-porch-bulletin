@@ -2,6 +2,7 @@ import { useGetFeaturedArticles } from "@workspace/api-client-react";
 import { Layout } from "@/components/layout/Layout";
 import { ArticleTeaser } from "@/components/ArticleTeaser";
 import { NewspaperSkeleton } from "@/components/ui/newspaper-skeleton";
+import { StudentSpotlight } from "@/components/StudentSpotlight";
 
 export default function Home() {
   const { data: featuredData, isLoading } = useGetFeaturedArticles();
@@ -13,6 +14,8 @@ export default function Home() {
       ) : (
         <div className="flex gap-0 divide-x divide-foreground">
           <div className="w-1/3 pr-6">
+            <StudentSpotlight />
+
             <h2 className="font-headline text-xs uppercase tracking-widest font-bold border-b border-foreground pb-1 mb-4">
               In This Issue
             </h2>
