@@ -34,7 +34,14 @@ export function Obituaries() {
   const obituaries = data?.obituaries ?? [];
 
   if (!obituaries.length) {
-    return null;
+    return (
+      <div className="mt-8 border-t-2 border-foreground pt-4">
+        <h2 className="font-headline text-xs uppercase tracking-widest font-bold border-b border-foreground pb-1 mb-4">
+          Obituaries
+        </h2>
+        <p className="font-serif text-sm italic text-foreground/50">No obituaries this week.</p>
+      </div>
+    );
   }
 
   return (
