@@ -172,10 +172,11 @@
     font-size: 9pt;
   }
 
-  /* Shrink logo so page 1 header takes less vertical space */
+  /* Logo spans full printable width */
   header img {
-    max-height: 160px !important;
-    width: auto !important;
+    width: 100% !important;
+    max-height: none !important;
+    height: auto !important;
   }
 
   /* Tighten up the header padding */
