@@ -3,6 +3,7 @@ import { useClerk, useUser } from "@clerk/react";
 import { useGetMyRole, getGetMyRoleQueryKey } from "@workspace/api-client-react";
 import { FileText, Tags, Users, LogOut, LayoutDashboard, Star, Church, BookOpen, Printer } from "lucide-react";
 import logoSrc from "@assets/The_1775669458963.png";
+import { BulkEmailDialog } from "@/components/admin/BulkEmailDialog";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
@@ -56,16 +57,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               </Link>
             );
           })}
+
+          {/* Press actions — above the dividing line */}
+          <div className="pt-3 space-y-1.5">
+            <p className="text-xs uppercase tracking-widest text-foreground/30 font-bold px-2 pb-1">Press</p>
+            <button
+              onClick={() => window.open('/?print=1', '_blank')}
+              className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-widest border-2 border-foreground bg-[#f5f0e8] hover:bg-foreground hover:text-background transition-colors"
+            >
+              <Printer className="h-3.5 w-3.5 shrink-0" /> Print Edition
+            </button>
+            <BulkEmailDialog />
+          </div>
         </nav>
 
         <div className="p-3 border-t-2 border-foreground space-y-2">
-          <button
-            onClick={() => window.open('/?print=1', '_blank')}
-            className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-widest border-2 border-foreground bg-[#f5f0e8] hover:bg-foreground hover:text-background transition-colors"
-          >
-            <Printer className="h-3.5 w-3.5 shrink-0" /> Print Edition
-          </button>
-          <p className="text-xs font-bold font-headline truncate pt-1">{user?.fullName || "Staff Member"}</p>
+          <p className="text-xs font-bold font-headline truncate">{user?.fullName || "Staff Member"}</p>
           <p className="text-xs uppercase tracking-widest text-primary font-bold">{roleData?.isAdmin ? "Editor-in-Chief" : (roleData?.role || "Pending")}</p>
           <button
             onClick={() => signOut()}
