@@ -50,19 +50,13 @@ export default function Home() {
                   )}
                 </div>
 
-                {/* Right main column — Headline article */}
+                {/* Right main column — Headline + community listings */}
                 <div className="order-1 lg:order-2 w-full lg:w-2/3 lg:pl-6">
                   {featuredData?.headline ? (
                     <ArticleTeaser article={featuredData.headline} featured={true} />
                   ) : (
                     <p className="text-sm font-serif text-foreground/60 italic">No featured story today.</p>
                   )}
-                </div>
-              </div>
-
-              {/* Community listings */}
-              <div className="mt-10 border-t-4 border-foreground pt-6">
-                <div className="lg:columns-2 lg:gap-x-12 [column-rule:1px_solid_rgba(0,0,0,0.15)]">
                   <Obituaries />
                   <ChurchDirectory />
                   <CalendarEvents />
