@@ -21,6 +21,18 @@ router.get("/", async (_req, res) => {
   res.json({ categories: withCounts });
 });
 
+router.post("/", async (req, res) => {
+  const { name, slug, description, showInEvents } = req.body;
+  if (!name || !slug) return res.status(400).json({ error: "name and slug are required" });
+
+  const [created] = await db
+    .insert(categoriesTable)
+    .values({ name, slug, description: description || null, showInEvents: Boolean(showInEvents) })
+    .returning();
+
+  res.status(201).json(created);
+});
+
 router.put("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) return res.status(400).json({ error: "Invalid id" });

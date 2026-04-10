@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Tags, Pencil, Trash2, X, Save } from "lucide-react";
+import { Tags, Pencil, Trash2, X, Save, PlusCircle } from "lucide-react";
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 
@@ -20,32 +20,37 @@ type CategoryWithCount = {
   articleCount: number;
 };
 
-async function saveCategory(id: number, body: Record<string, unknown>) {
-  const res = await fetch(`${BASE}/api/categories/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) throw new Error(await res.text());
-  return res.json();
-}
+const emptyForm = { name: "", slug: "", description: "", showInEvents: false };
 
-function EditDialog({
+function CategoryDialog({
   category,
   onClose,
 }: {
-  category: CategoryWithCount;
+  category: CategoryWithCount | null;
   onClose: () => void;
 }) {
+  const isNew = category === null;
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const [form, setForm] = useState({
-    name: category.name,
-    slug: category.slug,
-    description: category.description ?? "",
-    showInEvents: category.showInEvents,
-  });
+  const [form, setForm] = useState(
+    isNew
+      ? emptyForm
+      : {
+          name: category.name,
+          slug: category.slug,
+          description: category.description ?? "",
+          showInEvents: category.showInEvents,
+        }
+  );
   const [saving, setSaving] = useState(false);
+
+  const handleNameChange = (name: string) => {
+    setForm((f) => ({
+      ...f,
+      name,
+      slug: isNew ? name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "") : f.slug,
+    }));
+  };
 
   const handleSave = async () => {
     if (!form.name.trim() || !form.slug.trim()) {
@@ -54,14 +59,21 @@ function EditDialog({
     }
     setSaving(true);
     try {
-      await saveCategory(category.id, {
-        name: form.name.trim(),
-        slug: form.slug.trim(),
-        description: form.description.trim() || null,
-        showInEvents: form.showInEvents,
+      const url = isNew ? `${BASE}/api/categories` : `${BASE}/api/categories/${category.id}`;
+      const method = isNew ? "POST" : "PUT";
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name.trim(),
+          slug: form.slug.trim(),
+          description: form.description.trim() || null,
+          showInEvents: form.showInEvents,
+        }),
       });
+      if (!res.ok) throw new Error(await res.text());
       queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() });
-      toast({ title: "Section updated" });
+      toast({ title: isNew ? "Section created" : "Section updated" });
       onClose();
     } catch {
       toast({ title: "Failed to save", variant: "destructive" });
@@ -74,7 +86,9 @@ function EditDialog({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-background border-4 border-foreground shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] w-full max-w-md p-6 space-y-4">
         <div className="flex justify-between items-center border-b-2 border-foreground pb-3">
-          <h2 className="font-headline font-bold text-2xl uppercase tracking-widest">Edit Section</h2>
+          <h2 className="font-headline font-bold text-2xl uppercase tracking-widest">
+            {isNew ? "New Section" : "Edit Section"}
+          </h2>
           <button onClick={onClose} className="hover:opacity-70 transition-opacity">
             <X className="h-5 w-5" />
           </button>
@@ -85,15 +99,16 @@ function EditDialog({
             <label className="font-mono text-xs uppercase tracking-widest block mb-1">Name</label>
             <Input
               value={form.name}
-              onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+              onChange={(e) => handleNameChange(e.target.value)}
               className="border-2 border-foreground font-serif"
+              autoFocus
             />
           </div>
           <div>
             <label className="font-mono text-xs uppercase tracking-widest block mb-1">Slug</label>
             <Input
               value={form.slug}
-              onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value.toLowerCase().replace(/\s+/g, "-") }))}
+              onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "") }))}
               className="border-2 border-foreground font-mono"
             />
           </div>
@@ -123,7 +138,7 @@ function EditDialog({
         <div className="flex gap-3 pt-2">
           <Button onClick={handleSave} disabled={saving} className="flex-1 font-headline font-bold uppercase tracking-widest">
             <Save className="h-4 w-4 mr-2" />
-            {saving ? "Saving…" : "Save"}
+            {saving ? "Saving…" : isNew ? "Create" : "Save"}
           </Button>
           <Button variant="outline" onClick={onClose} className="border-2 border-foreground font-headline uppercase tracking-widest">
             Cancel
@@ -138,18 +153,28 @@ export default function AdminCategories() {
   const { data, isLoading } = useListCategories({ query: { queryKey: getListCategoriesQueryKey() } });
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<CategoryWithCount | null>(null);
   const [toggling, setToggling] = useState<number | null>(null);
+
+  const openNew = () => { setEditing(null); setDialogOpen(true); };
+  const openEdit = (cat: CategoryWithCount) => { setEditing(cat); setDialogOpen(true); };
+  const closeDialog = () => setDialogOpen(false);
 
   const handleToggleEvents = async (category: CategoryWithCount) => {
     setToggling(category.id);
     try {
-      await saveCategory(category.id, {
-        name: category.name,
-        slug: category.slug,
-        description: category.description || null,
-        showInEvents: !category.showInEvents,
+      const res = await fetch(`${BASE}/api/categories/${category.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: category.name,
+          slug: category.slug,
+          description: category.description || null,
+          showInEvents: !category.showInEvents,
+        }),
       });
+      if (!res.ok) throw new Error(await res.text());
       queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() });
     } catch {
       toast({ title: "Failed to update", variant: "destructive" });
@@ -171,13 +196,19 @@ export default function AdminCategories() {
 
   return (
     <div className="space-y-8">
-      {editing && <EditDialog category={editing} onClose={() => setEditing(null)} />}
+      {dialogOpen && (
+        <CategoryDialog category={editing} onClose={closeDialog} />
+      )}
 
       <header className="border-b-4 border-foreground pb-6 mb-8 flex justify-between items-end">
         <div>
           <h1 className="text-4xl sm:text-5xl font-headline font-bold uppercase tracking-widest mb-2">Sections</h1>
           <p className="text-xl text-muted-foreground italic font-serif">Publication categories and beats.</p>
         </div>
+        <Button onClick={openNew} className="font-headline font-bold uppercase tracking-widest shrink-0">
+          <PlusCircle className="h-4 w-4 mr-2" />
+          New Section
+        </Button>
       </header>
 
       {isLoading ? (
@@ -204,7 +235,7 @@ export default function AdminCategories() {
                 <TableRow
                   key={category.id}
                   className="border-b-2 border-foreground/20 hover:bg-[#f5f0e8]/50 transition-colors cursor-pointer"
-                  onClick={() => setEditing(category)}
+                  onClick={() => openEdit(category)}
                 >
                   <TableCell className="font-headline font-bold text-xl py-4">
                     <span className="flex items-center gap-2">
@@ -234,7 +265,7 @@ export default function AdminCategories() {
                   <TableCell className="py-4" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center justify-end gap-1">
                       <button
-                        onClick={(e) => { e.stopPropagation(); setEditing(category); }}
+                        onClick={(e) => { e.stopPropagation(); openEdit(category); }}
                         className="p-1.5 hover:bg-foreground/10 rounded transition-colors"
                         title="Edit"
                       >
@@ -273,6 +304,13 @@ export default function AdminCategories() {
                   </TableCell>
                 </TableRow>
               ))}
+              {data?.categories.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-12 font-serif italic text-muted-foreground">
+                    No sections yet. Add your first one above.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </div>
