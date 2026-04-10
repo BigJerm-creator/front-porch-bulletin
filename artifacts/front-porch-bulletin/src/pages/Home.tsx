@@ -6,6 +6,7 @@ import { NewspaperSkeleton } from "@/components/ui/newspaper-skeleton";
 import { StudentSpotlight } from "@/components/StudentSpotlight";
 import { ChurchDirectory } from "@/components/ChurchDirectory";
 import { Obituaries } from "@/components/Obituaries";
+import { CalendarEvents } from "@/components/CalendarEvents";
 
 export default function Home() {
   const { data: featuredData, isLoading } = useGetFeaturedArticles();
@@ -53,6 +54,7 @@ export default function Home() {
             )}
             <Obituaries />
             <ChurchDirectory />
+            <CalendarEvents />
           </div>
         </div>
       )}

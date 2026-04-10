@@ -5,3 +5,4 @@ export * from "./spotlight";
 export * from "./churches";
 export * from "./obituaries";
 export * from "./newsletterSubscribers";
+export * from "./calendarEvents";

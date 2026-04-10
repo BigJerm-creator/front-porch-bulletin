@@ -10,6 +10,7 @@ import AdminUsers from "./AdminUsers";
 import AdminSpotlight from "./AdminSpotlight";
 import AdminObituaries from "./AdminObituaries";
 import AdminChurches from "./AdminChurches";
+import AdminCalendar from "./AdminCalendar";
 import { Newspaper } from "lucide-react";
 
 export default function AdminRoute() {
@@ -55,6 +56,7 @@ export default function AdminRoute() {
               <Route path="/admin/spotlight" component={AdminSpotlight} />
               <Route path="/admin/obituaries" component={AdminObituaries} />
               <Route path="/admin/churches" component={AdminChurches} />
+              <Route path="/admin/calendar" component={AdminCalendar} />
               <Route path="/admin/users" component={AdminUsers} />
             </Switch>
           </AdminLayout>

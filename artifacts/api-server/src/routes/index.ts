@@ -8,6 +8,7 @@ import churchesRouter from "./churches";
 import obituariesRouter from "./obituaries";
 import storageRouter from "./storage";
 import newsletterRouter from "./newsletter";
+import calendarEventsRouter from "./calendarEvents";
 
 const router: IRouter = Router();
 
@@ -20,5 +21,6 @@ router.use("/spotlight", spotlightRouter);
 router.use("/churches", churchesRouter);
 router.use("/obituaries", obituariesRouter);
 router.use("/newsletter", newsletterRouter);
+router.use("/calendar-events", calendarEventsRouter);
 
 export default router;
