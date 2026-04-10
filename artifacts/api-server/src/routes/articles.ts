@@ -69,7 +69,7 @@ router.get("/featured", async (_req, res) => {
   const articles = await db
     .select()
     .from(articlesTable)
-    .where(and(eq(articlesTable.archived, false), ne(articlesTable.category, "Obituaries")))
+    .where(and(eq(articlesTable.archived, false), ne(articlesTable.category, "Obituaries"), ne(articlesTable.category, "Sports")))
     .orderBy(desc(articlesTable.publishedAt))
     .limit(10);
 

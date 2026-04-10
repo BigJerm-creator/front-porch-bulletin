@@ -27,6 +27,21 @@ export default function Home() {
           {/* Left sidebar — appears below the headline on mobile */}
           <div className="order-2 lg:order-1 print:order-1 w-full lg:w-1/3 print:w-1/3 lg:pr-6 print:pr-6 pt-6 lg:pt-0 print:pt-0 border-t border-foreground lg:border-t-0 print:border-t-0">
             <StudentSpotlight />
+
+            <h2 className="font-headline text-xs uppercase tracking-widest font-bold border-b border-foreground pb-1 mb-4">
+              Upcoming Events
+            </h2>
+            {featuredData?.secondary && featuredData.secondary.length > 0 ? (
+              <div className="space-y-5 divide-y divide-foreground/20">
+                {featuredData.secondary.map((article) => (
+                  <div key={article.id} className="pt-5 first:pt-0">
+                    <ArticleTeaser article={article} />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm font-serif text-foreground/60 italic">No upcoming events this week.</p>
+            )}
           </div>
 
           {/* Right main column — shown first on mobile */}
