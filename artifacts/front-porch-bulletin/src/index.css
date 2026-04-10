@@ -155,7 +155,7 @@
 @media print {
   @page {
     size: letter;
-    margin: 0.2in;
+    margin: 0.45in;
   }
 
   /* Cream newsprint background */
