@@ -36,7 +36,7 @@ export default function Home() {
                 Upcoming Events
               </h2>
               {featuredData?.secondary && featuredData.secondary.length > 0 ? (
-                <div className="space-y-5 divide-y divide-foreground/20">
+                <div className="space-y-5 divide-y divide-foreground/20 print-sidebar-events">
                   {featuredData.secondary.map((article) => (
                     <div key={article.id} className="pt-5 first:pt-0">
                       <ArticleTeaser article={article} />
