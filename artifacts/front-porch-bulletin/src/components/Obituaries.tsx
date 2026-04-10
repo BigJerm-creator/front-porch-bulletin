@@ -35,7 +35,7 @@ export function Obituaries() {
 
   if (!obituaries.length) {
     return (
-      <div className="mt-8 border-t-2 border-foreground pt-4 print-page-two">
+      <div className="mt-8 border-t-2 border-foreground pt-4">
         <h2 className="font-headline text-xs uppercase tracking-widest font-bold border-b border-foreground pb-1 mb-4">
           Obituaries
         </h2>
@@ -45,7 +45,7 @@ export function Obituaries() {
   }
 
   return (
-    <div className="mt-8 border-t-2 border-foreground pt-4 print-page-two">
+    <div className="mt-8 border-t-2 border-foreground pt-4">
       <h2 className="font-headline text-xs uppercase tracking-widest font-bold border-b border-foreground pb-1 mb-4">
         Obituaries
       </h2>

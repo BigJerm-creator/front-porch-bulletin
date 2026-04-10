@@ -149,7 +149,7 @@
 
 @media print {
   @page {
-    size: 11in 14in;
+    size: letter;
     margin: 0.5in;
   }
 
@@ -176,11 +176,47 @@
   /* Images never overflow the page */
   img {
     max-width: 100% !important;
+    break-inside: avoid;
   }
 
-  /* Logo blends with the printed cream background */
-  header img,
-  .logo-blend {
-    mix-blend-mode: multiply !important;
+  /* Shrink the logo so it doesn't dominate page 1 */
+  header img {
+    max-height: 130px !important;
+  }
+
+  /* Section headings never get orphaned from their content */
+  h2 {
+    break-after: avoid;
+  }
+
+  /* Keep individual items (articles, churches, calendar events) together */
+  article,
+  .break-inside-avoid {
+    break-inside: avoid;
+  }
+
+  /* Community listings section starts on page 2 */
+  .print-page-two {
+    break-before: page !important;
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+    border-top: none !important;
+  }
+
+  /* Featured headline: smaller for print so the article fits on page 1 */
+  .print-featured-title {
+    font-size: 2.4rem !important;
+    line-height: 1.1 !important;
+  }
+
+  /* Featured article body: single column in print (no side-by-side columns) */
+  .print-featured-body {
+    columns: 1 !important;
+  }
+
+  /* Spotlight photo: cap height so it doesn't crowd page 1 */
+  .print-spotlight-photo {
+    max-height: 2in !important;
+    aspect-ratio: auto !important;
   }
 }

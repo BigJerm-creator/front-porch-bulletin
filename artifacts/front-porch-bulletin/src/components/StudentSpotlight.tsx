@@ -28,7 +28,7 @@ export function StudentSpotlight() {
       </h2>
 
       <div
-        className="w-full mb-2 border border-foreground flex flex-col items-center justify-end overflow-hidden"
+        className="w-full mb-2 border border-foreground flex flex-col items-center justify-end overflow-hidden print-spotlight-photo"
         style={{ aspectRatio: "4/3", background: "#d6cfc4" }}
       >
         {data.photoUrl ? (
