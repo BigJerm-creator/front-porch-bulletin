@@ -147,18 +147,18 @@
   font-weight: bold;
 }
 
+/* ── Screen: hide the print-only view ── */
+#print-view-wrapper {
+  display: none;
+}
+
 @media print {
   @page {
     size: letter;
-    margin: 0.35in;
+    margin: 0.4in;
   }
 
-  /* Scale everything down — the single most effective compressor */
-  html {
-    font-size: 10px;
-  }
-
-  /* Cream newsprint background prints correctly */
+  /* Cream newsprint background */
   html,
   body {
     -webkit-print-color-adjust: exact;
@@ -166,95 +166,13 @@
     background-color: hsl(36, 33%, 94%) !important;
   }
 
-  /* Hide chrome that should never print */
-  .no-print,
-  nav {
+  /* Hide the screen layout entirely when printing */
+  .screen-layout {
     display: none !important;
   }
 
-  /* No coloured hyperlinks */
-  a {
-    color: inherit !important;
-    text-decoration: none !important;
-  }
-
-  /* Images stay within columns */
-  img {
-    max-width: 100% !important;
-    break-inside: avoid;
-  }
-
-  /* ── Header ── */
-  /* Tight margins on the header wrapper */
-  header {
-    margin-bottom: 0.25rem !important;
-    padding-bottom: 0 !important;
-  }
-  /* Logo is decorative — keep it small */
-  header img {
-    max-height: 80px !important;
-  }
-  /* Shrink the padding around the logo */
-  header .py-2,
-  header .md\:py-4 {
-    padding-top: 0.25rem !important;
-    padding-bottom: 0.25rem !important;
-  }
-
-  /* ── Typography ── */
-  /* Prevent orphaned section headings */
-  h2 {
-    break-after: avoid;
-  }
-
-  /* ── Featured article (page 1 right column) ── */
-  .print-featured-title {
-    font-size: 1.7rem !important;
-    line-height: 1.1 !important;
-    margin-bottom: 0.3rem !important;
-  }
-  /* Single-column body, hard cap on height so it can't bleed off page 1 */
-  .print-featured-body {
-    columns: 1 !important;
-    max-height: 4.2in !important;
-    overflow: hidden !important;
-  }
-
-  /* ── Student Spotlight (page 1 left column) ── */
-  .print-spotlight-photo {
-    max-height: 1.3in !important;
-    aspect-ratio: auto !important;
-  }
-
-  /* ── Spacing compression ── */
-  /* Tighten vertical rhythm across the board */
-  .mt-8  { margin-top:  0.6rem !important; }
-  .mt-10 { margin-top:  0.75rem !important; }
-  .mb-6  { margin-bottom: 0.4rem !important; }
-  .mb-5  { margin-bottom: 0.4rem !important; }
-  .pt-6  { padding-top: 0.4rem !important; }
-  .pt-4  { padding-top: 0.3rem !important; }
-  .pb-5  { padding-bottom: 0.4rem !important; }
-  .space-y-5 > * + * { margin-top: 0.6rem !important; }
-  .space-y-4 > * + * { margin-top: 0.5rem !important; }
-  .gap-3 { gap: 0.35rem !important; }
-
-  /* ── Keep items together ── */
-  article,
-  .break-inside-avoid {
-    break-inside: avoid;
-  }
-
-  /* ── Sidebar events: cap at 3 items so page 1 doesn't overflow ── */
-  .print-sidebar-events > *:nth-child(n+4) {
-    display: none !important;
-  }
-
-  /* ── Page 2: community listings ── */
-  .print-page-two {
-    break-before: page !important;
-    padding-top:  0 !important;
-    margin-top:   0 !important;
-    border-top:   none !important;
+  /* Show the dedicated print view */
+  #print-view-wrapper {
+    display: block !important;
   }
 }
