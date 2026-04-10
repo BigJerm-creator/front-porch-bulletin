@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { Show } from "@clerk/react";
 import { formatDate } from "@/lib/format";
-import logoSrc from "@assets/The_1775669458963.png";
+import logoSrc from "@assets/The_(1)_1775854639167.png";
 
 export function Header() {
   const today = new Date().toISOString();
@@ -30,7 +30,7 @@ export function Header() {
             src={logoSrc}
             alt="The Front Porch Bulletin — Where Community Comes to Gather"
             className="max-w-full mx-auto"
-            style={{ maxHeight: "400px", width: "100%", objectFit: "contain", mixBlendMode: "multiply" }}
+            style={{ maxHeight: "400px", width: "100%", objectFit: "contain" }}
             data-testid="header-logo"
           />
         </Link>

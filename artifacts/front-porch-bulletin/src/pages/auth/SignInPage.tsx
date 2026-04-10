@@ -1,5 +1,5 @@
 import { SignIn } from '@clerk/react';
-import logo from '@assets/The_1775669458963.png';
+import logo from '@assets/The_(1)_1775854639167.png';
 
 const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
 

@@ -2,7 +2,7 @@ import { Link, useLocation } from "wouter";
 import { useClerk, useUser } from "@clerk/react";
 import { useGetMyRole, getGetMyRoleQueryKey } from "@workspace/api-client-react";
 import { FileText, Tags, Users, LogOut, LayoutDashboard, Star, Church, BookOpen, Printer, CalendarDays } from "lucide-react";
-import logoSrc from "@assets/The_1775669458963.png";
+import logoSrc from "@assets/The_(1)_1775854639167.png";
 import { BulkEmailDialog } from "@/components/admin/BulkEmailDialog";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -33,8 +33,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <img
               src={logoSrc}
               alt="The Front Porch Bulletin"
-              style={{ mixBlendMode: "multiply" }}
-              className="w-full logo-blend"
+              className="w-full"
             />
           </Link>
         </div>
