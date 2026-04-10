@@ -80,7 +80,7 @@ export function PrintView() {
         <img
           src={logoSrc}
           alt="The Front Porch Bulletin"
-          style={{ width: "100%", maxHeight: "90pt", objectFit: "contain", display: "block", margin: "0 auto" }}
+          style={{ width: "100%", maxHeight: "160pt", objectFit: "contain", display: "block", margin: "0 auto" }}
         />
         <div style={{
           borderTop: "2.5px solid " + INK,
