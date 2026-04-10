@@ -16,8 +16,19 @@ type CategoryWithCount = {
   name: string;
   slug: string;
   description?: string | null;
+  showInEvents: boolean;
   articleCount: number;
 };
+
+async function saveCategory(id: number, body: Record<string, unknown>) {
+  const res = await fetch(`${BASE}/api/categories/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
 
 function EditDialog({
   category,
@@ -32,6 +43,7 @@ function EditDialog({
     name: category.name,
     slug: category.slug,
     description: category.description ?? "",
+    showInEvents: category.showInEvents,
   });
   const [saving, setSaving] = useState(false);
 
@@ -42,16 +54,12 @@ function EditDialog({
     }
     setSaving(true);
     try {
-      const res = await fetch(`${BASE}/api/categories/${category.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: form.name.trim(),
-          slug: form.slug.trim(),
-          description: form.description.trim() || null,
-        }),
+      await saveCategory(category.id, {
+        name: form.name.trim(),
+        slug: form.slug.trim(),
+        description: form.description.trim() || null,
+        showInEvents: form.showInEvents,
       });
-      if (!res.ok) throw new Error(await res.text());
       queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() });
       toast({ title: "Section updated" });
       onClose();
@@ -98,6 +106,18 @@ function EditDialog({
               placeholder="Optional"
             />
           </div>
+          <div className="flex items-center gap-3 pt-1">
+            <input
+              type="checkbox"
+              id="showInEvents"
+              checked={form.showInEvents}
+              onChange={(e) => setForm((f) => ({ ...f, showInEvents: e.target.checked }))}
+              className="h-4 w-4 border-2 border-foreground"
+            />
+            <label htmlFor="showInEvents" className="font-mono text-xs uppercase tracking-widest cursor-pointer">
+              Show in Upcoming Events
+            </label>
+          </div>
         </div>
 
         <div className="flex gap-3 pt-2">
@@ -119,6 +139,24 @@ export default function AdminCategories() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [editing, setEditing] = useState<CategoryWithCount | null>(null);
+  const [toggling, setToggling] = useState<number | null>(null);
+
+  const handleToggleEvents = async (category: CategoryWithCount) => {
+    setToggling(category.id);
+    try {
+      await saveCategory(category.id, {
+        name: category.name,
+        slug: category.slug,
+        description: category.description || null,
+        showInEvents: !category.showInEvents,
+      });
+      queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() });
+    } catch {
+      toast({ title: "Failed to update", variant: "destructive" });
+    } finally {
+      setToggling(null);
+    }
+  };
 
   const handleDelete = async (category: CategoryWithCount) => {
     try {
@@ -154,18 +192,19 @@ export default function AdminCategories() {
             <TableHeader className="bg-[#f5f0e8] border-b-4 border-foreground">
               <TableRow className="hover:bg-transparent">
                 <TableHead className="font-headline font-bold uppercase tracking-widest text-foreground py-4 text-base">Section Name</TableHead>
-                <TableHead className="font-headline font-bold uppercase tracking-widest text-foreground py-4 text-base">Slug</TableHead>
-                <TableHead className="font-headline font-bold uppercase tracking-widest text-foreground py-4 text-base hidden md:table-cell">Description</TableHead>
+                <TableHead className="font-headline font-bold uppercase tracking-widest text-foreground py-4 text-base hidden md:table-cell">Slug</TableHead>
+                <TableHead className="font-headline font-bold uppercase tracking-widest text-foreground py-4 text-base hidden lg:table-cell">Description</TableHead>
+                <TableHead className="font-headline font-bold uppercase tracking-widest text-foreground py-4 text-base text-center">In Events</TableHead>
                 <TableHead className="font-headline font-bold uppercase tracking-widest text-foreground py-4 text-base text-right">Count</TableHead>
                 <TableHead className="w-20" />
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data?.categories.map((category) => (
+              {(data?.categories as CategoryWithCount[] | undefined)?.map((category) => (
                 <TableRow
                   key={category.id}
                   className="border-b-2 border-foreground/20 hover:bg-[#f5f0e8]/50 transition-colors cursor-pointer"
-                  onClick={() => setEditing(category as CategoryWithCount)}
+                  onClick={() => setEditing(category)}
                 >
                   <TableCell className="font-headline font-bold text-xl py-4">
                     <span className="flex items-center gap-2">
@@ -173,11 +212,21 @@ export default function AdminCategories() {
                       {category.name}
                     </span>
                   </TableCell>
-                  <TableCell className="py-4">
+                  <TableCell className="py-4 hidden md:table-cell">
                     <span className="font-mono text-sm bg-muted px-2 py-1 border border-border">{category.slug}</span>
                   </TableCell>
-                  <TableCell className="italic text-muted-foreground py-4 max-w-xs truncate hidden md:table-cell">
+                  <TableCell className="italic text-muted-foreground py-4 max-w-xs truncate hidden lg:table-cell">
                     {category.description || "-"}
+                  </TableCell>
+                  <TableCell className="py-4 text-center" onClick={(e) => e.stopPropagation()}>
+                    <input
+                      type="checkbox"
+                      checked={category.showInEvents}
+                      disabled={toggling === category.id}
+                      onChange={() => handleToggleEvents(category)}
+                      className="h-4 w-4 border-2 border-foreground cursor-pointer disabled:opacity-50"
+                      title="Show articles from this section in Upcoming Events"
+                    />
                   </TableCell>
                   <TableCell className="text-right font-headline font-bold text-2xl py-4 text-primary">
                     {category.articleCount}
@@ -185,7 +234,7 @@ export default function AdminCategories() {
                   <TableCell className="py-4" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center justify-end gap-1">
                       <button
-                        onClick={(e) => { e.stopPropagation(); setEditing(category as CategoryWithCount); }}
+                        onClick={(e) => { e.stopPropagation(); setEditing(category); }}
                         className="p-1.5 hover:bg-foreground/10 rounded transition-colors"
                         title="Edit"
                       >
@@ -212,7 +261,7 @@ export default function AdminCategories() {
                           <AlertDialogFooter>
                             <AlertDialogCancel className="font-headline uppercase tracking-widest border-2 border-foreground">Cancel</AlertDialogCancel>
                             <AlertDialogAction
-                              onClick={() => handleDelete(category as CategoryWithCount)}
+                              onClick={() => handleDelete(category)}
                               className="font-headline uppercase tracking-widest bg-destructive text-white hover:bg-destructive/80"
                             >
                               Remove

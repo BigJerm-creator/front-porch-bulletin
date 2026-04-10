@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
-import { articlesTable } from "@workspace/db";
+import { articlesTable, categoriesTable } from "@workspace/db";
 import { eq, desc, sql, and, ne } from "drizzle-orm";
 import {
   ListArticlesQueryParams,
@@ -69,12 +69,22 @@ router.get("/featured", async (_req, res) => {
   const articles = await db
     .select()
     .from(articlesTable)
-    .where(and(eq(articlesTable.archived, false), ne(articlesTable.category, "Obituaries"), ne(articlesTable.category, "Sports"), ne(articlesTable.category, "Classifieds")))
+    .where(and(eq(articlesTable.archived, false), ne(articlesTable.category, "Obituaries")))
     .orderBy(desc(articlesTable.publishedAt))
-    .limit(10);
+    .limit(20);
 
   const headline = articles.find((a) => a.featured) ?? articles[0] ?? null;
-  const secondary = articles.filter((a) => a.id !== headline?.id).slice(0, 5);
+
+  const eventCategories = await db
+    .select({ name: categoriesTable.name })
+    .from(categoriesTable)
+    .where(eq(categoriesTable.showInEvents, true));
+
+  const eventCategoryNames = new Set(eventCategories.map((c) => c.name));
+
+  const secondary = articles
+    .filter((a) => a.id !== headline?.id && eventCategoryNames.has(a.category))
+    .slice(0, 5);
 
   res.json({ headline, secondary });
 });

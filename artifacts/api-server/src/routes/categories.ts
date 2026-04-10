@@ -25,12 +25,17 @@ router.put("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
   if (isNaN(id)) return res.status(400).json({ error: "Invalid id" });
 
-  const { name, slug, description } = req.body;
+  const { name, slug, description, showInEvents } = req.body;
   if (!name || !slug) return res.status(400).json({ error: "name and slug are required" });
 
   const [updated] = await db
     .update(categoriesTable)
-    .set({ name, slug, description: description || null })
+    .set({
+      name,
+      slug,
+      description: description || null,
+      showInEvents: Boolean(showInEvents),
+    })
     .where(eq(categoriesTable.id, id))
     .returning();
 
