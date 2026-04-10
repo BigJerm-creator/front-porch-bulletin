@@ -23,9 +23,9 @@ export default function Home() {
       {isLoading ? (
         <NewspaperSkeleton />
       ) : (
-        <div className="flex flex-col lg:flex-row lg:divide-x lg:divide-foreground gap-0">
+        <div className="flex flex-col lg:flex-row print:flex-row lg:divide-x print:divide-x lg:divide-foreground print:divide-foreground gap-0">
           {/* Left sidebar — appears below the headline on mobile */}
-          <div className="order-2 lg:order-1 w-full lg:w-1/3 lg:pr-6 pt-6 lg:pt-0 border-t border-foreground lg:border-t-0">
+          <div className="order-2 lg:order-1 print:order-1 w-full lg:w-1/3 print:w-1/3 lg:pr-6 print:pr-6 pt-6 lg:pt-0 print:pt-0 border-t border-foreground lg:border-t-0 print:border-t-0">
             <StudentSpotlight />
 
             <h2 className="font-headline text-xs uppercase tracking-widest font-bold border-b border-foreground pb-1 mb-4">
@@ -45,7 +45,7 @@ export default function Home() {
           </div>
 
           {/* Right main column — shown first on mobile */}
-          <div className="order-1 lg:order-2 w-full lg:w-2/3 lg:pl-6">
+          <div className="order-1 lg:order-2 print:order-2 w-full lg:w-2/3 print:w-2/3 lg:pl-6 print:pl-6">
             {featuredData?.headline ? (
               <ArticleTeaser article={featuredData.headline} featured={true} />
             ) : (
