@@ -94,7 +94,7 @@ export function PrintView() {
           display: "flex",
           justifyContent: "space-between",
         }}>
-          <span>Haskell, Texas</span>
+          <span>Haskell, Oklahoma</span>
           <span>{formatDate(today)}</span>
           <span>Page 1</span>
         </div>
