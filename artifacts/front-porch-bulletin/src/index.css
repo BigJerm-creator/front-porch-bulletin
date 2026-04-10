@@ -153,6 +153,14 @@
     margin: 0.5in;
   }
 
+  /* Ensure the cream newsprint background prints */
+  html,
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    background-color: hsl(36, 33%, 94%) !important;
+  }
+
   /* Hide admin chrome and nav */
   .no-print,
   nav {
@@ -168,5 +176,11 @@
   /* Images never overflow the page */
   img {
     max-width: 100% !important;
+  }
+
+  /* Logo blends with the printed cream background */
+  header img,
+  .logo-blend {
+    mix-blend-mode: multiply !important;
   }
 }

@@ -34,7 +34,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               src={logoSrc}
               alt="The Front Porch Bulletin"
               style={{ mixBlendMode: "multiply" }}
-              className="w-full"
+              className="w-full logo-blend"
             />
           </Link>
         </div>
