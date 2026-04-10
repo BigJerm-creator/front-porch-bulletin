@@ -186,7 +186,7 @@ export default function AdminArticleForm() {
                       </FormControl>
                       <SelectContent className="rounded-none border-2 border-foreground uppercase tracking-wider text-sm font-bold font-sans">
                         {categories?.categories.map((c) => (
-                          <SelectItem key={c.slug} value={c.slug}>{c.name}</SelectItem>
+                          <SelectItem key={c.slug} value={c.name}>{c.name}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
