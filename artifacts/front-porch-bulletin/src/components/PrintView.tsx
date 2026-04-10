@@ -71,7 +71,7 @@ export function PrintView() {
   const churches   = churchData?.churches ?? [];
 
   return (
-    <div id="print-view" style={{ fontFamily: FONT_SERIF, color: INK, fontSize: "9.5pt", padding: "2px" }}>
+    <div id="print-view" style={{ fontFamily: FONT_SERIF, color: INK, fontSize: "9.5pt", padding: "5px" }}>
 
       {/* ══════════════════ PAGE 1 ══════════════════ */}
 
