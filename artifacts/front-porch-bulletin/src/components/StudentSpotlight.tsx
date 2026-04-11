@@ -28,7 +28,7 @@ export function StudentSpotlight() {
       </h2>
 
       <div
-        className="w-full mb-2 border border-foreground flex flex-col items-center justify-end overflow-hidden print-spotlight-photo"
+        className="w-full border border-foreground flex flex-col items-center justify-end overflow-hidden print-spotlight-photo"
         style={{ aspectRatio: "4/3", background: "#d6cfc4" }}
       >
         {data.photoUrl ? (
@@ -38,12 +38,12 @@ export function StudentSpotlight() {
             <User className="h-16 w-16 text-foreground/20" />
           </div>
         )}
-        {data.photoCredit && (
-          <div className="w-full bg-foreground/80 text-background text-center text-[10px] font-mono py-1 px-2 italic">
-            {data.photoCredit}
-          </div>
-        )}
       </div>
+      {data.photoCredit && (
+        <p className="text-[10px] font-mono italic text-foreground/50 text-right mt-0.5 mb-1">
+          {data.photoCredit}
+        </p>
+      )}
 
       <p className="text-xs font-mono uppercase tracking-widest text-foreground/60 mb-2 text-center">
         Student of the Week

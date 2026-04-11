@@ -74,10 +74,10 @@ export default function ArticleDetail() {
         </header>
 
         {article.photoUrl && (
-          <figure className="mb-8 border border-foreground/20">
-            <img src={article.photoUrl} alt={article.title} className="w-full object-cover" />
+          <figure className="mb-8">
+            <img src={article.photoUrl} alt={article.title} className="w-full object-cover border border-foreground/20" />
             {article.photoCredit && (
-              <figcaption className="font-mono text-xs text-foreground/50 italic text-right px-2 py-1 border-t border-foreground/10">
+              <figcaption className="font-mono text-xs text-foreground/50 italic text-right mt-1">
                 {article.photoCredit}
               </figcaption>
             )}
