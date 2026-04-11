@@ -35,12 +35,6 @@ type CalendarEvent = {
   eventTime?: string | null; location?: string | null;
 };
 
-function formatEventDate(d: string) {
-  const [y, m, day] = d.split("-").map(Number);
-  return new Date(y, m - 1, Number(day)).toLocaleDateString("en-US", {
-    month: "short", day: "numeric",
-  });
-}
 
 /* ─── PrintView ───────────────────────────────────────────────── */
 export function PrintView() {
@@ -51,7 +45,8 @@ export function PrintView() {
   const [calEvents, setCalEvents] = useState<CalendarEvent[]>([]);
 
   useEffect(() => {
-    fetch(`${BASE}/api/calendar-events`)
+    const now = new Date();
+    fetch(`${BASE}/api/calendar-events/month/${now.getFullYear()}/${now.getMonth() + 1}`)
       .then(r => r.json())
       .then(d => setCalEvents(d.events ?? []));
   }, []);
@@ -239,46 +234,77 @@ export function PrintView() {
           </div>
         )}
 
-        {/* Community Calendar */}
-        {calEvents.length > 0 && (
-          <div>
-            <div style={sectionHeading}>Community Calendar</div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "5pt 14pt" }}>
-              {calEvents.map((ev) => (
-                <div key={ev.id} style={{
-                  display: "flex",
-                  gap: "5pt",
-                  paddingBottom: "5pt",
-                  marginBottom: "5pt",
-                  borderBottom: RULE_LIGHT,
-                  breakInside: "avoid",
-                }}>
-                  <div style={{
-                    flexShrink: 0,
-                    width: "28pt",
-                    border: "1.5px solid " + INK,
-                    textAlign: "center",
-                    padding: "2pt 0",
-                    lineHeight: 1,
-                  }}>
-                    <div style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "11pt", lineHeight: 1 }}>
-                      {ev.eventDate.split("-")[2].replace(/^0/, "")}
-                    </div>
-                    <div style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", textTransform: "uppercase", letterSpacing: "0.08em", color: INK_MUTED }}>
-                      {new Date(ev.eventDate + "T12:00:00").toLocaleDateString("en-US", { month: "short" })}
-                    </div>
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "8.5pt", lineHeight: 1.15, margin: "0 0 1pt" }}>{ev.title}</p>
-                    <p style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.07em", color: INK_MUTED, margin: 0 }}>
-                      {formatEventDate(ev.eventDate)}{ev.eventTime ? " · " + ev.eventTime : ""}{ev.location ? " · " + ev.location : ""}
-                    </p>
-                  </div>
-                </div>
-              ))}
+        {/* Community Calendar — monthly grid */}
+        {(() => {
+          const now       = new Date();
+          const yr        = now.getFullYear();
+          const mo        = now.getMonth();
+          const firstDow  = new Date(yr, mo, 1).getDay();
+          const daysInMo  = new Date(yr, mo + 1, 0).getDate();
+          const monthName = now.toLocaleDateString("en-US", { month: "long" });
+          const DAY_HEADS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+          const eventsByDay: Record<string, CalendarEvent[]> = {};
+          calEvents.forEach(ev => {
+            if (!eventsByDay[ev.eventDate]) eventsByDay[ev.eventDate] = [];
+            eventsByDay[ev.eventDate].push(ev);
+          });
+
+          const cells: (number | null)[] = [
+            ...Array(firstDow).fill(null),
+            ...Array.from({ length: daysInMo }, (_, i) => i + 1),
+          ];
+          while (cells.length % 7 !== 0) cells.push(null);
+          const weeks: (number | null)[][] = [];
+          for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
+
+          return (
+            <div>
+              <div style={sectionHeading}>Community Calendar</div>
+              <div style={{ fontFamily: FONT_MONO, fontSize: "7pt", textTransform: "uppercase", letterSpacing: "0.12em", textAlign: "center", marginBottom: "3pt", fontWeight: "bold" }}>
+                {monthName} {yr}
+              </div>
+              <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "fixed" }}>
+                <thead>
+                  <tr style={{ borderBottom: "1px solid " + INK }}>
+                    {DAY_HEADS.map(d => (
+                      <th key={d} style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, textAlign: "center", padding: "1.5pt 0", fontWeight: "normal", width: "14.28%" }}>
+                        {d}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {weeks.map((week, wi) => (
+                    <tr key={wi}>
+                      {week.map((day, di) => {
+                        if (!day) return (
+                          <td key={di} style={{ border: "0.5px solid " + INK, padding: "2pt", minHeight: "30pt", background: "rgba(0,0,0,0.03)" }} />
+                        );
+                        const moStr   = String(mo + 1).padStart(2, "0");
+                        const dayStr  = String(day).padStart(2, "0");
+                        const dateKey = `${yr}-${moStr}-${dayStr}`;
+                        const evs     = eventsByDay[dateKey] ?? [];
+                        return (
+                          <td key={di} style={{ border: "0.5px solid " + INK, padding: "2pt", verticalAlign: "top", minHeight: "30pt" }}>
+                            <div style={{ fontFamily: FONT_MONO, fontSize: "6pt", textAlign: "right", color: INK_MUTED, marginBottom: "1pt" }}>{day}</div>
+                            {evs.map(ev => (
+                              <div key={ev.id} style={{ borderLeft: "1.5px solid " + INK, paddingLeft: "2pt", marginBottom: "1.5pt", breakInside: "avoid" }}>
+                                <div style={{ fontFamily: FONT_SERIF, fontSize: "6.5pt", fontWeight: "bold", lineHeight: 1.2, color: INK }}>{ev.title}</div>
+                                {ev.eventTime && <div style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", color: INK, lineHeight: 1.2 }}>{ev.eventTime}</div>}
+                                {ev.location  && <div style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", color: INK, lineHeight: 1.2 }}>{ev.location}</div>}
+                              </div>
+                            ))}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          </div>
-        )}
+          );
+        })()}
       </div>
 
     </div>
