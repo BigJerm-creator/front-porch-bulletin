@@ -26,9 +26,8 @@ function formatTime(timeStr: string) {
 }
 
 export function CalendarEvents() {
-  const today = new Date();
-  const [viewYear,  setViewYear]  = useState(today.getFullYear());
-  const [viewMonth, setViewMonth] = useState(today.getMonth() + 1);
+  const [viewYear,  setViewYear]  = useState(2026);
+  const [viewMonth, setViewMonth] = useState(5);
   const [events,    setEvents]    = useState<CalendarEvent[]>([]);
   const [loading,   setLoading]   = useState(true);
 
@@ -52,7 +51,8 @@ export function CalendarEvents() {
   const firstDay   = new Date(viewYear, viewMonth - 1, 1).getDay();
   const daysInMonth = new Date(viewYear, viewMonth, 0).getDate();
 
-  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  const _now = new Date();
+  const todayStr = `${_now.getFullYear()}-${String(_now.getMonth() + 1).padStart(2, "0")}-${String(_now.getDate()).padStart(2, "0")}`;
 
   const eventsByDay: Record<string, CalendarEvent[]> = {};
   events.forEach((ev) => {
