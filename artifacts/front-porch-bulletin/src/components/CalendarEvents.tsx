@@ -49,7 +49,7 @@ export function CalendarEvents() {
     else setViewMonth(m => m + 1);
   }
 
-  const firstDay  = new Date(viewYear, viewMonth - 1, 1).getDay();
+  const firstDay   = new Date(viewYear, viewMonth - 1, 1).getDay();
   const daysInMonth = new Date(viewYear, viewMonth, 0).getDate();
 
   const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
@@ -70,26 +70,28 @@ export function CalendarEvents() {
   for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
 
   return (
-    <div className="mt-8 border-t-2 border-foreground pt-4">
-      <h2 className="font-headline text-xs uppercase tracking-widest font-bold border-b border-foreground pb-1 mb-3">
-        Community Calendar
-      </h2>
+    <div>
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="font-headline text-xs uppercase tracking-widest font-bold">
+          Community Calendar
+        </h2>
+      </div>
 
       {/* Month navigation */}
-      <div className="flex items-center justify-between mb-2">
+      <div className="flex items-center justify-between mb-2 border-b border-foreground pb-2">
         <button
           onClick={prevMonth}
-          className="font-mono text-xs uppercase tracking-widest text-foreground/60 hover:text-foreground transition-colors px-1"
+          className="font-mono text-xs uppercase tracking-widest text-foreground/60 hover:text-foreground transition-colors"
           aria-label="Previous month"
         >
           &#8249; {viewMonth === 1 ? MONTHS[11] : MONTHS[viewMonth - 2]}
         </button>
-        <span className="font-headline font-bold text-base uppercase tracking-wider">
+        <span className="font-headline font-bold text-lg uppercase tracking-wider">
           {MONTHS[viewMonth - 1]} {viewYear}
         </span>
         <button
           onClick={nextMonth}
-          className="font-mono text-xs uppercase tracking-widest text-foreground/60 hover:text-foreground transition-colors px-1"
+          className="font-mono text-xs uppercase tracking-widest text-foreground/60 hover:text-foreground transition-colors"
           aria-label="Next month"
         >
           {viewMonth === 12 ? MONTHS[0] : MONTHS[viewMonth]} &#8250;
@@ -99,11 +101,11 @@ export function CalendarEvents() {
       {/* Calendar grid */}
       <div className="border border-foreground">
         {/* Day-of-week headers */}
-        <div className="grid grid-cols-7 border-b border-foreground">
+        <div className="grid grid-cols-7 border-b border-foreground bg-foreground/5">
           {DAYS.map((d) => (
             <div
               key={d}
-              className="font-mono text-[9px] uppercase tracking-widest text-foreground/60 text-center py-1 border-r last:border-r-0 border-foreground"
+              className="font-mono text-[10px] uppercase tracking-widest text-foreground/70 text-center py-1.5 border-r last:border-r-0 border-foreground"
             >
               {d}
             </div>
@@ -112,16 +114,16 @@ export function CalendarEvents() {
 
         {/* Weeks */}
         {loading ? (
-          <div className="py-8 text-center font-mono text-xs text-foreground/40 uppercase tracking-widest">Loading...</div>
+          <div className="py-12 text-center font-mono text-xs text-foreground/40 uppercase tracking-widest">Loading...</div>
         ) : (
           weeks.map((week, wi) => (
-            <div key={wi} className="grid grid-cols-7 border-b last:border-b-0 border-foreground">
+            <div key={wi} className="grid grid-cols-7 border-b last:border-b-0 border-foreground" style={{ minHeight: "90px" }}>
               {week.map((day, di) => {
                 if (!day) {
                   return (
                     <div
                       key={di}
-                      className="min-h-[56px] border-r last:border-r-0 border-foreground bg-foreground/[0.03]"
+                      className="border-r last:border-r-0 border-foreground bg-foreground/[0.03]"
                     />
                   );
                 }
@@ -132,19 +134,23 @@ export function CalendarEvents() {
                 return (
                   <div
                     key={di}
-                    className={`min-h-[56px] border-r last:border-r-0 border-foreground p-1 ${isToday ? "bg-foreground/[0.06]" : ""}`}
+                    className={`border-r last:border-r-0 border-foreground p-1.5 flex flex-col ${isToday ? "bg-foreground/[0.07]" : ""}`}
                   >
-                    <div className={`font-mono text-[10px] text-right leading-none mb-1 ${isToday ? "font-bold underline underline-offset-2" : "text-foreground/70"}`}>
+                    {/* Day number */}
+                    <div className={`font-mono text-[11px] text-right leading-none mb-1.5 ${isToday ? "font-bold underline underline-offset-2" : "text-foreground/60"}`}>
                       {day}
                     </div>
-                    <div className="space-y-0.5">
+                    {/* Events */}
+                    <div className="space-y-1 flex-1">
                       {dayEvents.map((ev) => (
-                        <div
-                          key={ev.id}
-                          title={[ev.title, ev.eventTime ? formatTime(ev.eventTime) : "", ev.location ?? ""].filter(Boolean).join(" · ")}
-                          className="font-serif text-[9px] leading-tight bg-foreground text-background px-0.5 truncate cursor-default"
-                        >
-                          {ev.title}
+                        <div key={ev.id} className="bg-foreground text-background px-1 py-0.5">
+                          <div className="font-serif text-[9px] font-bold leading-tight truncate">{ev.title}</div>
+                          {ev.eventTime && (
+                            <div className="font-mono text-[8px] text-background/70 leading-tight">{formatTime(ev.eventTime)}</div>
+                          )}
+                          {ev.location && (
+                            <div className="font-mono text-[8px] text-background/70 leading-tight truncate">{ev.location}</div>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -155,32 +161,6 @@ export function CalendarEvents() {
           ))
         )}
       </div>
-
-      {/* Event legend below grid */}
-      {!loading && events.length > 0 && (
-        <div className="mt-3 space-y-1.5">
-          {events.map((ev) => {
-            const [y, m, d] = ev.eventDate.split("-").map(Number);
-            const label = new Date(y, m - 1, d).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
-            return (
-              <div key={ev.id} className="flex gap-2 items-baseline">
-                <span className="font-mono text-[9px] uppercase tracking-wide text-foreground/50 shrink-0 w-20">{label}</span>
-                <span className="font-serif text-xs leading-snug">
-                  <span className="font-bold">{ev.title}</span>
-                  {(ev.eventTime || ev.location) && (
-                    <span className="text-foreground/60">
-                      {" — "}
-                      {ev.eventTime ? formatTime(ev.eventTime) : ""}
-                      {ev.eventTime && ev.location ? ", " : ""}
-                      {ev.location ?? ""}
-                    </span>
-                  )}
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      )}
 
       {!loading && events.length === 0 && (
         <p className="mt-2 text-xs font-serif text-foreground/50 italic">No events scheduled this month.</p>

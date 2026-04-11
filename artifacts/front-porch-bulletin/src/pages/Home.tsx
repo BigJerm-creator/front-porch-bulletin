@@ -57,8 +57,12 @@ export default function Home() {
                     <p className="text-sm font-serif text-foreground/60 italic">No featured story today.</p>
                   )}
                   <ChurchDirectory />
-                  <CalendarEvents />
                 </div>
+              </div>
+
+              {/* Full-width Community Calendar */}
+              <div className="mt-8 border-t-2 border-foreground pt-6">
+                <CalendarEvents />
               </div>
             </>
           )}
