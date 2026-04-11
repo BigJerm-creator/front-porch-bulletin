@@ -121,14 +121,12 @@ export function PrintView() {
               By {headline.author} &nbsp;&middot;&nbsp; {headline.category} &nbsp;&middot;&nbsp; {formatDateline(headline.publishedAt)}
             </p>
 
-            <div style={{ columns: "3", columnGap: "14pt", columnRule: RULE_LIGHT, maxHeight: "3.4in", overflow: "hidden" }}>
-              <p style={{ fontSize: "9.5pt", lineHeight: 1.5, margin: 0, textAlign: "justify" }}>
-                <span style={{ fontFamily: FONT_MONO, fontWeight: "bold", fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", marginRight: "3pt" }}>
-                  {formatDateline(headline.publishedAt)}—
-                </span>
-                {headline.content}
-              </p>
-            </div>
+            <p style={{ fontSize: "9.5pt", lineHeight: 1.5, margin: 0, textAlign: "justify" }}>
+              <span style={{ fontFamily: FONT_MONO, fontWeight: "bold", fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", marginRight: "3pt" }}>
+                {formatDateline(headline.publishedAt)}—
+              </span>
+              {headline.content}
+            </p>
           </article>
         ) : (
           <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", color: INK_MUTED }}>No featured story this week.</p>
