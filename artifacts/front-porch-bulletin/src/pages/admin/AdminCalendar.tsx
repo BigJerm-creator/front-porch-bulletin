@@ -20,6 +20,13 @@ type CalendarEvent = {
 
 const emptyForm = { title: "", eventDate: "", eventTime: "", location: "", description: "" };
 
+function formatTime(t: string) {
+  const [h, m] = t.split(":").map(Number);
+  const ampm = h >= 12 ? "p.m." : "a.m.";
+  const hour = h % 12 || 12;
+  return m === 0 ? `${hour} ${ampm}` : `${hour}:${String(m).padStart(2, "0")} ${ampm}`;
+}
+
 function formatDisplayDate(dateStr: string) {
   const [year, month, day] = dateStr.split("-").map(Number);
   return new Date(year, month - 1, day).toLocaleDateString("en-US", {
@@ -234,7 +241,7 @@ export default function AdminCalendar() {
               <div className="flex-1 min-w-0">
                 <p className="font-headline font-bold text-lg leading-tight">{ev.title}</p>
                 <p className="font-mono text-xs text-foreground/60 uppercase tracking-wide mt-0.5">
-                  {ev.eventTime ? `${ev.eventTime} · ` : ""}
+                  {ev.eventTime ? `${formatTime(ev.eventTime)} · ` : ""}
                   {formatDisplayDate(ev.eventDate)}
                 </p>
                 {ev.location && (

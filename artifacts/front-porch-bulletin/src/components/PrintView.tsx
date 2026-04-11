@@ -36,6 +36,13 @@ type CalendarEvent = {
 };
 
 
+function formatTime(t: string) {
+  const [h, m] = t.split(":").map(Number);
+  const ampm = h >= 12 ? "p.m." : "a.m.";
+  const hour = h % 12 || 12;
+  return m === 0 ? `${hour} ${ampm}` : `${hour}:${String(m).padStart(2, "0")} ${ampm}`;
+}
+
 /* ─── PrintView ───────────────────────────────────────────────── */
 export function PrintView() {
   const today = new Date().toISOString();
@@ -298,7 +305,7 @@ export function PrintView() {
                             {evs.map(ev => (
                               <div key={ev.id} style={{ borderLeft: "1.5px solid " + INK, paddingLeft: "2pt", marginBottom: "2pt", breakInside: "avoid" }}>
                                 <div style={{ fontFamily: FONT_SERIF, fontSize: "6pt", fontWeight: "bold", lineHeight: 1.2, color: INK }}>{ev.title}</div>
-                                {ev.eventTime && <div style={{ fontFamily: FONT_MONO, fontSize: "5pt", color: INK, lineHeight: 1.2 }}>{ev.eventTime}</div>}
+                                {ev.eventTime && <div style={{ fontFamily: FONT_MONO, fontSize: "5pt", color: INK, lineHeight: 1.2 }}>{formatTime(ev.eventTime)}</div>}
                                 {ev.location  && <div style={{ fontFamily: FONT_MONO, fontSize: "5pt", color: INK, lineHeight: 1.2 }}>{ev.location}</div>}
                               </div>
                             ))}
