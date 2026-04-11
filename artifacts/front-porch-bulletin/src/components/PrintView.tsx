@@ -51,9 +51,11 @@ export function PrintView() {
   const { data: churchData }  = useListChurches({ query: { queryKey: getListChurchesQueryKey() } });
   const [calEvents, setCalEvents] = useState<CalendarEvent[]>([]);
 
+  const PRINT_YEAR  = 2026;
+  const PRINT_MONTH = 5; // May
+
   useEffect(() => {
-    const now = new Date();
-    fetch(`${BASE}/api/calendar-events/month/${now.getFullYear()}/${now.getMonth() + 1}`)
+    fetch(`${BASE}/api/calendar-events/month/${PRINT_YEAR}/${PRINT_MONTH}`)
       .then(r => r.json())
       .then(d => setCalEvents(d.events ?? []));
   }, []);
@@ -243,12 +245,11 @@ export function PrintView() {
 
         {/* Community Calendar — monthly grid */}
         {(() => {
-          const now       = new Date();
-          const yr        = now.getFullYear();
-          const mo        = now.getMonth();
+          const yr        = PRINT_YEAR;
+          const mo        = PRINT_MONTH - 1; // 0-indexed
           const firstDow  = new Date(yr, mo, 1).getDay();
           const daysInMo  = new Date(yr, mo + 1, 0).getDate();
-          const monthName = now.toLocaleDateString("en-US", { month: "long" });
+          const monthName = new Date(yr, mo, 1).toLocaleDateString("en-US", { month: "long" });
           const DAY_HEADS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
           const eventsByDay: Record<string, CalendarEvent[]> = {};
