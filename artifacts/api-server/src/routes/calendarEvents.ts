@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { db } from "@workspace/db";
 import { calendarEventsTable } from "@workspace/db";
-import { eq, gte, asc } from "drizzle-orm";
+import { eq, gte, asc, and, lte } from "drizzle-orm";
 
 const router = Router();
 
@@ -13,6 +13,23 @@ router.get("/", async (_req, res) => {
     .where(gte(calendarEventsTable.eventDate, today))
     .orderBy(asc(calendarEventsTable.eventDate), asc(calendarEventsTable.eventTime))
     .limit(20);
+  res.json({ events });
+});
+
+router.get("/month/:year/:month", async (req, res) => {
+  const year  = parseInt(req.params.year);
+  const month = parseInt(req.params.month);
+  if (isNaN(year) || isNaN(month) || month < 1 || month > 12) {
+    return res.status(400).json({ error: "Invalid year or month" });
+  }
+  const first = `${year}-${String(month).padStart(2, "0")}-01`;
+  const lastDay = new Date(year, month, 0).getDate();
+  const last  = `${year}-${String(month).padStart(2, "0")}-${String(lastDay).padStart(2, "0")}`;
+  const events = await db
+    .select()
+    .from(calendarEventsTable)
+    .where(and(gte(calendarEventsTable.eventDate, first), lte(calendarEventsTable.eventDate, last)))
+    .orderBy(asc(calendarEventsTable.eventDate), asc(calendarEventsTable.eventTime));
   res.json({ events });
 });
 
