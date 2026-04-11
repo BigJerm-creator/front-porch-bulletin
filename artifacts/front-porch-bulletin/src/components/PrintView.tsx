@@ -104,17 +104,19 @@ export function PrintView() {
           {spotlight && (
             <div style={{ marginBottom: "8pt", paddingBottom: "8pt", borderBottom: RULE_LIGHT }}>
               <div style={sectionHeading}>Student Spotlight</div>
-              {spotlight.photoUrl ? (
-                <img
-                  src={spotlight.photoUrl}
-                  alt={spotlight.name}
-                  style={{ width: "100%", maxHeight: "110pt", objectFit: "contain", display: "block", marginBottom: "4pt", background: "#d6cfc4" }}
-                />
-              ) : (
-                <div style={{ width: "100%", height: "65pt", background: "#d6cfc4", marginBottom: "4pt", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", color: INK_MUTED, textTransform: "uppercase" }}>Photo</span>
-                </div>
-              )}
+              <div style={{ width: "100%", aspectRatio: "4/3", overflow: "hidden", border: `1pt solid ${INK}`, background: "#d6cfc4", marginBottom: "4pt" }}>
+                {spotlight.photoUrl ? (
+                  <img
+                    src={spotlight.photoUrl}
+                    alt={spotlight.name}
+                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                  />
+                ) : (
+                  <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", color: INK_MUTED, textTransform: "uppercase" }}>Photo</span>
+                  </div>
+                )}
+              </div>
               <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "11pt", lineHeight: 1.1, margin: "0 0 1.5pt" }}>{spotlight.name}</p>
               <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 3pt" }}>
                 {spotlight.school} &bull; {spotlight.grade}
