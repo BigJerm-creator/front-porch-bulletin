@@ -108,7 +108,7 @@ export function PrintView() {
                 <img
                   src={spotlight.photoUrl}
                   alt={spotlight.name}
-                  style={{ width: "100%", maxHeight: "80pt", objectFit: "cover", display: "block", marginBottom: "4pt" }}
+                  style={{ width: "100%", height: "auto", display: "block", marginBottom: "4pt" }}
                 />
               ) : (
                 <div style={{ width: "100%", height: "65pt", background: "#d6cfc4", marginBottom: "4pt", display: "flex", alignItems: "center", justifyContent: "center" }}>
