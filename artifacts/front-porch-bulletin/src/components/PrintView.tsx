@@ -133,33 +133,7 @@ export function PrintView() {
         )}
       </div>
 
-      {/* ══════════════════ PAGE BREAK ══════════════════ */}
-      <div style={{ pageBreakBefore: "always", breakBefore: "page" }} />
-
-      {/* ══════════════════ PAGE 2 ══════════════════ */}
-
-      {/* Page 2 masthead — slim, no logo */}
-      <div style={{
-        borderBottom: "2.5px solid " + INK,
-        borderTop: "2.5px solid " + INK,
-        padding: "2.5pt 0",
-        marginBottom: "8pt",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-      }}>
-        <span style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "9pt", letterSpacing: "0.02em" }}>
-          The Front Porch Bulletin
-        </span>
-        <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.12em", color: INK_MUTED }}>
-          Community Pages &nbsp;&middot;&nbsp; {formatDate(today)}
-        </span>
-        <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.12em", color: INK_MUTED }}>
-          Page 2
-        </span>
-      </div>
-
-      {/* ── Three spotlights side by side ── */}
+      {/* ── Three spotlights side by side — page 1, under headline ── */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "14pt", alignItems: "flex-start" }}>
 
         {/* Student Spotlight */}
@@ -239,6 +213,32 @@ export function PrintView() {
             <p style={{ fontSize: "8.5pt", lineHeight: 1.4, margin: 0, color: "#333" }}>{groupSpotlight.description}</p>
           </div>
         )}
+      </div>
+
+      {/* ══════════════════ PAGE BREAK ══════════════════ */}
+      <div style={{ pageBreakBefore: "always", breakBefore: "page" }} />
+
+      {/* ══════════════════ PAGE 2 ══════════════════ */}
+
+      {/* Page 2 masthead — slim */}
+      <div style={{
+        borderBottom: "2.5px solid " + INK,
+        borderTop: "2.5px solid " + INK,
+        padding: "2.5pt 0",
+        marginBottom: "8pt",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}>
+        <span style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "9pt", letterSpacing: "0.02em" }}>
+          The Front Porch Bulletin
+        </span>
+        <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.12em", color: INK_MUTED }}>
+          Community Pages &nbsp;&middot;&nbsp; {formatDate(today)}
+        </span>
+        <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.12em", color: INK_MUTED }}>
+          Page 2
+        </span>
       </div>
 
       {/* ── Church Directory ── */}
