@@ -104,27 +104,6 @@ export interface UploadUrlResponse {
   objectPath: string;
 }
 
-export interface Obituary {
-  id: number;
-  name: string;
-  birthDate?: string | null;
-  deathDate?: string | null;
-  hometown?: string | null;
-  content: string;
-  photoUrl?: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface ObituaryBody {
-  name: string;
-  birthDate?: string | null;
-  deathDate?: string | null;
-  hometown?: string | null;
-  content: string;
-  photoUrl?: string | null;
-}
-
 export interface Spotlight {
   id: number;
   name: string;
@@ -186,10 +165,6 @@ export type GetFeaturedArticles200 = {
 
 export type ArchiveArticleBody = {
   archived: boolean;
-};
-
-export type ListObituaries200 = {
-  obituaries: Obituary[];
 };
 
 export type ListChurches200 = {

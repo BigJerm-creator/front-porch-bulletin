@@ -13,7 +13,7 @@ export default function About() {
             Founded in 1924, <span className="italic">The Front Porch Bulletin</span> has been the steady heartbeat of our community for nearly a century. We believe that local news is the most important news. While the big city papers might carry stories from across the ocean, we bring you the stories from across the street.
           </p>
           <p className="indent-8">
-            Whether it's the results of the high school football game, the announcement of a new local business, or the solemn obituaries of those who built this town, we record the history of our home, week by week, edition by edition.
+            Whether it's the results of the high school football game, the announcement of a new local business, or the stories of those who built this town, we record the history of our home, week by week, edition by edition.
           </p>
           <p className="indent-8">
             In an age of instant digital gratification, we preserve the dignity of the printed word. We take pride in our typesetting, our thorough fact-checking, and our commitment to serving you, the reader.

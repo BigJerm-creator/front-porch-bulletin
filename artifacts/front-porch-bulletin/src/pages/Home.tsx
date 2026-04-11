@@ -5,7 +5,6 @@ import { ArticleTeaser } from "@/components/ArticleTeaser";
 import { NewspaperSkeleton } from "@/components/ui/newspaper-skeleton";
 import { StudentSpotlight } from "@/components/StudentSpotlight";
 import { ChurchDirectory } from "@/components/ChurchDirectory";
-import { Obituaries } from "@/components/Obituaries";
 import { CalendarEvents } from "@/components/CalendarEvents";
 import { PrintView } from "@/components/PrintView";
 
@@ -57,7 +56,6 @@ export default function Home() {
                   ) : (
                     <p className="text-sm font-serif text-foreground/60 italic">No featured story today.</p>
                   )}
-                  <Obituaries />
                   <ChurchDirectory />
                   <CalendarEvents />
                 </div>

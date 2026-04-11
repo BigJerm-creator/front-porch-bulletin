@@ -3,7 +3,6 @@ import logoSrc from "@assets/The_(1)_1775854639167.png";
 import {
   useGetFeaturedArticles,
   useGetSpotlight, getGetSpotlightQueryKey,
-  useListObituaries, getListObituariesQueryKey,
   useListChurches, getListChurchesQueryKey,
 } from "@workspace/api-client-react";
 import { formatDate, formatDateline } from "@/lib/format";
@@ -43,19 +42,11 @@ function formatEventDate(d: string) {
   });
 }
 
-function formatObituaryDate(dateStr: string | null | undefined) {
-  if (!dateStr) return null;
-  const [year, month, day] = dateStr.split("-");
-  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  return `${months[Number(month)-1]}. ${Number(day)}, ${year}`;
-}
-
 /* ─── PrintView ───────────────────────────────────────────────── */
 export function PrintView() {
   const today = new Date().toISOString();
   const { data: featured }    = useGetFeaturedArticles();
   const { data: spotlight }   = useGetSpotlight({ query: { queryKey: getGetSpotlightQueryKey() } });
-  const { data: obituaryData }= useListObituaries({ query: { queryKey: getListObituariesQueryKey() } });
   const { data: churchData }  = useListChurches({ query: { queryKey: getListChurchesQueryKey() } });
   const [calEvents, setCalEvents] = useState<CalendarEvent[]>([]);
 
@@ -67,7 +58,6 @@ export function PrintView() {
 
   const headline   = featured?.headline;
   const secondary  = (featured?.secondary ?? []).slice(0, 3);
-  const obituaries = obituaryData?.obituaries ?? [];
   const churches   = churchData?.churches ?? [];
 
   return (
@@ -223,77 +213,44 @@ export function PrintView() {
         </span>
       </div>
 
-      {/* Two-column community listings */}
-      <div style={{ display: "flex", gap: "16pt", alignItems: "flex-start" }}>
+      {/* Community listings — full width */}
+      <div>
 
-        {/* ── Left: Obituaries ── */}
-        <div style={{ width: "48%", borderRight: RULE, paddingRight: "14pt" }}>
-          <div style={sectionHeading}>Obituaries</div>
-          {obituaries.length === 0 ? (
-            <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", fontSize: "8.5pt", color: INK_MUTED }}>No obituaries this week.</p>
-          ) : (
-            obituaries.map((obit, i) => {
-              const birth = formatObituaryDate(obit.birthDate);
-              const death = formatObituaryDate(obit.deathDate);
-              const dates = [birth, death].filter(Boolean).join(" \u2013 ");
-              const meta  = [dates, obit.hometown].filter(Boolean).join(" \u00b7 ");
-              return (
-                <div key={String(obit.id)} style={{
-                  marginBottom: "7pt",
-                  paddingBottom: "7pt",
-                  borderBottom: i < obituaries.length - 1 ? RULE_LIGHT : "none",
-                  breakInside: "avoid",
-                }}>
-                  <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "11pt", lineHeight: 1.1, margin: "0 0 1.5pt" }}>{obit.name}</p>
-                  {meta && (
-                    <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.09em", color: INK_MUTED, margin: "0 0 3pt" }}>{meta}</p>
+        {/* Church Directory */}
+        {churches.length > 0 && (
+          <div style={{ marginBottom: "10pt" }}>
+            <div style={sectionHeading}>Church Directory</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "5pt 10pt" }}>
+              {churches.map(church => (
+                <div key={church.id} style={{ borderLeft: "2px solid " + INK, paddingLeft: "5pt", breakInside: "avoid" }}>
+                  <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "8.5pt", lineHeight: 1.1, margin: "0 0 1pt" }}>{church.name}</p>
+                  {church.pastor && (
+                    <p style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.08em", color: INK_MUTED, margin: "0 0 1pt" }}>{church.pastor}</p>
                   )}
-                  <p style={{ fontSize: "8.5pt", lineHeight: 1.45, margin: 0, color: "#333" }}>
-                    {obit.content?.slice(0, 400)}
-                  </p>
+                  {church.serviceTimes && (
+                    <p style={{ fontSize: "7.5pt", lineHeight: 1.3, margin: "0 0 1pt", color: "#333" }}>{church.serviceTimes}</p>
+                  )}
+                  {church.phone && (
+                    <p style={{ fontFamily: FONT_MONO, fontSize: "6pt", color: INK_MUTED, margin: 0 }}>{church.phone}</p>
+                  )}
                 </div>
-              );
-            })
-          )}
-        </div>
-
-        {/* ── Right: Church Directory + Community Calendar ── */}
-        <div style={{ flex: 1, minWidth: 0 }}>
-
-          {/* Church Directory */}
-          {churches.length > 0 && (
-            <div style={{ marginBottom: "10pt" }}>
-              <div style={sectionHeading}>Church Directory</div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "5pt 10pt" }}>
-                {churches.map(church => (
-                  <div key={church.id} style={{ borderLeft: "2px solid " + INK, paddingLeft: "5pt", breakInside: "avoid" }}>
-                    <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "8.5pt", lineHeight: 1.1, margin: "0 0 1pt" }}>{church.name}</p>
-                    {church.pastor && (
-                      <p style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.08em", color: INK_MUTED, margin: "0 0 1pt" }}>{church.pastor}</p>
-                    )}
-                    {church.serviceTimes && (
-                      <p style={{ fontSize: "7.5pt", lineHeight: 1.3, margin: "0 0 1pt", color: "#333" }}>{church.serviceTimes}</p>
-                    )}
-                    {church.phone && (
-                      <p style={{ fontFamily: FONT_MONO, fontSize: "6pt", color: INK_MUTED, margin: 0 }}>{church.phone}</p>
-                    )}
-                  </div>
-                ))}
-              </div>
+              ))}
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Community Calendar */}
-          {calEvents.length > 0 && (
-            <div>
-              <div style={sectionHeading}>Community Calendar</div>
-              {calEvents.map((ev, i) => (
+        {/* Community Calendar */}
+        {calEvents.length > 0 && (
+          <div>
+            <div style={sectionHeading}>Community Calendar</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "5pt 14pt" }}>
+              {calEvents.map((ev) => (
                 <div key={ev.id} style={{
                   display: "flex",
                   gap: "5pt",
-                  marginBottom: "5pt",
                   paddingBottom: "5pt",
-                  borderBottom: i < calEvents.length - 1 ? RULE_LIGHT : "none",
+                  marginBottom: "5pt",
+                  borderBottom: RULE_LIGHT,
                   breakInside: "avoid",
                 }}>
                   <div style={{
@@ -320,8 +277,8 @@ export function PrintView() {
                 </div>
               ))}
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
     </div>

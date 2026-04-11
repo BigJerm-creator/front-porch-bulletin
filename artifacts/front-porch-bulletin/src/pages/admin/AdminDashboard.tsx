@@ -1,8 +1,8 @@
 import { Link } from "wouter";
 import { useUser } from "@clerk/react";
-import { useGetArticlesSummary, getGetArticlesSummaryQueryKey, useGetMyRole, getGetMyRoleQueryKey, useListChurches, getListChurchesQueryKey, useListObituaries, getListObituariesQueryKey, useGetSpotlight, getGetSpotlightQueryKey } from "@workspace/api-client-react";
+import { useGetArticlesSummary, getGetArticlesSummaryQueryKey, useGetMyRole, getGetMyRoleQueryKey, useListChurches, getListChurchesQueryKey, useGetSpotlight, getGetSpotlightQueryKey } from "@workspace/api-client-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FileText, Star, BookOpen, Church, Tags, Users, ArrowRight, PlusCircle } from "lucide-react";
+import { FileText, Star, Church, Tags, Users, ArrowRight, PlusCircle } from "lucide-react";
 
 function SectionCard({
   href,
@@ -49,7 +49,6 @@ export default function AdminDashboard() {
   const { data: summary, isLoading: summaryLoading } = useGetArticlesSummary({ query: { queryKey: getGetArticlesSummaryQueryKey() } });
   const { data: roleData } = useGetMyRole({ query: { queryKey: getGetMyRoleQueryKey() } });
   const { data: churches, isLoading: churchesLoading } = useListChurches({ query: { queryKey: getListChurchesQueryKey() } });
-  const { data: obituaries, isLoading: obituariesLoading } = useListObituaries({ query: { queryKey: getListObituariesQueryKey() } });
   const { data: spotlight, isLoading: spotlightLoading } = useGetSpotlight({ query: { queryKey: getGetSpotlightQueryKey() } });
 
   return (
@@ -91,15 +90,6 @@ export default function AdminDashboard() {
           />
 
           <SectionCard
-            href="/admin/obituaries"
-            icon={BookOpen}
-            title="Obituaries"
-            description="Record and honor community members who have passed. Add, edit, or remove individual entries."
-            meta={obituariesLoading ? undefined : `${obituaries?.obituaries.length ?? 0} on record`}
-            metaLoading={obituariesLoading}
-          />
-
-          <SectionCard
             href="/admin/churches"
             icon={Church}
             title="Church Directory"
@@ -135,11 +125,6 @@ export default function AdminDashboard() {
           <Link href="/admin/articles/new">
             <div className="flex items-center gap-2 px-5 h-11 border-4 border-foreground bg-primary text-primary-foreground font-bold uppercase tracking-widest text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all cursor-pointer">
               <PlusCircle className="h-4 w-4" /> Draft New Article
-            </div>
-          </Link>
-          <Link href="/admin/obituaries">
-            <div className="flex items-center gap-2 px-5 h-11 border-4 border-foreground bg-white font-bold uppercase tracking-widest text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all cursor-pointer hover:bg-[#f5f0e8]">
-              <PlusCircle className="h-4 w-4" /> Add Obituary
             </div>
           </Link>
           <Link href="/admin/churches">
