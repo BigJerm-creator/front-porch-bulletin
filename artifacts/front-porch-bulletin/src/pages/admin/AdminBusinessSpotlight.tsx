@@ -14,7 +14,7 @@ import { ImageUpload } from "@/components/admin/ImageUpload";
 
 export default function AdminBusinessSpotlight() {
   const { data, isLoading } = useGetBusinessSpotlight({
-    query: { queryKey: getGetBusinessSpotlightQueryKey() },
+    query: { queryKey: getGetBusinessSpotlightQueryKey(), retry: false },
   });
   const updateSpotlight = useUpdateBusinessSpotlight();
   const queryClient = useQueryClient();

@@ -2,7 +2,7 @@ import { useGetGroupSpotlight, getGetGroupSpotlightQueryKey } from "@workspace/a
 import { Users } from "lucide-react";
 
 export function GroupSpotlight() {
-  const { data, isLoading } = useGetGroupSpotlight({ query: { queryKey: getGetGroupSpotlightQueryKey() } });
+  const { data, isLoading } = useGetGroupSpotlight({ query: { queryKey: getGetGroupSpotlightQueryKey(), retry: false } });
 
   if (isLoading) {
     return (

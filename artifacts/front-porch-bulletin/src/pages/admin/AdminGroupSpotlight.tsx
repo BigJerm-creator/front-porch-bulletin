@@ -14,7 +14,7 @@ import { ImageUpload } from "@/components/admin/ImageUpload";
 
 export default function AdminGroupSpotlight() {
   const { data, isLoading } = useGetGroupSpotlight({
-    query: { queryKey: getGetGroupSpotlightQueryKey() },
+    query: { queryKey: getGetGroupSpotlightQueryKey(), retry: false },
   });
   const updateSpotlight = useUpdateGroupSpotlight();
   const queryClient = useQueryClient();

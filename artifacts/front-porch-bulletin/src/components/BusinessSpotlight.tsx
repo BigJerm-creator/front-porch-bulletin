@@ -2,7 +2,7 @@ import { useGetBusinessSpotlight, getGetBusinessSpotlightQueryKey } from "@works
 import { Building2 } from "lucide-react";
 
 export function BusinessSpotlight() {
-  const { data, isLoading } = useGetBusinessSpotlight({ query: { queryKey: getGetBusinessSpotlightQueryKey() } });
+  const { data, isLoading } = useGetBusinessSpotlight({ query: { queryKey: getGetBusinessSpotlightQueryKey(), retry: false } });
 
   if (isLoading) {
     return (
