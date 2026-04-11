@@ -51,6 +51,15 @@ function EventDialog({ event, onClose, onSaved }: {
     }
   );
   const [saving, setSaving] = useState(false);
+  const [repeatWeekly, setRepeatWeekly] = useState(false);
+  const [repeatWeeks, setRepeatWeeks] = useState(4);
+
+  function addWeeks(dateStr: string, weeks: number): string {
+    const [y, m, d] = dateStr.split("-").map(Number);
+    const dt = new Date(y, m - 1, d);
+    dt.setDate(dt.getDate() + weeks * 7);
+    return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}-${String(dt.getDate()).padStart(2, "0")}`;
+  }
 
   const handleSave = async () => {
     if (!form.title.trim() || !form.eventDate) {
@@ -59,20 +68,41 @@ function EventDialog({ event, onClose, onSaved }: {
     }
     setSaving(true);
     try {
-      const url = isNew ? `${BASE}/api/calendar-events` : `${BASE}/api/calendar-events/${event.id}`;
-      const res = await fetch(url, {
-        method: isNew ? "POST" : "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: form.title.trim(),
-          eventDate: form.eventDate,
-          eventTime: form.eventTime.trim() || null,
-          location: form.location.trim() || null,
-          description: form.description.trim() || null,
-        }),
+      const payload = (dateStr: string) => ({
+        title: form.title.trim(),
+        eventDate: dateStr,
+        eventTime: form.eventTime.trim() || null,
+        location: form.location.trim() || null,
+        description: form.description.trim() || null,
       });
-      if (!res.ok) throw new Error(await res.text());
-      toast({ title: isNew ? "Event added to calendar" : "Event updated" });
+
+      if (!isNew) {
+        const res = await fetch(`${BASE}/api/calendar-events/${event.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload(form.eventDate)),
+        });
+        if (!res.ok) throw new Error(await res.text());
+      } else {
+        const weeks = repeatWeekly ? repeatWeeks : 0;
+        for (let i = 0; i <= weeks; i++) {
+          const dateStr = i === 0 ? form.eventDate : addWeeks(form.eventDate, i);
+          const res = await fetch(`${BASE}/api/calendar-events`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload(dateStr)),
+          });
+          if (!res.ok) throw new Error(await res.text());
+        }
+      }
+
+      toast({
+        title: isNew
+          ? repeatWeekly
+            ? `Added ${repeatWeeks + 1} recurring events`
+            : "Event added to calendar"
+          : "Event updated",
+      });
       onSaved();
       onClose();
     } catch {
@@ -143,12 +173,50 @@ function EventDialog({ event, onClose, onSaved }: {
               placeholder="Optional details…"
             />
           </div>
+
+          {isNew && (
+            <div className="border-t-2 border-foreground/20 pt-3 space-y-2">
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={repeatWeekly}
+                  onChange={(e) => setRepeatWeekly(e.target.checked)}
+                  className="h-4 w-4 border-2 border-foreground accent-foreground"
+                />
+                <span className="font-mono text-xs uppercase tracking-widest">Repeat weekly</span>
+              </label>
+              {repeatWeekly && (
+                <div className="flex items-center gap-3 pl-6">
+                  <label className="font-mono text-xs uppercase tracking-widest whitespace-nowrap">
+                    Repeat for
+                  </label>
+                  <Input
+                    type="number"
+                    min={1}
+                    max={52}
+                    value={repeatWeeks}
+                    onChange={(e) => setRepeatWeeks(Math.max(1, Math.min(52, Number(e.target.value))))}
+                    className="border-2 border-foreground font-mono w-20 text-center"
+                  />
+                  <span className="font-mono text-xs uppercase tracking-widest whitespace-nowrap">
+                    additional week{repeatWeeks !== 1 ? "s" : ""}
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="flex gap-3 pt-1">
           <Button onClick={handleSave} disabled={saving} className="flex-1 font-headline font-bold uppercase tracking-widest">
             <Save className="h-4 w-4 mr-2" />
-            {saving ? "Saving…" : isNew ? "Add to Calendar" : "Save Changes"}
+            {saving
+              ? "Saving…"
+              : !isNew
+              ? "Save Changes"
+              : repeatWeekly
+              ? `Add ${repeatWeeks + 1} Events`
+              : "Add to Calendar"}
           </Button>
           <Button variant="outline" onClick={onClose} className="border-2 border-foreground font-headline uppercase tracking-widest">
             Cancel
