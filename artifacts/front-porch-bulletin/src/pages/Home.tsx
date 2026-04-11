@@ -30,27 +30,32 @@ export default function Home() {
             <NewspaperSkeleton />
           ) : (
             <>
-              {/* PAGE 1: Two-column front page */}
-              <div className="flex flex-col lg:flex-row lg:divide-x lg:divide-foreground gap-0">
-                {/* Left sidebar — Student, Business & Group Spotlights */}
-                <div className="order-2 lg:order-1 w-full lg:w-1/3 lg:pr-6 pt-6 lg:pt-0 border-t border-foreground lg:border-t-0">
-                  <StudentSpotlight />
-                  <BusinessSpotlight />
-                  <GroupSpotlight />
-                </div>
+              {/* Headline — full width */}
+              <div className="mb-8 pb-8 border-b-2 border-foreground">
+                {featuredData?.headline ? (
+                  <ArticleTeaser article={featuredData.headline} featured={true} />
+                ) : (
+                  <p className="text-sm font-serif text-foreground/60 italic">No featured story today.</p>
+                )}
+              </div>
 
-                {/* Right main column — Headline + community listings */}
-                <div className="order-1 lg:order-2 w-full lg:w-2/3 lg:pl-6">
-                  {featuredData?.headline ? (
-                    <ArticleTeaser article={featuredData.headline} featured={true} />
-                  ) : (
-                    <p className="text-sm font-serif text-foreground/60 italic">No featured story today.</p>
-                  )}
-                  <ChurchDirectory />
+              {/* Spotlights — three columns */}
+              <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-foreground mb-8 pb-8 border-b-2 border-foreground">
+                <div className="md:pr-6 pb-6 md:pb-0">
+                  <StudentSpotlight />
+                </div>
+                <div className="md:px-6 py-6 md:py-0">
+                  <BusinessSpotlight />
+                </div>
+                <div className="md:pl-6 pt-6 md:pt-0">
+                  <GroupSpotlight />
                 </div>
               </div>
 
-              {/* Full-width Community Calendar */}
+              {/* Church Directory */}
+              <ChurchDirectory />
+
+              {/* Community Calendar */}
               <div className="mt-8 border-t-2 border-foreground pt-6">
                 <CalendarEvents />
               </div>
