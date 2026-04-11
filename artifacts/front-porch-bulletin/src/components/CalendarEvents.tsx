@@ -143,16 +143,16 @@ export function CalendarEvents() {
                     {/* Events */}
                     <div className="space-y-1 flex-1">
                       {dayEvents.map((ev) => (
-                        <div key={ev.id} className="bg-foreground text-background px-1 py-0.5">
+                        <div key={ev.id} className="border-l-2 border-foreground pl-1 py-0.5">
                           <div className="font-serif text-[9px] font-bold leading-tight break-words">{ev.title}</div>
                           {ev.eventTime && (
-                            <div className="font-mono text-[8px] text-background/70 leading-tight">{formatTime(ev.eventTime)}</div>
+                            <div className="font-mono text-[8px] text-foreground/60 leading-tight">{formatTime(ev.eventTime)}</div>
                           )}
                           {ev.location && (
-                            <div className="font-mono text-[8px] text-background/70 leading-tight break-words">{ev.location}</div>
+                            <div className="font-mono text-[8px] text-foreground/60 leading-tight break-words">{ev.location}</div>
                           )}
                           {ev.description && (
-                            <div className="font-serif text-[8px] text-background/60 leading-tight mt-0.5 break-words">{ev.description}</div>
+                            <div className="font-serif text-[8px] text-foreground/50 leading-tight mt-0.5 break-words">{ev.description}</div>
                           )}
                         </div>
                       ))}
