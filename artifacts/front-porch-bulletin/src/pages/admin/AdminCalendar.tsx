@@ -77,12 +77,24 @@ function EventDialog({ event, onClose, onSaved }: {
       });
 
       if (!isNew) {
+        // Save the edit on the existing event
         const res = await fetch(`${BASE}/api/calendar-events/${event.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload(form.eventDate)),
         });
         if (!res.ok) throw new Error(await res.text());
+        // If repeat is on, also create new events for the additional weeks
+        if (repeatWeekly) {
+          for (let i = 1; i <= repeatWeeks; i++) {
+            const r = await fetch(`${BASE}/api/calendar-events`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload(addWeeks(form.eventDate, i))),
+            });
+            if (!r.ok) throw new Error(await r.text());
+          }
+        }
       } else {
         const weeks = repeatWeekly ? repeatWeeks : 0;
         for (let i = 0; i <= weeks; i++) {
@@ -97,10 +109,12 @@ function EventDialog({ event, onClose, onSaved }: {
       }
 
       toast({
-        title: isNew
-          ? repeatWeekly
+        title: repeatWeekly
+          ? isNew
             ? `Added ${repeatWeeks + 1} recurring events`
-            : "Event added to calendar"
+            : `Event updated + ${repeatWeeks} additional week${repeatWeeks !== 1 ? "s" : ""} added`
+          : isNew
+          ? "Event added to calendar"
           : "Event updated",
       });
       onSaved();
@@ -174,8 +188,7 @@ function EventDialog({ event, onClose, onSaved }: {
             />
           </div>
 
-          {isNew && (
-            <div className="border-t-2 border-foreground/20 pt-3 space-y-2">
+          <div className="border-t-2 border-foreground/20 pt-3 space-y-2">
               <label className="flex items-center gap-2 cursor-pointer select-none">
                 <input
                   type="checkbox"
@@ -204,7 +217,6 @@ function EventDialog({ event, onClose, onSaved }: {
                 </div>
               )}
             </div>
-          )}
         </div>
 
         <div className="flex gap-3 pt-1">
@@ -212,11 +224,13 @@ function EventDialog({ event, onClose, onSaved }: {
             <Save className="h-4 w-4 mr-2" />
             {saving
               ? "Saving…"
-              : !isNew
-              ? "Save Changes"
+              : isNew
+              ? repeatWeekly
+                ? `Add ${repeatWeeks + 1} Events`
+                : "Add to Calendar"
               : repeatWeekly
-              ? `Add ${repeatWeeks + 1} Events`
-              : "Add to Calendar"}
+              ? `Save + Add ${repeatWeeks} More`
+              : "Save Changes"}
           </Button>
           <Button variant="outline" onClick={onClose} className="border-2 border-foreground font-headline uppercase tracking-widest">
             Cancel
