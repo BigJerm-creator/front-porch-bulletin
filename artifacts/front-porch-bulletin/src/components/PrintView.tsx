@@ -97,142 +97,66 @@ export function PrintView() {
         </div>
       </div>
 
-      {/* Two-column body */}
-      <div style={{ display: "flex", gap: "14pt", alignItems: "flex-start" }}>
+      {/* ── Headline article — full width ── */}
+      <div style={{ marginBottom: "10pt" }}>
+        {headline ? (
+          <article>
+            <h1 style={{
+              fontFamily: FONT_HEADLINE,
+              fontWeight: "bold",
+              fontSize: "26pt",
+              lineHeight: 1.05,
+              margin: "0 0 4pt",
+              letterSpacing: "-0.01em",
+              textAlign: "center",
+            }}>{headline.title}</h1>
 
-        {/* ── Left column: Spotlight + Upcoming Events ── */}
-        <div style={{ width: "32%", borderRight: RULE, paddingRight: "12pt", flexShrink: 0 }}>
-
-          {/* Student Spotlight */}
-          {spotlight && (
-            <div style={{ marginBottom: "8pt", paddingBottom: "8pt", borderBottom: RULE_LIGHT }}>
-              <div style={sectionHeading}>Student Spotlight</div>
-              <div style={{ width: "100%", aspectRatio: "4/3", overflow: "hidden", border: `1pt solid ${INK}`, background: "#d6cfc4", marginBottom: "4pt" }}>
-                {spotlight.photoUrl ? (
-                  <img
-                    src={spotlight.photoUrl}
-                    alt={spotlight.name}
-                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                  />
-                ) : (
-                  <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", color: INK_MUTED, textTransform: "uppercase" }}>Photo</span>
-                  </div>
-                )}
-              </div>
-              <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "11pt", lineHeight: 1.1, margin: "0 0 1.5pt" }}>{spotlight.name}</p>
-              <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 3pt" }}>
-                {spotlight.school} &bull; {spotlight.grade}
+            {headline.subtitle && (
+              <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "12pt", lineHeight: 1.2, margin: "0 0 4pt", color: "#333", textAlign: "center" }}>
+                {headline.subtitle}
               </p>
-              <p style={{ fontSize: "8.5pt", lineHeight: 1.4, margin: 0, color: "#333" }}>{spotlight.description}</p>
+            )}
+
+            <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 6pt", borderBottom: RULE_LIGHT, borderTop: RULE_LIGHT, padding: "3pt 0", textAlign: "center" }}>
+              By {headline.author} &nbsp;&middot;&nbsp; {headline.category} &nbsp;&middot;&nbsp; {formatDateline(headline.publishedAt)}
+            </p>
+
+            <div style={{ columns: "3", columnGap: "14pt", columnRule: RULE_LIGHT, maxHeight: "3.4in", overflow: "hidden" }}>
+              <p style={{ fontSize: "9.5pt", lineHeight: 1.5, margin: 0, textAlign: "justify" }}>
+                <span style={{ fontFamily: FONT_MONO, fontWeight: "bold", fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", marginRight: "3pt" }}>
+                  {formatDateline(headline.publishedAt)}—
+                </span>
+                {headline.content}
+              </p>
             </div>
-          )}
-
-          {/* Business Spotlight */}
-          {businessSpotlight && (
-            <div style={{ marginBottom: "8pt", paddingBottom: "8pt", borderBottom: RULE_LIGHT }}>
-              <div style={sectionHeading}>Business Spotlight</div>
-              <div style={{ width: "100%", aspectRatio: "4/3", overflow: "hidden", border: `1pt solid ${INK}`, background: "#d6cfc4", marginBottom: "4pt" }}>
-                {businessSpotlight.photoUrl ? (
-                  <img
-                    src={businessSpotlight.photoUrl}
-                    alt={businessSpotlight.name}
-                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                  />
-                ) : (
-                  <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", color: INK_MUTED, textTransform: "uppercase" }}>Photo</span>
-                  </div>
-                )}
-              </div>
-              {businessSpotlight.photoCredit && (
-                <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "0 0 3pt" }}>
-                  Picture Credit — {businessSpotlight.photoCredit}
-                </p>
-              )}
-              <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "11pt", lineHeight: 1.1, margin: "0 0 1.5pt" }}>{businessSpotlight.name}</p>
-              <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 3pt" }}>
-                {businessSpotlight.businessType}
-              </p>
-              <p style={{ fontSize: "8.5pt", lineHeight: 1.4, margin: 0, color: "#333" }}>{businessSpotlight.description}</p>
-            </div>
-          )}
-
-          {/* Group Spotlight */}
-          {groupSpotlight && (
-            <div>
-              <div style={sectionHeading}>Group Spotlight</div>
-              <div style={{ width: "100%", aspectRatio: "4/3", overflow: "hidden", border: `1pt solid ${INK}`, background: "#d6cfc4", marginBottom: "4pt" }}>
-                {groupSpotlight.photoUrl ? (
-                  <img
-                    src={groupSpotlight.photoUrl}
-                    alt={groupSpotlight.name}
-                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                  />
-                ) : (
-                  <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", color: INK_MUTED, textTransform: "uppercase" }}>Photo</span>
-                  </div>
-                )}
-              </div>
-              {groupSpotlight.photoCredit && (
-                <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "0 0 3pt" }}>
-                  Picture Credit — {groupSpotlight.photoCredit}
-                </p>
-              )}
-              <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "11pt", lineHeight: 1.1, margin: "0 0 1.5pt" }}>{groupSpotlight.name}</p>
-              <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 3pt" }}>
-                {groupSpotlight.groupType}
-              </p>
-              <p style={{ fontSize: "8.5pt", lineHeight: 1.4, margin: 0, color: "#333" }}>{groupSpotlight.description}</p>
-            </div>
-          )}
-        </div>
-
-        {/* ── Right column: Headline article ── */}
-        <div style={{ flex: 1, minWidth: 0 }}>
-          {headline ? (
-            <article>
-              <h1 style={{
-                fontFamily: FONT_HEADLINE,
-                fontWeight: "bold",
-                fontSize: "22pt",
-                lineHeight: 1.05,
-                margin: "0 0 4pt",
-                letterSpacing: "-0.01em",
-              }}>{headline.title}</h1>
-
-              {headline.subtitle && (
-                <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "11pt", lineHeight: 1.2, margin: "0 0 4pt", color: "#333" }}>
-                  {headline.subtitle}
-                </p>
-              )}
-
-              <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 6pt", borderBottom: RULE_LIGHT, paddingBottom: "3pt" }}>
-                By {headline.author} &nbsp;&middot;&nbsp; {headline.category} &nbsp;&middot;&nbsp; {formatDateline(headline.publishedAt)}
-              </p>
-
-              {/* Body text — two newspaper columns, overflow hidden to stay on page 1 */}
-              <div style={{
-                columns: "2",
-                columnGap: "12pt",
-                columnRule: RULE_LIGHT,
-                maxHeight: "6.1in",
-                overflow: "hidden",
-              }}>
-                <p style={{ fontSize: "9.5pt", lineHeight: 1.5, margin: 0, textAlign: "justify" }}>
-                  <span style={{ fontFamily: FONT_MONO, fontWeight: "bold", fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", marginRight: "3pt" }}>
-                    {formatDateline(headline.publishedAt)}—
-                  </span>
-                  {headline.content}
-                </p>
-              </div>
-            </article>
-          ) : (
-            <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", color: INK_MUTED }}>No featured story this week.</p>
-          )}
-        </div>
+          </article>
+        ) : (
+          <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", color: INK_MUTED }}>No featured story this week.</p>
+        )}
       </div>
+
+      {/* ── Church Directory ── */}
+      {churches.length > 0 && (
+        <div style={{ marginBottom: "10pt" }}>
+          <div style={sectionHeading}>Church Directory</div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "5pt 10pt" }}>
+            {churches.map(church => (
+              <div key={church.id} style={{ borderLeft: "2px solid " + INK, paddingLeft: "5pt", breakInside: "avoid" }}>
+                <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "8.5pt", lineHeight: 1.1, margin: "0 0 1pt" }}>{church.name}</p>
+                {church.pastor && (
+                  <p style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.08em", color: INK_MUTED, margin: "0 0 1pt" }}>{church.pastor}</p>
+                )}
+                {church.serviceTimes && (
+                  <p style={{ fontSize: "7.5pt", lineHeight: 1.3, margin: "0 0 1pt", color: "#333" }}>{church.serviceTimes}</p>
+                )}
+                {church.phone && (
+                  <p style={{ fontFamily: FONT_MONO, fontSize: "6pt", color: INK_MUTED, margin: 0 }}>{church.phone}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* ══════════════════ PAGE BREAK ══════════════════ */}
       <div style={{ pageBreakBefore: "always", breakBefore: "page" }} />
@@ -253,38 +177,121 @@ export function PrintView() {
           The Front Porch Bulletin
         </span>
         <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.12em", color: INK_MUTED }}>
-          Community Pages &nbsp;&middot;&nbsp; {formatDate(today)}
+          Community Spotlights &nbsp;&middot;&nbsp; {formatDate(today)}
         </span>
         <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.12em", color: INK_MUTED }}>
           Page 2
         </span>
       </div>
 
-      {/* Community listings — full width */}
-      <div>
+      {/* ── Three spotlights side by side ── */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "14pt", alignItems: "flex-start" }}>
 
-        {/* Church Directory */}
-        {churches.length > 0 && (
-          <div style={{ marginBottom: "10pt" }}>
-            <div style={sectionHeading}>Church Directory</div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "5pt 10pt" }}>
-              {churches.map(church => (
-                <div key={church.id} style={{ borderLeft: "2px solid " + INK, paddingLeft: "5pt", breakInside: "avoid" }}>
-                  <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "8.5pt", lineHeight: 1.1, margin: "0 0 1pt" }}>{church.name}</p>
-                  {church.pastor && (
-                    <p style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.08em", color: INK_MUTED, margin: "0 0 1pt" }}>{church.pastor}</p>
-                  )}
-                  {church.serviceTimes && (
-                    <p style={{ fontSize: "7.5pt", lineHeight: 1.3, margin: "0 0 1pt", color: "#333" }}>{church.serviceTimes}</p>
-                  )}
-                  {church.phone && (
-                    <p style={{ fontFamily: FONT_MONO, fontSize: "6pt", color: INK_MUTED, margin: 0 }}>{church.phone}</p>
-                  )}
+        {/* Student Spotlight */}
+        {spotlight && (
+          <div style={{ borderRight: RULE, paddingRight: "12pt" }}>
+            <div style={sectionHeading}>Student Spotlight</div>
+            <div style={{ width: "100%", aspectRatio: "4/3", overflow: "hidden", border: `1pt solid ${INK}`, background: "#d6cfc4", marginBottom: "4pt" }}>
+              {spotlight.photoUrl ? (
+                <img src={spotlight.photoUrl} alt={spotlight.name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+              ) : (
+                <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", color: INK_MUTED, textTransform: "uppercase" }}>Photo</span>
                 </div>
-              ))}
+              )}
             </div>
+            {spotlight.photoCredit && (
+              <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "0 0 3pt" }}>
+                Picture Credit — {spotlight.photoCredit}
+              </p>
+            )}
+            <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "11pt", lineHeight: 1.1, margin: "0 0 1.5pt" }}>{spotlight.name}</p>
+            <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 3pt" }}>
+              {spotlight.school} &bull; {spotlight.grade}
+            </p>
+            <p style={{ fontSize: "8.5pt", lineHeight: 1.4, margin: 0, color: "#333" }}>{spotlight.description}</p>
           </div>
         )}
+
+        {/* Business Spotlight */}
+        {businessSpotlight && (
+          <div style={{ borderRight: RULE, paddingRight: "12pt" }}>
+            <div style={sectionHeading}>Business Spotlight</div>
+            <div style={{ width: "100%", aspectRatio: "4/3", overflow: "hidden", border: `1pt solid ${INK}`, background: "#d6cfc4", marginBottom: "4pt" }}>
+              {businessSpotlight.photoUrl ? (
+                <img src={businessSpotlight.photoUrl} alt={businessSpotlight.name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+              ) : (
+                <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", color: INK_MUTED, textTransform: "uppercase" }}>Photo</span>
+                </div>
+              )}
+            </div>
+            {businessSpotlight.photoCredit && (
+              <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "0 0 3pt" }}>
+                Picture Credit — {businessSpotlight.photoCredit}
+              </p>
+            )}
+            <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "11pt", lineHeight: 1.1, margin: "0 0 1.5pt" }}>{businessSpotlight.name}</p>
+            <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 3pt" }}>
+              {businessSpotlight.businessType}
+            </p>
+            <p style={{ fontSize: "8.5pt", lineHeight: 1.4, margin: 0, color: "#333" }}>{businessSpotlight.description}</p>
+          </div>
+        )}
+
+        {/* Group Spotlight */}
+        {groupSpotlight && (
+          <div>
+            <div style={sectionHeading}>Group Spotlight</div>
+            <div style={{ width: "100%", aspectRatio: "4/3", overflow: "hidden", border: `1pt solid ${INK}`, background: "#d6cfc4", marginBottom: "4pt" }}>
+              {groupSpotlight.photoUrl ? (
+                <img src={groupSpotlight.photoUrl} alt={groupSpotlight.name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+              ) : (
+                <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", color: INK_MUTED, textTransform: "uppercase" }}>Photo</span>
+                </div>
+              )}
+            </div>
+            {groupSpotlight.photoCredit && (
+              <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "0 0 3pt" }}>
+                Picture Credit — {groupSpotlight.photoCredit}
+              </p>
+            )}
+            <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "11pt", lineHeight: 1.1, margin: "0 0 1.5pt" }}>{groupSpotlight.name}</p>
+            <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 3pt" }}>
+              {groupSpotlight.groupType}
+            </p>
+            <p style={{ fontSize: "8.5pt", lineHeight: 1.4, margin: 0, color: "#333" }}>{groupSpotlight.description}</p>
+          </div>
+        )}
+      </div>
+
+      {/* Page break before calendar if spotlights take too much space, otherwise calendar follows naturally */}
+      <div style={{ pageBreakBefore: "always", breakBefore: "page" }} />
+
+      {/* ══════════════════ PAGE 3 ══════════════════ */}
+      <div style={{
+        borderBottom: "2.5px solid " + INK,
+        borderTop: "2.5px solid " + INK,
+        padding: "2.5pt 0",
+        marginBottom: "8pt",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}>
+        <span style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "9pt", letterSpacing: "0.02em" }}>
+          The Front Porch Bulletin
+        </span>
+        <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.12em", color: INK_MUTED }}>
+          Community Calendar &nbsp;&middot;&nbsp; {formatDate(today)}
+        </span>
+        <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.12em", color: INK_MUTED }}>
+          Page 3
+        </span>
+      </div>
+
+      {/* Community listings — full width */}
+      <div>
 
         {/* Community Calendar — monthly grid */}
         {(() => {
