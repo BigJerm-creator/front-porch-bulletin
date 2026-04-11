@@ -38,9 +38,11 @@ export function StudentSpotlight() {
             <User className="h-16 w-16 text-foreground/20" />
           </div>
         )}
-        <div className="w-full bg-foreground/80 text-background text-center text-xs font-mono uppercase tracking-wider py-1 px-2">
-          Photo
-        </div>
+        {data.photoCredit && (
+          <div className="w-full bg-foreground/80 text-background text-center text-[10px] font-mono py-1 px-2 italic">
+            {data.photoCredit}
+          </div>
+        )}
       </div>
 
       <p className="text-xs font-mono uppercase tracking-widest text-foreground/60 mb-2 text-center">

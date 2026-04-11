@@ -21,7 +21,7 @@ router.get("/", async (_req, res) => {
 });
 
 router.put("/", requireApproved, async (req, res) => {
-  const { name, school, grade, description, photoUrl } = req.body;
+  const { name, school, grade, description, photoUrl, photoCredit } = req.body;
   if (!name || !school || !grade || !description) {
     res.status(400).json({ error: "name, school, grade, and description are required" });
     return;
@@ -32,13 +32,13 @@ router.put("/", requireApproved, async (req, res) => {
   if (existing.length > 0) {
     const [updated] = await db
       .update(spotlightTable)
-      .set({ name, school, grade, description, photoUrl: photoUrl ?? null, updatedAt: new Date() })
+      .set({ name, school, grade, description, photoUrl: photoUrl ?? null, photoCredit: photoCredit ?? null, updatedAt: new Date() })
       .returning();
     res.json(updated);
   } else {
     const [created] = await db
       .insert(spotlightTable)
-      .values({ name, school, grade, description, photoUrl: photoUrl ?? null })
+      .values({ name, school, grade, description, photoUrl: photoUrl ?? null, photoCredit: photoCredit ?? null })
       .returning();
     res.json(created);
   }

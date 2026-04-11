@@ -14,4 +14,5 @@ export interface ChurchBody {
   phone: string;
   sortOrder?: number;
   photoUrl?: string | null;
+  photoCredit?: string | null;
 }

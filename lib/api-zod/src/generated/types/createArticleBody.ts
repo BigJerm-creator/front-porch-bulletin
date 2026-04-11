@@ -14,5 +14,6 @@ export interface CreateArticleBody {
   category: string;
   featured?: boolean;
   photoUrl?: string | null;
+  photoCredit?: string | null;
   publishedAt?: Date;
 }

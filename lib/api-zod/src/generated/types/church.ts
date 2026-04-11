@@ -15,5 +15,6 @@ export interface Church {
   phone: string;
   sortOrder: number;
   photoUrl?: string | null;
+  photoCredit?: string | null;
   createdAt: Date;
 }

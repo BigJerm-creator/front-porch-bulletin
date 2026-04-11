@@ -18,6 +18,7 @@ const emptyForm = {
   phone: "",
   sortOrder: 0,
   photoUrl: null as string | null,
+  photoCredit: null as string | null,
 };
 
 function FormCard({
@@ -66,6 +67,17 @@ function FormCard({
             onChange={(url) => setForm({ ...form, photoUrl: url })}
             label="Photo (optional)"
           />
+          {form.photoUrl && (
+            <div className="mt-3">
+              <label className="block text-xs font-bold uppercase tracking-widest mb-1">Photo Credit</label>
+              <Input
+                className="rounded-none border-2 border-foreground font-serif text-sm"
+                value={form.photoCredit ?? ""}
+                onChange={(e) => setForm({ ...form, photoCredit: e.target.value || null })}
+                placeholder="e.g. Photo by Jane Smith"
+              />
+            </div>
+          )}
         </div>
       </div>
       <div className="flex gap-3 pt-2 border-t-2 border-foreground/20">
@@ -105,6 +117,7 @@ export default function AdminChurches() {
       phone: church.phone,
       sortOrder: church.sortOrder,
       photoUrl: church.photoUrl ?? null,
+      photoCredit: church.photoCredit ?? null,
     });
   };
 

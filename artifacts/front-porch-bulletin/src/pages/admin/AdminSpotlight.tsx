@@ -20,6 +20,7 @@ export default function AdminSpotlight() {
     grade: "",
     description: "",
     photoUrl: "",
+    photoCredit: "",
   });
 
   useEffect(() => {
@@ -30,6 +31,7 @@ export default function AdminSpotlight() {
         grade: data.grade,
         description: data.description,
         photoUrl: data.photoUrl ?? "",
+        photoCredit: data.photoCredit ?? "",
       });
     }
   }, [data]);
@@ -43,6 +45,7 @@ export default function AdminSpotlight() {
           grade: form.grade,
           description: form.description,
           photoUrl: form.photoUrl || null,
+          photoCredit: form.photoCredit.trim() || null,
         },
       });
       queryClient.invalidateQueries({ queryKey: getGetSpotlightQueryKey() });
@@ -120,6 +123,17 @@ export default function AdminSpotlight() {
               onChange={(url) => setForm({ ...form, photoUrl: url ?? "" })}
               label="Photo (optional)"
             />
+            {form.photoUrl && (
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-widest mb-1">Photo Credit</label>
+                <Input
+                  className="rounded-none border-2 border-foreground font-serif text-sm"
+                  value={form.photoCredit}
+                  onChange={(e) => setForm({ ...form, photoCredit: e.target.value })}
+                  placeholder="e.g. Photo by Jane Smith"
+                />
+              </div>
+            )}
           </div>
 
           <div className="space-y-4">

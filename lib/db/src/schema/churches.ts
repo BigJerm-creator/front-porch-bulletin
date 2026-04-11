@@ -9,6 +9,7 @@ export const churchesTable = pgTable("churches", {
   phone: text("phone").notNull(),
   sortOrder: integer("sort_order").notNull().default(0),
   photoUrl: text("photo_url"),
+  photoCredit: text("photo_credit"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

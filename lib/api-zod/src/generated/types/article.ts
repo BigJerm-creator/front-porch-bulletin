@@ -16,6 +16,7 @@ export interface Article {
   featured: boolean;
   archived: boolean;
   photoUrl?: string | null;
+  photoCredit?: string | null;
   publishedAt: Date;
   createdAt: Date;
   updatedAt: Date;

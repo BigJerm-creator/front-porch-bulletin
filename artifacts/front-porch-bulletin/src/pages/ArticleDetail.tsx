@@ -73,6 +73,17 @@ export default function ArticleDetail() {
           </div>
         </header>
 
+        {article.photoUrl && (
+          <figure className="mb-8 border border-foreground/20">
+            <img src={article.photoUrl} alt={article.title} className="w-full object-cover" />
+            {article.photoCredit && (
+              <figcaption className="font-mono text-xs text-foreground/50 italic text-right px-2 py-1 border-t border-foreground/10">
+                {article.photoCredit}
+              </figcaption>
+            )}
+          </figure>
+        )}
+
         <article className="prose prose-stone prose-lg max-w-none font-serif leading-loose column-gap md:columns-2">
           <p className="first-letter-drop">
             <span className="font-bold text-xs uppercase tracking-wider font-mono mr-2">

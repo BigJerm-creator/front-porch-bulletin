@@ -35,6 +35,7 @@ export default function AdminArticleForm() {
   const isEditing = !!params?.id;
   const articleId = isEditing ? parseInt(params.id!) : 0;
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  const [photoCredit, setPhotoCredit] = useState<string>("");
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -72,6 +73,7 @@ export default function AdminArticleForm() {
         publishedAt: article.publishedAt.split('T')[0],
       });
       setPhotoUrl(article.photoUrl ?? null);
+      setPhotoCredit(article.photoCredit ?? "");
     }
   }, [isEditing, article, form]);
 
@@ -80,6 +82,7 @@ export default function AdminArticleForm() {
       const formattedValues = {
         ...values,
         photoUrl,
+        photoCredit: photoCredit.trim() || null,
         publishedAt: new Date(values.publishedAt).toISOString(),
       };
 
@@ -234,12 +237,23 @@ export default function AdminArticleForm() {
               )}
             />
 
-            <div className="border-2 border-foreground/20 p-4 bg-[#f5f0e8]">
+            <div className="border-2 border-foreground/20 p-4 bg-[#f5f0e8] space-y-3">
               <ImageUpload
                 value={photoUrl}
                 onChange={setPhotoUrl}
                 label="Lead Photo (optional)"
               />
+              {photoUrl && (
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-widest mb-1">Photo Credit</label>
+                  <Input
+                    value={photoCredit}
+                    onChange={(e) => setPhotoCredit(e.target.value)}
+                    className="rounded-none border-2 border-foreground font-serif text-sm"
+                    placeholder="e.g. Photo by Jane Smith"
+                  />
+                </div>
+              )}
             </div>
 
             <FormField

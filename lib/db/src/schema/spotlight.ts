@@ -7,6 +7,7 @@ export const spotlightTable = pgTable("student_spotlight", {
   grade: text("grade").notNull(),
   description: text("description").notNull(),
   photoUrl: text("photo_url"),
+  photoCredit: text("photo_credit"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

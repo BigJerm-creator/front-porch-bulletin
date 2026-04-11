@@ -13,6 +13,7 @@ export interface Spotlight {
   grade: string;
   description: string;
   photoUrl?: string | null;
+  photoCredit?: string | null;
   createdAt: Date;
   updatedAt: Date;
 }

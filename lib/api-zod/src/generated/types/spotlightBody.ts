@@ -12,4 +12,5 @@ export interface SpotlightBody {
   grade: string;
   description: string;
   photoUrl?: string | null;
+  photoCredit?: string | null;
 }
