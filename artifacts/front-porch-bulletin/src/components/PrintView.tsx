@@ -276,23 +276,30 @@ export function PrintView() {
                 </thead>
                 <tbody>
                   {weeks.map((week, wi) => (
-                    <tr key={wi}>
+                    <tr key={wi} style={{ height: "52pt" }}>
                       {week.map((day, di) => {
+                        const baseTd: React.CSSProperties = {
+                          border: "0.5px solid " + INK,
+                          padding: "2.5pt",
+                          verticalAlign: "top",
+                          width: "14.28%",
+                          overflow: "hidden",
+                        };
                         if (!day) return (
-                          <td key={di} style={{ border: "0.5px solid " + INK, padding: "2pt", minHeight: "30pt", background: "rgba(0,0,0,0.03)" }} />
+                          <td key={di} style={{ ...baseTd, background: "rgba(0,0,0,0.03)" }} />
                         );
                         const moStr   = String(mo + 1).padStart(2, "0");
                         const dayStr  = String(day).padStart(2, "0");
                         const dateKey = `${yr}-${moStr}-${dayStr}`;
                         const evs     = eventsByDay[dateKey] ?? [];
                         return (
-                          <td key={di} style={{ border: "0.5px solid " + INK, padding: "2pt", verticalAlign: "top", minHeight: "30pt" }}>
-                            <div style={{ fontFamily: FONT_MONO, fontSize: "6pt", textAlign: "right", color: INK_MUTED, marginBottom: "1pt" }}>{day}</div>
+                          <td key={di} style={baseTd}>
+                            <div style={{ fontFamily: FONT_MONO, fontSize: "6pt", textAlign: "right", color: INK_MUTED, marginBottom: "1.5pt", lineHeight: 1 }}>{day}</div>
                             {evs.map(ev => (
-                              <div key={ev.id} style={{ borderLeft: "1.5px solid " + INK, paddingLeft: "2pt", marginBottom: "1.5pt", breakInside: "avoid" }}>
-                                <div style={{ fontFamily: FONT_SERIF, fontSize: "6.5pt", fontWeight: "bold", lineHeight: 1.2, color: INK }}>{ev.title}</div>
-                                {ev.eventTime && <div style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", color: INK, lineHeight: 1.2 }}>{ev.eventTime}</div>}
-                                {ev.location  && <div style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", color: INK, lineHeight: 1.2 }}>{ev.location}</div>}
+                              <div key={ev.id} style={{ borderLeft: "1.5px solid " + INK, paddingLeft: "2pt", marginBottom: "2pt", breakInside: "avoid" }}>
+                                <div style={{ fontFamily: FONT_SERIF, fontSize: "6pt", fontWeight: "bold", lineHeight: 1.2, color: INK }}>{ev.title}</div>
+                                {ev.eventTime && <div style={{ fontFamily: FONT_MONO, fontSize: "5pt", color: INK, lineHeight: 1.2 }}>{ev.eventTime}</div>}
+                                {ev.location  && <div style={{ fontFamily: FONT_MONO, fontSize: "5pt", color: INK, lineHeight: 1.2 }}>{ev.location}</div>}
                               </div>
                             ))}
                           </td>
