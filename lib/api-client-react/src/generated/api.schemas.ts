@@ -123,6 +123,44 @@ export interface SpotlightBody {
   photoUrl?: string | null;
 }
 
+export interface BusinessSpotlight {
+  id: number;
+  name: string;
+  businessType: string;
+  description: string;
+  photoUrl?: string | null;
+  photoCredit?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BusinessSpotlightBody {
+  name: string;
+  businessType: string;
+  description: string;
+  photoUrl?: string | null;
+  photoCredit?: string | null;
+}
+
+export interface GroupSpotlight {
+  id: number;
+  name: string;
+  groupType: string;
+  description: string;
+  photoUrl?: string | null;
+  photoCredit?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GroupSpotlightBody {
+  name: string;
+  groupType: string;
+  description: string;
+  photoUrl?: string | null;
+  photoCredit?: string | null;
+}
+
 export interface Church {
   id: number;
   name: string;

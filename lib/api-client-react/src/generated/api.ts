@@ -21,10 +21,14 @@ import type {
   ArchiveArticleBody,
   Article,
   ArticlesSummary,
+  BusinessSpotlight,
+  BusinessSpotlightBody,
   Church,
   ChurchBody,
   CreateArticleBody,
   GetFeaturedArticles200,
+  GroupSpotlight,
+  GroupSpotlightBody,
   HealthStatus,
   ListAdminUsers200,
   ListArticles200,
@@ -1133,6 +1137,268 @@ export const useUpdateSpotlight = <
   TContext
 > => {
   return useMutation(getUpdateSpotlightMutationOptions(options));
+};
+
+/**
+ * @summary Get the current business spotlight
+ */
+export const getGetBusinessSpotlightUrl = () => {
+  return `/api/business-spotlight`;
+};
+
+export const getBusinessSpotlight = async (
+  options?: RequestInit,
+): Promise<BusinessSpotlight> => {
+  return customFetch<BusinessSpotlight>(getGetBusinessSpotlightUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetBusinessSpotlightQueryKey = () => {
+  return [`/api/business-spotlight`] as const;
+};
+
+export const getGetBusinessSpotlightQueryOptions = <
+  TData = Awaited<ReturnType<typeof getBusinessSpotlight>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getBusinessSpotlight>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+  const queryKey = queryOptions?.queryKey ?? getGetBusinessSpotlightQueryKey();
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getBusinessSpotlight>>> = ({
+    signal,
+  }) => getBusinessSpotlight({ signal, ...requestOptions });
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getBusinessSpotlight>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetBusinessSpotlightQueryResult = NonNullable<Awaited<ReturnType<typeof getBusinessSpotlight>>>;
+export type GetBusinessSpotlightQueryError = ErrorType<void>;
+
+export function useGetBusinessSpotlight<
+  TData = Awaited<ReturnType<typeof getBusinessSpotlight>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<Awaited<ReturnType<typeof getBusinessSpotlight>>, TError, TData>;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetBusinessSpotlightQueryOptions(options);
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const getUpdateBusinessSpotlightUrl = () => {
+  return `/api/business-spotlight`;
+};
+
+export const updateBusinessSpotlight = async (
+  businessSpotlightBody: BusinessSpotlightBody,
+  options?: RequestInit,
+): Promise<BusinessSpotlight> => {
+  return customFetch<BusinessSpotlight>(getUpdateBusinessSpotlightUrl(), {
+    ...options,
+    method: "PUT",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(businessSpotlightBody),
+  });
+};
+
+export const getUpdateBusinessSpotlightMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateBusinessSpotlight>>,
+    TError,
+    { data: BodyType<BusinessSpotlightBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateBusinessSpotlight>>,
+  TError,
+  { data: BodyType<BusinessSpotlightBody> },
+  TContext
+> => {
+  const mutationKey = ["updateBusinessSpotlight"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateBusinessSpotlight>>,
+    { data: BodyType<BusinessSpotlightBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+    return updateBusinessSpotlight(data, requestOptions);
+  };
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateBusinessSpotlightMutationResult = NonNullable<Awaited<ReturnType<typeof updateBusinessSpotlight>>>;
+export type UpdateBusinessSpotlightMutationBody = BodyType<BusinessSpotlightBody>;
+export type UpdateBusinessSpotlightMutationError = ErrorType<void>;
+
+export const useUpdateBusinessSpotlight = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateBusinessSpotlight>>,
+    TError,
+    { data: BodyType<BusinessSpotlightBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateBusinessSpotlight>>,
+  TError,
+  { data: BodyType<BusinessSpotlightBody> },
+  TContext
+> => {
+  return useMutation(getUpdateBusinessSpotlightMutationOptions(options));
+};
+
+/**
+ * @summary Get the current group spotlight
+ */
+export const getGetGroupSpotlightUrl = () => {
+  return `/api/group-spotlight`;
+};
+
+export const getGroupSpotlight = async (
+  options?: RequestInit,
+): Promise<GroupSpotlight> => {
+  return customFetch<GroupSpotlight>(getGetGroupSpotlightUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetGroupSpotlightQueryKey = () => {
+  return [`/api/group-spotlight`] as const;
+};
+
+export const getGetGroupSpotlightQueryOptions = <
+  TData = Awaited<ReturnType<typeof getGroupSpotlight>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getGroupSpotlight>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+  const queryKey = queryOptions?.queryKey ?? getGetGroupSpotlightQueryKey();
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getGroupSpotlight>>> = ({
+    signal,
+  }) => getGroupSpotlight({ signal, ...requestOptions });
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getGroupSpotlight>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetGroupSpotlightQueryResult = NonNullable<Awaited<ReturnType<typeof getGroupSpotlight>>>;
+export type GetGroupSpotlightQueryError = ErrorType<void>;
+
+export function useGetGroupSpotlight<
+  TData = Awaited<ReturnType<typeof getGroupSpotlight>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<Awaited<ReturnType<typeof getGroupSpotlight>>, TError, TData>;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetGroupSpotlightQueryOptions(options);
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & { queryKey: QueryKey };
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const getUpdateGroupSpotlightUrl = () => {
+  return `/api/group-spotlight`;
+};
+
+export const updateGroupSpotlight = async (
+  groupSpotlightBody: GroupSpotlightBody,
+  options?: RequestInit,
+): Promise<GroupSpotlight> => {
+  return customFetch<GroupSpotlight>(getUpdateGroupSpotlightUrl(), {
+    ...options,
+    method: "PUT",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(groupSpotlightBody),
+  });
+};
+
+export const getUpdateGroupSpotlightMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateGroupSpotlight>>,
+    TError,
+    { data: BodyType<GroupSpotlightBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateGroupSpotlight>>,
+  TError,
+  { data: BodyType<GroupSpotlightBody> },
+  TContext
+> => {
+  const mutationKey = ["updateGroupSpotlight"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && "mutationKey" in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateGroupSpotlight>>,
+    { data: BodyType<GroupSpotlightBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+    return updateGroupSpotlight(data, requestOptions);
+  };
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateGroupSpotlightMutationResult = NonNullable<Awaited<ReturnType<typeof updateGroupSpotlight>>>;
+export type UpdateGroupSpotlightMutationBody = BodyType<GroupSpotlightBody>;
+export type UpdateGroupSpotlightMutationError = ErrorType<void>;
+
+export const useUpdateGroupSpotlight = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateGroupSpotlight>>,
+    TError,
+    { data: BodyType<GroupSpotlightBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateGroupSpotlight>>,
+  TError,
+  { data: BodyType<GroupSpotlightBody> },
+  TContext
+> => {
+  return useMutation(getUpdateGroupSpotlightMutationOptions(options));
 };
 
 /**

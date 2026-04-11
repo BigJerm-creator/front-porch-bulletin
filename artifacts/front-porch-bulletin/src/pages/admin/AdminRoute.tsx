@@ -8,6 +8,8 @@ import AdminArticleForm from "./AdminArticleForm";
 import AdminCategories from "./AdminCategories";
 import AdminUsers from "./AdminUsers";
 import AdminSpotlight from "./AdminSpotlight";
+import AdminBusinessSpotlight from "./AdminBusinessSpotlight";
+import AdminGroupSpotlight from "./AdminGroupSpotlight";
 import AdminChurches from "./AdminChurches";
 import AdminCalendar from "./AdminCalendar";
 import { Newspaper } from "lucide-react";
@@ -53,6 +55,8 @@ export default function AdminRoute() {
               <Route path="/admin/articles/:id/edit" component={AdminArticleForm} />
               <Route path="/admin/categories" component={AdminCategories} />
               <Route path="/admin/spotlight" component={AdminSpotlight} />
+              <Route path="/admin/business-spotlight" component={AdminBusinessSpotlight} />
+              <Route path="/admin/group-spotlight" component={AdminGroupSpotlight} />
               <Route path="/admin/churches" component={AdminChurches} />
               <Route path="/admin/calendar" component={AdminCalendar} />
               <Route path="/admin/users" component={AdminUsers} />

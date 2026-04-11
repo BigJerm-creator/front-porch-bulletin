@@ -1,0 +1,14 @@
+import { pgTable, text, serial, timestamp } from "drizzle-orm/pg-core";
+
+export const groupSpotlightTable = pgTable("group_spotlight", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  groupType: text("group_type").notNull(),
+  description: text("description").notNull(),
+  photoUrl: text("photo_url"),
+  photoCredit: text("photo_credit"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export type GroupSpotlight = typeof groupSpotlightTable.$inferSelect;
