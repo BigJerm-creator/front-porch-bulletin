@@ -135,29 +135,6 @@ export function PrintView() {
         )}
       </div>
 
-      {/* ── Church Directory ── */}
-      {churches.length > 0 && (
-        <div style={{ marginBottom: "10pt" }}>
-          <div style={sectionHeading}>Church Directory</div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "5pt 10pt" }}>
-            {churches.map(church => (
-              <div key={church.id} style={{ borderLeft: "2px solid " + INK, paddingLeft: "5pt", breakInside: "avoid" }}>
-                <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "8.5pt", lineHeight: 1.1, margin: "0 0 1pt" }}>{church.name}</p>
-                {church.pastor && (
-                  <p style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.08em", color: INK_MUTED, margin: "0 0 1pt" }}>{church.pastor}</p>
-                )}
-                {church.serviceTimes && (
-                  <p style={{ fontSize: "7.5pt", lineHeight: 1.3, margin: "0 0 1pt", color: "#333" }}>{church.serviceTimes}</p>
-                )}
-                {church.phone && (
-                  <p style={{ fontFamily: FONT_MONO, fontSize: "6pt", color: INK_MUTED, margin: 0 }}>{church.phone}</p>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* ══════════════════ PAGE BREAK ══════════════════ */}
       <div style={{ pageBreakBefore: "always", breakBefore: "page" }} />
 
@@ -177,7 +154,7 @@ export function PrintView() {
           The Front Porch Bulletin
         </span>
         <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.12em", color: INK_MUTED }}>
-          Community Spotlights &nbsp;&middot;&nbsp; {formatDate(today)}
+          Community Pages &nbsp;&middot;&nbsp; {formatDate(today)}
         </span>
         <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.12em", color: INK_MUTED }}>
           Page 2
@@ -266,31 +243,30 @@ export function PrintView() {
         )}
       </div>
 
-      {/* Page break before calendar if spotlights take too much space, otherwise calendar follows naturally */}
-      <div style={{ pageBreakBefore: "always", breakBefore: "page" }} />
+      {/* ── Church Directory ── */}
+      {churches.length > 0 && (
+        <div style={{ marginTop: "10pt", marginBottom: "10pt" }}>
+          <div style={sectionHeading}>Church Directory</div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "5pt 10pt" }}>
+            {churches.map(church => (
+              <div key={church.id} style={{ borderLeft: "2px solid " + INK, paddingLeft: "5pt", breakInside: "avoid" }}>
+                <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "8.5pt", lineHeight: 1.1, margin: "0 0 1pt" }}>{church.name}</p>
+                {church.pastor && (
+                  <p style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.08em", color: INK_MUTED, margin: "0 0 1pt" }}>{church.pastor}</p>
+                )}
+                {church.serviceTimes && (
+                  <p style={{ fontSize: "7.5pt", lineHeight: 1.3, margin: "0 0 1pt", color: "#333" }}>{church.serviceTimes}</p>
+                )}
+                {church.phone && (
+                  <p style={{ fontFamily: FONT_MONO, fontSize: "6pt", color: INK_MUTED, margin: 0 }}>{church.phone}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
-      {/* ══════════════════ PAGE 3 ══════════════════ */}
-      <div style={{
-        borderBottom: "2.5px solid " + INK,
-        borderTop: "2.5px solid " + INK,
-        padding: "2.5pt 0",
-        marginBottom: "8pt",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-      }}>
-        <span style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "9pt", letterSpacing: "0.02em" }}>
-          The Front Porch Bulletin
-        </span>
-        <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.12em", color: INK_MUTED }}>
-          Community Calendar &nbsp;&middot;&nbsp; {formatDate(today)}
-        </span>
-        <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.12em", color: INK_MUTED }}>
-          Page 3
-        </span>
-      </div>
-
-      {/* Community listings — full width */}
+      {/* ── Community Calendar ── */}
       <div>
 
         {/* Community Calendar — monthly grid */}
