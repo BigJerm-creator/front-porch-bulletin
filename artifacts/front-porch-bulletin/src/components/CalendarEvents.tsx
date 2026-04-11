@@ -117,7 +117,7 @@ export function CalendarEvents() {
           <div className="py-12 text-center font-mono text-xs text-foreground/40 uppercase tracking-widest">Loading...</div>
         ) : (
           weeks.map((week, wi) => (
-            <div key={wi} className="grid grid-cols-7 border-b last:border-b-0 border-foreground" style={{ minHeight: "90px" }}>
+            <div key={wi} className="grid grid-cols-7 border-b last:border-b-0 border-foreground" style={{ minHeight: "100px" }}>
               {week.map((day, di) => {
                 if (!day) {
                   return (
@@ -144,12 +144,15 @@ export function CalendarEvents() {
                     <div className="space-y-1 flex-1">
                       {dayEvents.map((ev) => (
                         <div key={ev.id} className="bg-foreground text-background px-1 py-0.5">
-                          <div className="font-serif text-[9px] font-bold leading-tight truncate">{ev.title}</div>
+                          <div className="font-serif text-[9px] font-bold leading-tight break-words">{ev.title}</div>
                           {ev.eventTime && (
                             <div className="font-mono text-[8px] text-background/70 leading-tight">{formatTime(ev.eventTime)}</div>
                           )}
                           {ev.location && (
-                            <div className="font-mono text-[8px] text-background/70 leading-tight truncate">{ev.location}</div>
+                            <div className="font-mono text-[8px] text-background/70 leading-tight break-words">{ev.location}</div>
+                          )}
+                          {ev.description && (
+                            <div className="font-serif text-[8px] text-background/60 leading-tight mt-0.5 break-words">{ev.description}</div>
                           )}
                         </div>
                       ))}
