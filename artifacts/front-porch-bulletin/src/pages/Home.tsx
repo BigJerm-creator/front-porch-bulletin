@@ -4,6 +4,8 @@ import { Layout } from "@/components/layout/Layout";
 import { ArticleTeaser } from "@/components/ArticleTeaser";
 import { NewspaperSkeleton } from "@/components/ui/newspaper-skeleton";
 import { StudentSpotlight } from "@/components/StudentSpotlight";
+import { BusinessSpotlight } from "@/components/BusinessSpotlight";
+import { GroupSpotlight } from "@/components/GroupSpotlight";
 import { ChurchDirectory } from "@/components/ChurchDirectory";
 import { CalendarEvents } from "@/components/CalendarEvents";
 import { PrintView } from "@/components/PrintView";
@@ -30,23 +32,11 @@ export default function Home() {
             <>
               {/* PAGE 1: Two-column front page */}
               <div className="flex flex-col lg:flex-row lg:divide-x lg:divide-foreground gap-0">
-                {/* Left sidebar — Student Spotlight + Upcoming Events */}
+                {/* Left sidebar — Student, Business & Group Spotlights */}
                 <div className="order-2 lg:order-1 w-full lg:w-1/3 lg:pr-6 pt-6 lg:pt-0 border-t border-foreground lg:border-t-0">
                   <StudentSpotlight />
-                  <h2 className="font-headline text-xs uppercase tracking-widest font-bold border-b border-foreground pb-1 mb-4">
-                    Upcoming Events
-                  </h2>
-                  {featuredData?.secondary && featuredData.secondary.length > 0 ? (
-                    <div className="space-y-5 divide-y divide-foreground/20">
-                      {featuredData.secondary.map((article) => (
-                        <div key={article.id} className="pt-5 first:pt-0">
-                          <ArticleTeaser article={article} />
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm font-serif text-foreground/60 italic">No upcoming events this week.</p>
-                  )}
+                  <BusinessSpotlight />
+                  <GroupSpotlight />
                 </div>
 
                 {/* Right main column — Headline + community listings */}
