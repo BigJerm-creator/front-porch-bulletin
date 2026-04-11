@@ -41,7 +41,7 @@ export function StudentSpotlight() {
       </div>
       {data.photoCredit && (
         <p className="text-[10px] font-mono italic text-foreground/50 text-right mt-0.5 mb-1">
-          {data.photoCredit}
+          Picture Credit — {data.photoCredit}
         </p>
       )}
 

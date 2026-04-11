@@ -78,7 +78,7 @@ export default function ArticleDetail() {
             <img src={article.photoUrl} alt={article.title} className="w-full object-cover border border-foreground/20" />
             {article.photoCredit && (
               <figcaption className="font-mono text-xs text-foreground/50 italic text-right mt-1">
-                {article.photoCredit}
+                Picture Credit — {article.photoCredit}
               </figcaption>
             )}
           </figure>
