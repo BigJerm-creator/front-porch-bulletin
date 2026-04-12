@@ -243,20 +243,20 @@ export function PrintView() {
 
       {/* ── Church Directory ── */}
       {churches.length > 0 && (
-        <div style={{ marginTop: "10pt", marginBottom: "10pt" }}>
+        <div style={{ marginTop: "6pt", marginBottom: "6pt" }}>
           <div style={sectionHeading}>Church Directory</div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "5pt 10pt" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "3pt 8pt" }}>
             {churches.map(church => (
-              <div key={church.id} style={{ borderLeft: "2px solid " + INK, paddingLeft: "5pt", breakInside: "avoid" }}>
-                <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "8.5pt", lineHeight: 1.1, margin: "0 0 1pt" }}>{church.name}</p>
+              <div key={church.id} style={{ borderLeft: "1.5px solid " + INK, paddingLeft: "4pt", breakInside: "avoid" }}>
+                <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "7pt", lineHeight: 1.1, margin: "0 0 0.5pt" }}>{church.name}</p>
                 {church.pastor && (
-                  <p style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.08em", color: INK_MUTED, margin: "0 0 1pt" }}>{church.pastor}</p>
+                  <p style={{ fontFamily: FONT_MONO, fontSize: "5pt", textTransform: "uppercase", letterSpacing: "0.06em", color: INK_MUTED, margin: "0 0 0.5pt" }}>{church.pastor}</p>
                 )}
                 {church.serviceTimes && (
-                  <p style={{ fontSize: "7.5pt", lineHeight: 1.3, margin: "0 0 1pt", color: "#333" }}>{church.serviceTimes}</p>
+                  <p style={{ fontSize: "6pt", lineHeight: 1.2, margin: "0 0 0.5pt", color: "#333" }}>{church.serviceTimes}</p>
                 )}
                 {church.phone && (
-                  <p style={{ fontFamily: FONT_MONO, fontSize: "6pt", color: INK_MUTED, margin: 0 }}>{church.phone}</p>
+                  <p style={{ fontFamily: FONT_MONO, fontSize: "5pt", color: INK_MUTED, margin: 0 }}>{church.phone}</p>
                 )}
               </div>
             ))}
