@@ -163,7 +163,7 @@
   body {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
-    background-color: hsl(36, 33%, 94%) !important;
+    background-color: #ffffff !important;
   }
 
   /* Hide the screen layout entirely when printing */
