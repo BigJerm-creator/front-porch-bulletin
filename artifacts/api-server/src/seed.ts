@@ -3,32 +3,22 @@ import { sql } from "drizzle-orm";
 import { logger } from "./lib/logger";
 
 export async function seedIfEmpty(): Promise<void> {
-  const client = await pool.connect();
-  let count = 0;
-  try {
-    const { rows } = await client.query("SELECT COUNT(*)::int AS n FROM articles");
-    count = rows[0]?.n ?? 0;
-  } finally {
-    client.release();
-  }
-
-  if (count > 0) {
-    logger.info({ count }, "Database already has data — skipping seed");
-    return;
-  }
-
-  logger.info("Database is empty — seeding from dev snapshot...");
+  logger.info("Running seed upsert — applying canonical data snapshot...");
 
   // ── Categories ──────────────────────────────────────────────────────────────
   await db.execute(sql`
     INSERT INTO categories (id, name, slug, description, show_in_events) VALUES
-    (1,  'Front Page',        'front-page',   'The biggest stories of the week',          false),
-    (2,  'Local News',        'local-news',   'What''s happening around town',            true),
-    (3,  'Community',         'community',    'Neighbor spotlights and community events', true),
-    (5,  'Letters to the Editor', 'letters',  'Reader letters and opinions',              false),
-    (7,  'Church & Faith',    'church-faith', 'Announcements from local congregations',   false),
-    (10, 'School News',       'school-news',  'Learn about new thing happening with our Schools', true)
-    ON CONFLICT (id) DO NOTHING
+    (1,  'Front Page',            'front-page',   'The biggest stories of the week',          false),
+    (2,  'Local News',            'local-news',   'What''s happening around town',            true),
+    (3,  'Community',             'community',    'Neighbor spotlights and community events', true),
+    (5,  'Letters to the Editor', 'letters',      'Reader letters and opinions',              false),
+    (7,  'Church & Faith',        'church-faith', 'Announcements from local congregations',   false),
+    (10, 'School News',           'school-news',  'Learn about new thing happening with our Schools', true)
+    ON CONFLICT (id) DO UPDATE SET
+      name           = EXCLUDED.name,
+      slug           = EXCLUDED.slug,
+      description    = EXCLUDED.description,
+      show_in_events = EXCLUDED.show_in_events
   `);
 
   // ── Articles ─────────────────────────────────────────────────────────────────
@@ -39,9 +29,9 @@ export async function seedIfEmpty(): Promise<void> {
       'Residents asked to conserve water during two-week maintenance window',
       'After nearly three years of petitions from residents on the east side of town, the Municipal Water Authority has confirmed that repairs to the aging Elm Street water tower will begin the week of April 14th. The tower, which was constructed in 1961, has shown significant rust deterioration along its lower support struts and has been the subject of ongoing concern from the county health inspector.
 
-  Public Works Director Harold Finney told the Bulletin on Wednesday that the project will require partial drainage of the reservoir during the first week of work. "We''re asking folks to be mindful of their water use," said Finney. "Morning showers, yes. Washing the car, let''s hold off."
+Public Works Director Harold Finney told the Bulletin on Wednesday that the project will require partial drainage of the reservoir during the first week of work. "We''re asking folks to be mindful of their water use," said Finney. "Morning showers, yes. Washing the car, let''s hold off."
 
-  The two-week project is expected to cost the town approximately $84,000, a portion of which will be offset by a state infrastructure grant secured last fall by Councilwoman Dolores Hutchins. Work is set to begin at 7 a.m. and conclude by 4 p.m. on weekdays, with no weekend operations planned in consideration of the Elm Street neighborhood.',
+The two-week project is expected to cost the town approximately $84,000, a portion of which will be offset by a state infrastructure grant secured last fall by Councilwoman Dolores Hutchins. Work is set to begin at 7 a.m. and conclude by 4 p.m. on weekdays, with no weekend operations planned in consideration of the Elm Street neighborhood.',
       'Ruth Ellen Kasprowicz', 'Front Page', true,
       '2026-04-03 18:22:23.52855', '2026-04-04 18:22:23.52855', '2026-04-04 18:22:23.52855', false, NULL, NULL),
 
@@ -50,9 +40,9 @@ export async function seedIfEmpty(): Promise<void> {
       NULL,
       'After a winter hiatus that many residents called "too long," the Dairy Queen on Route 9 has confirmed that Dilly Bars will return to the menu starting Saturday, April 5th — but with a new flavor in tow: strawberry cheesecake.
 
-  Owner and operator Frank Gunderson said the new flavor was the result of a suggestion box he placed near the register last October. "Somewhere around forty people wrote ''strawberry cheesecake,'' so we figured there was something to it," Gunderson said with a laugh.
+Owner and operator Frank Gunderson said the new flavor was the result of a suggestion box he placed near the register last October. "Somewhere around forty people wrote ''strawberry cheesecake,'' so we figured there was something to it," Gunderson said with a laugh.
 
-  The original chocolate Dilly Bar will remain available. Hours are 11 a.m. to 9 p.m. Sunday through Thursday, and 11 a.m. to 10 p.m. on Fridays and Saturdays.',
+The original chocolate Dilly Bar will remain available. Hours are 11 a.m. to 9 p.m. Sunday through Thursday, and 11 a.m. to 10 p.m. on Fridays and Saturdays.',
       'Staff Reporter', 'Local News', false,
       '2026-04-02 18:22:23.52855', '2026-04-04 18:22:23.52855', '2026-04-04 18:22:23.52855', false, NULL, NULL),
 
@@ -61,11 +51,11 @@ export async function seedIfEmpty(): Promise<void> {
       'She never missed a Thursday meeting in twenty-two years',
       'Vera Louise Shipley, born March 2nd, 1936, and a resident of Millbrook her entire life, passed away peacefully at home on the evening of Monday, March 31st, surrounded by her children and grandchildren.
 
-  Vera was, by all accounts, a woman who expressed love through her hands. She joined the Millbrook Ladies Quilting Circle in 1979 and did not miss a single Thursday meeting for twenty-two years, until her health made the walks to the church hall difficult. Her quilts hang in the homes of more than sixty families in this town, and three of them are on permanent display at the county historical museum.
+Vera was, by all accounts, a woman who expressed love through her hands. She joined the Millbrook Ladies Quilting Circle in 1979 and did not miss a single Thursday meeting for twenty-two years, until her health made the walks to the church hall difficult. Her quilts hang in the homes of more than sixty families in this town, and three of them are on permanent display at the county historical museum.
 
-  She is survived by her daughter Carol Shipley-Marsh of Millbrook, her son Douglas Shipley of Prescott, four grandchildren, and one great-grandchild on the way.
+She is survived by her daughter Carol Shipley-Marsh of Millbrook, her son Douglas Shipley of Prescott, four grandchildren, and one great-grandchild on the way.
 
-  A memorial service will be held at First Lutheran Church on Saturday, April 12th, at 2 p.m. In lieu of flowers, the family asks for donations to the Millbrook Public Library children''s reading fund.',
+A memorial service will be held at First Lutheran Church on Saturday, April 12th, at 2 p.m. In lieu of flowers, the family asks for donations to the Millbrook Public Library children''s reading fund.',
       'Submitted by the Shipley Family', 'Obituaries', false,
       '2026-04-01 18:22:23.52855', '2026-04-04 18:22:23.52855', '2026-04-04 18:22:23.52855', false, NULL, NULL),
 
@@ -74,11 +64,11 @@ export async function seedIfEmpty(): Promise<void> {
       NULL,
       'St. Michael''s Catholic Church is hosting its annual spring potluck dinner on Saturday, April 19th, beginning at 5:30 p.m. in the fellowship hall. All proceeds from the $8 suggested donation at the door will go directly to the Millbrook Community Food Pantry.
 
-  Parishioners and community members alike are encouraged to bring a dish to share. The church asks that you bring enough for eight to ten servings and label any items containing common allergens. Desserts are especially welcome.
+Parishioners and community members alike are encouraged to bring a dish to share. The church asks that you bring enough for eight to ten servings and label any items containing common allergens. Desserts are especially welcome.
 
-  "We had over 200 people last year," said event organizer Sister Margaret Flannery. "Every single dollar we raised bought groceries for our neighbors. That''s what this community does."
+"We had over 200 people last year," said event organizer Sister Margaret Flannery. "Every single dollar we raised bought groceries for our neighbors. That''s what this community does."
 
-  For more information, call the church office at 555-0142.',
+For more information, call the church office at 555-0142.',
       'Staff Reporter', 'Church & Faith', false,
       '2026-03-30 18:22:23.52855', '2026-04-04 18:22:23.52855', '2026-04-04 18:22:23.52855', false, NULL, NULL),
 
@@ -87,13 +77,13 @@ export async function seedIfEmpty(): Promise<void> {
       NULL,
       'To the Editor:
 
-  I want to use this space to say something that perhaps does not get said enough: thank you to our postal carriers. I am an 81-year-old widow living on the north end of Calloway Street, and every single day, rain, snow, or blistering July heat, my mail arrives. My carrier, whose name I will not print without his permission, always makes sure my packages are left under the awning when it rains. He waves to me when I''m at the window.
+I want to use this space to say something that perhaps does not get said enough: thank you to our postal carriers. I am an 81-year-old widow living on the north end of Calloway Street, and every single day, rain, snow, or blistering July heat, my mail arrives. My carrier, whose name I will not print without his permission, always makes sure my packages are left under the awning when it rains. He waves to me when I''m at the window.
 
-  These are small things. But when you live alone, small things are not small at all.
+These are small things. But when you live alone, small things are not small at all.
 
-  Thank you.
+Thank you.
 
-  — Mildred Oakes, Millbrook',
+— Mildred Oakes, Millbrook',
       'Mildred Oakes', 'Letters to the Editor', false,
       '2026-03-28 18:22:23.52855', '2026-04-04 18:22:23.52855', '2026-04-04 18:22:23.52855', false, NULL, NULL),
 
@@ -102,9 +92,9 @@ export async function seedIfEmpty(): Promise<void> {
       NULL,
       'The Millbrook Public Library''s Spring Book Sale will be held April 25th through April 27th in the library''s community room. Books are donated by residents and past sales have included everything from bestselling fiction to cookbooks, local history, and children''s picture books.
 
-  Hardcovers are priced at $1, paperbacks at 50 cents, and children''s books at 25 cents. Library volunteers ask that buyers bring their own bags.
+Hardcovers are priced at $1, paperbacks at 50 cents, and children''s books at 25 cents. Library volunteers ask that buyers bring their own bags.
 
-  The sale runs from 9 a.m. to 5 p.m. Friday and Saturday, and 12 p.m. to 4 p.m. on Sunday. Proceeds support new acquisitions for the library''s adult and juvenile collections.',
+The sale runs from 9 a.m. to 5 p.m. Friday and Saturday, and 12 p.m. to 4 p.m. on Sunday. Proceeds support new acquisitions for the library''s adult and juvenile collections.',
       'Staff Reporter', 'Community', false,
       '2026-04-01 18:22:23.52855', '2026-04-04 18:22:23.52855', '2026-04-04 18:22:23.52855', false, NULL, NULL),
 
@@ -115,7 +105,17 @@ export async function seedIfEmpty(): Promise<void> {
       'Janice Dody', 'School News', false,
       '2026-04-10 00:00:00', '2026-04-10 14:53:19.905739', '2026-04-10 14:53:19.905739', false, NULL, NULL)
 
-    ON CONFLICT (id) DO NOTHING
+    ON CONFLICT (id) DO UPDATE SET
+      title        = EXCLUDED.title,
+      subtitle     = EXCLUDED.subtitle,
+      content      = EXCLUDED.content,
+      author       = EXCLUDED.author,
+      category     = EXCLUDED.category,
+      featured     = EXCLUDED.featured,
+      published_at = EXCLUDED.published_at,
+      archived     = EXCLUDED.archived,
+      photo_url    = EXCLUDED.photo_url,
+      photo_credit = EXCLUDED.photo_credit
   `);
 
   // ── Churches ─────────────────────────────────────────────────────────────────
@@ -139,7 +139,15 @@ export async function seedIfEmpty(): Promise<void> {
     (6, 'Voice of Hope Training Center', '123 main st', 'Bryan Londagin',
       'Sunday 10a.m.',
       '918-232-3597', 6, '2026-04-12 01:05:41.89381', NULL, NULL)
-    ON CONFLICT (id) DO NOTHING
+    ON CONFLICT (id) DO UPDATE SET
+      name          = EXCLUDED.name,
+      address       = EXCLUDED.address,
+      pastor        = EXCLUDED.pastor,
+      service_times = EXCLUDED.service_times,
+      phone         = EXCLUDED.phone,
+      sort_order    = EXCLUDED.sort_order,
+      photo_url     = EXCLUDED.photo_url,
+      photo_credit  = EXCLUDED.photo_credit
   `);
 
   // ── Student Spotlight ────────────────────────────────────────────────────────
@@ -152,7 +160,13 @@ Bottom Row (left to right):
 Natalee Deckard, Amy Ortega, Cheyanna Morgan, Hayden Wentworth, Josie Enkey',
       '/api/storage/objects/uploads/ae4c547a-b2c7-4ec0-bfb1-c5df507e7ffb',
       '2026-04-09 20:37:40.772752', '2026-04-11 17:16:08.223', 'Haskell High School')
-    ON CONFLICT (id) DO NOTHING
+    ON CONFLICT (id) DO UPDATE SET
+      name         = EXCLUDED.name,
+      school       = EXCLUDED.school,
+      grade        = EXCLUDED.grade,
+      description  = EXCLUDED.description,
+      photo_url    = EXCLUDED.photo_url,
+      photo_credit = EXCLUDED.photo_credit
   `);
 
   // ── Business Spotlight ───────────────────────────────────────────────────────
@@ -161,7 +175,12 @@ Natalee Deckard, Amy Ortega, Cheyanna Morgan, Hayden Wentworth, Josie Enkey',
     (1, 'El Jalepeno', 'Restaurant', 'Join us in celebrating the success of this hometown delight.',
       '/api/storage/objects/uploads/7e449328-84cf-4300-ac8e-05b9d53202f2', 'EL Jalepeno',
       '2026-04-11 17:57:15.807511', '2026-04-11 17:57:15.807511')
-    ON CONFLICT (id) DO NOTHING
+    ON CONFLICT (id) DO UPDATE SET
+      name          = EXCLUDED.name,
+      business_type = EXCLUDED.business_type,
+      description   = EXCLUDED.description,
+      photo_url     = EXCLUDED.photo_url,
+      photo_credit  = EXCLUDED.photo_credit
   `);
 
   // ── Group Spotlight ──────────────────────────────────────────────────────────
@@ -170,7 +189,12 @@ Natalee Deckard, Amy Ortega, Cheyanna Morgan, Hayden Wentworth, Josie Enkey',
     (1, 'Pa-A Linn Club', 'Volunteer Organization', 'Pa-A Linn Club. Old ladies having fun.',
       '/api/storage/objects/uploads/d12b0235-895a-4bcd-8442-5aee50e3b70b', 'Facebook',
       '2026-04-11 17:59:40.392546', '2026-04-11 17:59:40.392546')
-    ON CONFLICT (id) DO NOTHING
+    ON CONFLICT (id) DO UPDATE SET
+      name         = EXCLUDED.name,
+      group_type   = EXCLUDED.group_type,
+      description  = EXCLUDED.description,
+      photo_url    = EXCLUDED.photo_url,
+      photo_credit = EXCLUDED.photo_credit
   `);
 
   // ── Calendar Events ──────────────────────────────────────────────────────────
@@ -206,7 +230,12 @@ Natalee Deckard, Amy Ortega, Cheyanna Morgan, Hayden Wentworth, Josie Enkey',
     (28, 'Farmers Market',                         '2026-05-16', '08:00', 'Rieger Memorial Library', NULL, '2026-04-11 19:11:54.065994'),
     (29, 'Farmers Market',                         '2026-05-23', '08:00', 'Rieger Memorial Library', NULL, '2026-04-11 19:11:54.174001'),
     (30, 'Farmers Market',                         '2026-05-30', '08:00', 'Rieger Memorial Library', NULL, '2026-04-11 19:11:54.237326')
-    ON CONFLICT (id) DO NOTHING
+    ON CONFLICT (id) DO UPDATE SET
+      title      = EXCLUDED.title,
+      event_date = EXCLUDED.event_date,
+      event_time = EXCLUDED.event_time,
+      location   = EXCLUDED.location,
+      description = EXCLUDED.description
   `);
 
   // ── User Roles ───────────────────────────────────────────────────────────────
