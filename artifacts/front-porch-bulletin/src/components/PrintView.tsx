@@ -64,8 +64,9 @@ export function PrintView() {
       .then(d => setCalEvents(d.events ?? []));
   }, []);
 
-  const headline  = featured?.headline;
-  const churches  = churchData?.churches ?? [];
+  const headline   = featured?.headline;
+  const frontPage  = featured?.frontPage ?? (headline ? [headline] : []);
+  const churches   = churchData?.churches ?? [];
 
   return (
     <div id="print-view" style={{ fontFamily: FONT_SERIF, color: INK, fontSize: "9.5pt", padding: "5px" }}>
@@ -97,39 +98,120 @@ export function PrintView() {
         </div>
       </div>
 
-      {/* ── Headline article — full width ── */}
+      {/* ── Front Page Articles — adaptive layout ── */}
       <div style={{ marginBottom: "10pt" }}>
-        {headline ? (
-          <article>
-            <h1 style={{
-              fontFamily: FONT_HEADLINE,
-              fontWeight: "bold",
-              fontSize: "26pt",
-              lineHeight: 1.05,
-              margin: "0 0 4pt",
-              letterSpacing: "-0.01em",
-              textAlign: "center",
-            }}>{headline.title}</h1>
+        {frontPage.length === 0 ? (
+          <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", color: INK_MUTED }}>No featured story this week.</p>
 
-            {headline.subtitle && (
+        ) : frontPage.length === 1 ? (
+          /* ── Single article: full-width hero ── */
+          <article>
+            <h1 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "26pt", lineHeight: 1.05, margin: "0 0 4pt", letterSpacing: "-0.01em", textAlign: "center" }}>
+              {frontPage[0].title}
+            </h1>
+            {frontPage[0].subtitle && (
               <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "12pt", lineHeight: 1.2, margin: "0 0 4pt", color: "#333", textAlign: "center" }}>
-                {headline.subtitle}
+                {frontPage[0].subtitle}
               </p>
             )}
-
             <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 6pt", borderBottom: RULE_LIGHT, borderTop: RULE_LIGHT, padding: "3pt 0", textAlign: "center" }}>
-              By {headline.author} &nbsp;&middot;&nbsp; {headline.category} &nbsp;&middot;&nbsp; {formatDateline(headline.publishedAt)}
+              By {frontPage[0].author} &nbsp;&middot;&nbsp; {formatDateline(frontPage[0].publishedAt)}
             </p>
-
             <p style={{ fontSize: "9.5pt", lineHeight: 1.5, margin: 0, textAlign: "justify" }}>
               <span style={{ fontFamily: FONT_MONO, fontWeight: "bold", fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", marginRight: "3pt" }}>
-                {formatDateline(headline.publishedAt)}—
+                {formatDateline(frontPage[0].publishedAt)}—
               </span>
-              {headline.content}
+              {frontPage[0].content}
             </p>
           </article>
+
+        ) : frontPage.length === 2 ? (
+          /* ── Two articles: dominant left + secondary right ── */
+          <div style={{ display: "grid", gridTemplateColumns: "3fr 2fr", gap: "0", alignItems: "flex-start" }}>
+            {/* Lead — left */}
+            <div style={{ paddingRight: "10pt", borderRight: RULE }}>
+              <h1 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "20pt", lineHeight: 1.05, margin: "0 0 3pt", letterSpacing: "-0.01em" }}>
+                {frontPage[0].title}
+              </h1>
+              {frontPage[0].subtitle && (
+                <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "10pt", lineHeight: 1.2, margin: "0 0 3pt", color: "#333" }}>
+                  {frontPage[0].subtitle}
+                </p>
+              )}
+              <p style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 5pt", borderBottom: RULE_LIGHT, padding: "2pt 0" }}>
+                By {frontPage[0].author} &nbsp;&middot;&nbsp; {formatDateline(frontPage[0].publishedAt)}
+              </p>
+              <p style={{ fontSize: "9pt", lineHeight: 1.5, margin: 0, textAlign: "justify" }}>
+                <span style={{ fontFamily: FONT_MONO, fontWeight: "bold", fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.1em", marginRight: "3pt" }}>
+                  {formatDateline(frontPage[0].publishedAt)}—
+                </span>
+                {frontPage[0].content.split('\n\n')[0]}
+              </p>
+            </div>
+            {/* Secondary — right */}
+            <div style={{ paddingLeft: "10pt" }}>
+              <h2 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "14pt", lineHeight: 1.1, margin: "0 0 3pt" }}>
+                {frontPage[1].title}
+              </h2>
+              {frontPage[1].subtitle && (
+                <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "8.5pt", lineHeight: 1.2, margin: "0 0 3pt", color: "#333" }}>
+                  {frontPage[1].subtitle}
+                </p>
+              )}
+              <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 5pt", borderBottom: RULE_LIGHT, padding: "2pt 0" }}>
+                By {frontPage[1].author} &nbsp;&middot;&nbsp; {formatDateline(frontPage[1].publishedAt)}
+              </p>
+              <p style={{ fontSize: "8.5pt", lineHeight: 1.45, margin: 0, textAlign: "justify" }}>
+                {frontPage[1].content.split('\n\n')[0]}
+              </p>
+            </div>
+          </div>
+
         ) : (
-          <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", color: INK_MUTED }}>No featured story this week.</p>
+          /* ── Three or more: hero on top, columns below ── */
+          <div>
+            {/* Lead — full width */}
+            <div style={{ paddingBottom: "8pt", marginBottom: "8pt", borderBottom: RULE_LIGHT }}>
+              <h1 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "22pt", lineHeight: 1.05, margin: "0 0 3pt", letterSpacing: "-0.01em", textAlign: "center" }}>
+                {frontPage[0].title}
+              </h1>
+              {frontPage[0].subtitle && (
+                <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "11pt", lineHeight: 1.2, margin: "0 0 3pt", color: "#333", textAlign: "center" }}>
+                  {frontPage[0].subtitle}
+                </p>
+              )}
+              <p style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 5pt", borderBottom: RULE_LIGHT, borderTop: RULE_LIGHT, padding: "2pt 0", textAlign: "center" }}>
+                By {frontPage[0].author} &nbsp;&middot;&nbsp; {formatDateline(frontPage[0].publishedAt)}
+              </p>
+              <p style={{ fontSize: "9pt", lineHeight: 1.5, margin: 0, textAlign: "justify" }}>
+                <span style={{ fontFamily: FONT_MONO, fontWeight: "bold", fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.1em", marginRight: "3pt" }}>
+                  {formatDateline(frontPage[0].publishedAt)}—
+                </span>
+                {frontPage[0].content.split('\n\n')[0]}
+              </p>
+            </div>
+            {/* Remaining — equal columns */}
+            <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(frontPage.length - 1, 3)}, 1fr)`, gap: "0" }}>
+              {frontPage.slice(1, 4).map((art, i) => (
+                <div key={art.id} style={{ paddingLeft: i > 0 ? "10pt" : 0, paddingRight: i < Math.min(frontPage.length - 2, 2) ? "10pt" : 0, borderLeft: i > 0 ? RULE : "none" }}>
+                  <h2 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "12pt", lineHeight: 1.1, margin: "0 0 2pt" }}>
+                    {art.title}
+                  </h2>
+                  {art.subtitle && (
+                    <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "8pt", lineHeight: 1.2, margin: "0 0 2pt", color: "#333" }}>
+                      {art.subtitle}
+                    </p>
+                  )}
+                  <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 4pt", borderBottom: RULE_LIGHT, padding: "1.5pt 0" }}>
+                    By {art.author} &nbsp;&middot;&nbsp; {formatDateline(art.publishedAt)}
+                  </p>
+                  <p style={{ fontSize: "8pt", lineHeight: 1.4, margin: 0, textAlign: "justify" }}>
+                    {art.content.split('\n\n')[0]}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
       </div>
 
