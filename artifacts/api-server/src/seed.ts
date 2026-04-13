@@ -68,21 +68,6 @@ For more information, call the church office at 555-0142.',
       'Staff Reporter', 'Church & Faith', false,
       '2026-03-30 18:22:23.52855', '2026-04-04 18:22:23.52855', '2026-04-04 18:22:23.52855', false, NULL, NULL),
 
-    (7,
-      'A Letter of Thanks to Our Postal Carriers',
-      NULL,
-      'To the Editor:
-
-I want to use this space to say something that perhaps does not get said enough: thank you to our postal carriers. I am an 81-year-old widow living on the north end of Calloway Street, and every single day, rain, snow, or blistering July heat, my mail arrives. My carrier, whose name I will not print without his permission, always makes sure my packages are left under the awning when it rains. He waves to me when I''m at the window.
-
-These are small things. But when you live alone, small things are not small at all.
-
-Thank you.
-
-— Mildred Oakes, Millbrook',
-      'Mildred Oakes', 'Letters to the Editor', false,
-      '2026-03-28 18:22:23.52855', '2026-04-04 18:22:23.52855', '2026-04-04 18:22:23.52855', false, NULL, NULL),
-
     (10,
       'Library Spring Book Sale Returns — Hardcovers $1, Paperbacks 50 Cents',
       NULL,
@@ -102,6 +87,31 @@ The sale runs from 9 a.m. to 5 p.m. Friday and Saturday, and 12 p.m. to 4 p.m. o
       '2026-04-10 00:00:00', '2026-04-10 14:53:19.905739', '2026-04-10 14:53:19.905739', false, NULL, NULL)
 
     ON CONFLICT (id) DO NOTHING
+  `);
+
+  // ── Article 7 — kept separate so edits here flow to both environments ────────
+  await db.execute(sql`
+    INSERT INTO articles (id, title, subtitle, content, author, category, featured, published_at, created_at, updated_at, archived, photo_url, photo_credit) VALUES
+    (7,
+      'A Letter from the Editor',
+      NULL,
+      'From the Editor;
+
+This is a letter from the editor to express our gratitude to all the patrons who have helped to build this into what it is. ',
+      'Ashley Morgan', 'Letters to the Editor', false,
+      '2026-03-28 00:00:00', '2026-04-13 17:35:34.35', '2026-04-13 17:35:34.35', false, NULL, NULL)
+    ON CONFLICT (id) DO UPDATE SET
+      title        = EXCLUDED.title,
+      subtitle     = EXCLUDED.subtitle,
+      content      = EXCLUDED.content,
+      author       = EXCLUDED.author,
+      category     = EXCLUDED.category,
+      featured     = EXCLUDED.featured,
+      published_at = EXCLUDED.published_at,
+      updated_at   = EXCLUDED.updated_at,
+      archived     = EXCLUDED.archived,
+      photo_url    = EXCLUDED.photo_url,
+      photo_credit = EXCLUDED.photo_credit
   `);
 
   // ── Churches ─────────────────────────────────────────────────────────────────
@@ -215,7 +225,8 @@ Natalee Deckard, Amy Ortega, Cheyanna Morgan, Hayden Wentworth, Josie Enkey',
     (27, 'Farmers Market',                         '2026-05-09', '08:00', 'Rieger Memorial Library', NULL, '2026-04-11 19:11:53.975756'),
     (28, 'Farmers Market',                         '2026-05-16', '08:00', 'Rieger Memorial Library', NULL, '2026-04-11 19:11:54.065994'),
     (29, 'Farmers Market',                         '2026-05-23', '08:00', 'Rieger Memorial Library', NULL, '2026-04-11 19:11:54.174001'),
-    (30, 'Farmers Market',                         '2026-05-30', '08:00', 'Rieger Memorial Library', NULL, '2026-04-11 19:11:54.237326')
+    (30, 'Farmers Market',                         '2026-05-30', '08:00', 'Rieger Memorial Library', NULL, '2026-04-11 19:11:54.237326'),
+    (31, 'All Sports Camp',                        '2026-05-12', '08:00', 'Haskell High School',     '1-12 grades', '2026-04-13 16:16:44.363916')
     ON CONFLICT (id) DO NOTHING
   `);
 
