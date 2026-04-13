@@ -3,7 +3,7 @@ import { sql } from "drizzle-orm";
 import { logger } from "./lib/logger";
 
 export async function seedIfEmpty(): Promise<void> {
-  logger.info("Running seed upsert — applying canonical data snapshot...");
+  logger.info("Running seed — inserting any missing base records...");
 
   // ── Categories ──────────────────────────────────────────────────────────────
   await db.execute(sql`
@@ -14,11 +14,7 @@ export async function seedIfEmpty(): Promise<void> {
     (5,  'Letters to the Editor', 'letters',      'Reader letters and opinions',              false),
     (7,  'Church & Faith',        'church-faith', 'Announcements from local congregations',   false),
     (10, 'School News',           'school-news',  'Learn about new thing happening with our Schools', true)
-    ON CONFLICT (id) DO UPDATE SET
-      name           = EXCLUDED.name,
-      slug           = EXCLUDED.slug,
-      description    = EXCLUDED.description,
-      show_in_events = EXCLUDED.show_in_events
+    ON CONFLICT (id) DO NOTHING
   `);
 
   // ── Articles ─────────────────────────────────────────────────────────────────
@@ -105,73 +101,55 @@ The sale runs from 9 a.m. to 5 p.m. Friday and Saturday, and 12 p.m. to 4 p.m. o
       'Janice Dody', 'School News', false,
       '2026-04-10 00:00:00', '2026-04-10 14:53:19.905739', '2026-04-10 14:53:19.905739', false, NULL, NULL)
 
-    ON CONFLICT (id) DO UPDATE SET
-      title        = EXCLUDED.title,
-      subtitle     = EXCLUDED.subtitle,
-      content      = EXCLUDED.content,
-      author       = EXCLUDED.author,
-      category     = EXCLUDED.category,
-      featured     = EXCLUDED.featured,
-      published_at = EXCLUDED.published_at,
-      archived     = EXCLUDED.archived,
-      photo_url    = EXCLUDED.photo_url,
-      photo_credit = EXCLUDED.photo_credit
+    ON CONFLICT (id) DO NOTHING
   `);
 
   // ── Churches ─────────────────────────────────────────────────────────────────
   await db.execute(sql`
     INSERT INTO churches (id, name, address, pastor, service_times, phone, sort_order, created_at, photo_url, photo_credit) VALUES
-    (1, 'First Baptist Church',  '1401 N Haskell Blvd., Haskell, Ok', 'Pastor Tim Hare',
+    (1,  'First Baptist Church',               '1401 N Haskell Blvd., Haskell, Ok',        'Pastor Tim Hare',
       'Sunday Breakfast 9:00 am Small Groups 9:45 am Worship 10:45 am| Wednesday Golden Agers 10:00 am  Hot meal 5:15 pm (During the school year) Kingdom Kids 6:00 pm (During the school year) Youth Group 6:00 pm',
       '(918) 482-3225', 1, '2026-04-09 20:37:40.772752', NULL, NULL),
-    (2, 'First Free Will Baptist', '500 W. Skelly Road', 'Pastor No one',
+    (2,  'First Free Will Baptist',             '500 W. Skelly Road',                       'Pastor No one',
       'Sun. Small Groups 10:00 am Worship 10:50 am  & 6:00 pm | Wed. 7 pm',
       '(918) 482-3410', 2, '2026-04-09 20:37:40.772752', NULL, NULL),
-    (3, 'First Assembly of God', '409 W. Cedar St., Haskell, Ok', 'Rev. Donald Jr. Hogue & Cathy Hogue',
+    (3,  'First Assembly of God',               '409 W. Cedar St., Haskell, Ok',            'Rev. Donald Jr. Hogue & Cathy Hogue',
       'Sat. 5:30pm | Sun. 8am & 10:30am',
       '(918) 482-5645', 3, '2026-04-09 20:37:40.772752', NULL, NULL),
-    (4, 'Central Church of Christ', '402 W. Main St., Haskell, Ok', 'Rev. Sandra Hobbs',
+    (4,  'Central Church of Christ',            '402 W. Main St., Haskell, Ok',             'Rev. Sandra Hobbs',
       'Sunday Bible Class 9:30 am & Worship10:30am Evening Worship 5:00 pm | Wed. 7:00 pm',
       '(918) 482-9999', 4, '2026-04-09 20:37:40.772752', NULL, NULL),
-    (5, 'Landmark Bible Church', '221 N. Broadway, Haskell, Ok', 'Pastor Kevin Troup',
+    (5,  'Landmark Bible Church',               '221 N. Broadway, Haskell, Ok',             'Pastor Kevin Troup',
       'Sun. 10:30am & 6pm | Wed. 7pm',
       '(918) 482-9289', 5, '2026-04-09 20:37:40.772752', NULL, NULL),
-    (6,  'Voice of Hope Training Center',        '123 main st',                              'Bryan Londagin',
+    (6,  'Voice of Hope Training Center',       '123 main st',                              'Bryan Londagin',
       'Sunday 10a.m.',
       '918-232-3597', 6, '2026-04-12 01:05:41.89381', NULL, NULL),
-    (7,  'Eastside First Baptist',                'W. Main St. Haskell, Ok',                  'Pastor Unknown',
+    (7,  'Eastside First Baptist',              'W. Main St. Haskell, Ok',                  'Pastor Unknown',
       'Sunday Unknown',
       '(918) 482-1223', 7, '2026-04-12 14:11:02.888651', NULL, NULL),
-    (8,  'First United Methodist',                '301 W Main St.',                           'Pastor Unknown',
+    (8,  'First United Methodist',              '301 W Main St.',                           'Pastor Unknown',
       'Service Times Unknown',
       '(918) 482-3325', 8, '2026-04-12 14:25:15.678564', NULL, NULL),
-    (9,  'Lighthouse Free Will Baptist',          '200 E Skelly Rd.',                         'Pastor Unknown',
+    (9,  'Lighthouse Free Will Baptist',        '200 E Skelly Rd.',                         'Pastor Unknown',
       'Service Times Unknown',
       '(918) 482-6068', 9, '2026-04-12 14:30:21.440199', NULL, NULL),
-    (10, 'United Pentecostal',                    '126 W. Franklin St. Haskell, Ok',          'Pastor James Stewart',
+    (10, 'United Pentecostal',                  '126 W. Franklin St. Haskell, Ok',          'Pastor James Stewart',
       'Sunday Groups 10:00 am Service 10:45 am| Wednesday 7:30 pm',
       '(918) 482-3389', 10, '2026-04-12 14:37:16.799445', NULL, NULL),
-    (11, 'Jubilee Worship Center International',  '300 W. Commercial, Haskell, Ok',           'Pastor Unknown',
+    (11, 'Jubilee Worship Center International','300 W. Commercial, Haskell, Ok',           'Pastor Unknown',
       'Service Times Unknown',
       '(918) 852-4207', 11, '2026-04-12 14:40:12.263839', NULL, NULL),
-    (12, 'Mount Zion',                            '7298 214th St. W. Haskell, Ok',            'Pastor Unknown',
+    (12, 'Mount Zion',                          '7298 214th St. W. Haskell, Ok',            'Pastor Unknown',
       'Service Times Unknown',
       '(918) 555-5555', 12, '2026-04-12 14:45:37.810241', NULL, NULL),
-    (13, 'Stone Bluff Baptist',                   '19141 Us-64 Stonebluff, Ok',               'Pastor Unknown',
+    (13, 'Stone Bluff Baptist',                 '19141 Us-64 Stonebluff, Ok',               'Pastor Unknown',
       'Service Times Unknown',
       '(918) 555-5555', 13, '2026-04-12 14:47:53.718412', NULL, NULL),
-    (14, 'All Nations Seventh-Day Adventist',     '1192 S. Haskell Blvd., Haskell, Ok',      'Pastor Unknown',
+    (14, 'All Nations Seventh-Day Adventist',   '1192 S. Haskell Blvd., Haskell, Ok',      'Pastor Unknown',
       'Saturday Sabbath School 9:30 am Worship 11:00 am| Youth Meetings 1st & 3rd Saturday 2:00 pm| Clothes Closet Thursday 5-7 pm| Thursday Bible Study 6:30 pm| Women''s Ministry & Book Club 4th Sunday 3:00 pm',
       '(918) 736-9771', 15, '2026-04-12 15:03:07.136936', NULL, NULL)
-    ON CONFLICT (id) DO UPDATE SET
-      name          = EXCLUDED.name,
-      address       = EXCLUDED.address,
-      pastor        = EXCLUDED.pastor,
-      service_times = EXCLUDED.service_times,
-      phone         = EXCLUDED.phone,
-      sort_order    = EXCLUDED.sort_order,
-      photo_url     = EXCLUDED.photo_url,
-      photo_credit  = EXCLUDED.photo_credit
+    ON CONFLICT (id) DO NOTHING
   `);
 
   // ── Student Spotlight ────────────────────────────────────────────────────────
@@ -184,13 +162,7 @@ Bottom Row (left to right):
 Natalee Deckard, Amy Ortega, Cheyanna Morgan, Hayden Wentworth, Josie Enkey',
       '/api/storage/objects/uploads/ae4c547a-b2c7-4ec0-bfb1-c5df507e7ffb',
       '2026-04-09 20:37:40.772752', '2026-04-11 17:16:08.223', 'Haskell High School')
-    ON CONFLICT (id) DO UPDATE SET
-      name         = EXCLUDED.name,
-      school       = EXCLUDED.school,
-      grade        = EXCLUDED.grade,
-      description  = EXCLUDED.description,
-      photo_url    = EXCLUDED.photo_url,
-      photo_credit = EXCLUDED.photo_credit
+    ON CONFLICT (id) DO NOTHING
   `);
 
   // ── Business Spotlight ───────────────────────────────────────────────────────
@@ -199,12 +171,7 @@ Natalee Deckard, Amy Ortega, Cheyanna Morgan, Hayden Wentworth, Josie Enkey',
     (1, 'El Jalepeno', 'Restaurant', 'Join us in celebrating the success of this hometown delight.',
       '/api/storage/objects/uploads/7e449328-84cf-4300-ac8e-05b9d53202f2', 'EL Jalepeno',
       '2026-04-11 17:57:15.807511', '2026-04-11 17:57:15.807511')
-    ON CONFLICT (id) DO UPDATE SET
-      name          = EXCLUDED.name,
-      business_type = EXCLUDED.business_type,
-      description   = EXCLUDED.description,
-      photo_url     = EXCLUDED.photo_url,
-      photo_credit  = EXCLUDED.photo_credit
+    ON CONFLICT (id) DO NOTHING
   `);
 
   // ── Group Spotlight ──────────────────────────────────────────────────────────
@@ -213,12 +180,7 @@ Natalee Deckard, Amy Ortega, Cheyanna Morgan, Hayden Wentworth, Josie Enkey',
     (1, 'Pa-A Linn Club', 'Volunteer Organization', 'Pa-A Linn Club. Old ladies having fun.',
       '/api/storage/objects/uploads/d12b0235-895a-4bcd-8442-5aee50e3b70b', 'Facebook',
       '2026-04-11 17:59:40.392546', '2026-04-11 17:59:40.392546')
-    ON CONFLICT (id) DO UPDATE SET
-      name         = EXCLUDED.name,
-      group_type   = EXCLUDED.group_type,
-      description  = EXCLUDED.description,
-      photo_url    = EXCLUDED.photo_url,
-      photo_credit = EXCLUDED.photo_credit
+    ON CONFLICT (id) DO NOTHING
   `);
 
   // ── Calendar Events ──────────────────────────────────────────────────────────
@@ -254,15 +216,10 @@ Natalee Deckard, Amy Ortega, Cheyanna Morgan, Hayden Wentworth, Josie Enkey',
     (28, 'Farmers Market',                         '2026-05-16', '08:00', 'Rieger Memorial Library', NULL, '2026-04-11 19:11:54.065994'),
     (29, 'Farmers Market',                         '2026-05-23', '08:00', 'Rieger Memorial Library', NULL, '2026-04-11 19:11:54.174001'),
     (30, 'Farmers Market',                         '2026-05-30', '08:00', 'Rieger Memorial Library', NULL, '2026-04-11 19:11:54.237326')
-    ON CONFLICT (id) DO UPDATE SET
-      title      = EXCLUDED.title,
-      event_date = EXCLUDED.event_date,
-      event_time = EXCLUDED.event_time,
-      location   = EXCLUDED.location,
-      description = EXCLUDED.description
+    ON CONFLICT (id) DO NOTHING
   `);
 
-  // ── User Roles ───────────────────────────────────────────────────────────────
+  // ── User Roles — always upsert so admin access is never accidentally lost ───
   await db.execute(sql`
     INSERT INTO user_roles (clerk_user_id, role) VALUES
     ('user_3C8RieDe4Djrw09MjSZ0AUxFFsG', 'admin'),
@@ -270,7 +227,7 @@ Natalee Deckard, Amy Ortega, Cheyanna Morgan, Hayden Wentworth, Josie Enkey',
     ON CONFLICT (clerk_user_id) DO UPDATE SET role = EXCLUDED.role
   `);
 
-  // ── Reset sequences ──────────────────────────────────────────────────────────
+  // ── Reset sequences so new admin entries don't collide with seed IDs ─────────
   await db.execute(sql`
     SELECT setval('articles_id_seq',          (SELECT MAX(id) FROM articles));
     SELECT setval('categories_id_seq',        (SELECT MAX(id) FROM categories));
@@ -282,5 +239,5 @@ Natalee Deckard, Amy Ortega, Cheyanna Morgan, Hayden Wentworth, Josie Enkey',
     SELECT setval('user_roles_id_seq',        (SELECT MAX(id) FROM user_roles));
   `);
 
-  logger.info("Seed complete — all tables populated and sequences updated");
+  logger.info("Seed complete");
 }
