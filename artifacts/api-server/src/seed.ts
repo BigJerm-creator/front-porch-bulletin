@@ -20,17 +20,6 @@ export async function seedIfEmpty(): Promise<void> {
   // ── Articles ─────────────────────────────────────────────────────────────────
   await db.execute(sql`
     INSERT INTO articles (id, title, subtitle, content, author, category, featured, published_at, created_at, updated_at, archived, photo_url, photo_credit) VALUES
-    (1,
-      'Water Tower Repair Finally Scheduled for Elm Street Reservoir',
-      'Residents asked to conserve water during two-week maintenance window',
-      'After nearly three years of petitions from residents on the east side of town, the Municipal Water Authority has confirmed that repairs to the aging Elm Street water tower will begin the week of April 14th. The tower, which was constructed in 1961, has shown significant rust deterioration along its lower support struts and has been the subject of ongoing concern from the county health inspector.
-
-Public Works Director Harold Finney told the Bulletin on Wednesday that the project will require partial drainage of the reservoir during the first week of work. "We''re asking folks to be mindful of their water use," said Finney. "Morning showers, yes. Washing the car, let''s hold off."
-
-The two-week project is expected to cost the town approximately $84,000, a portion of which will be offset by a state infrastructure grant secured last fall by Councilwoman Dolores Hutchins. Work is set to begin at 7 a.m. and conclude by 4 p.m. on weekdays, with no weekend operations planned in consideration of the Elm Street neighborhood.',
-      'Ruth Ellen Kasprowicz', 'Front Page', true,
-      '2026-04-03 18:22:23.52855', '2026-04-04 18:22:23.52855', '2026-04-04 18:22:23.52855', false, NULL, NULL),
-
     (2,
       'Dairy Queen Announces Return of Dilly Bar — With a Twist',
       NULL,
@@ -89,7 +78,33 @@ The sale runs from 9 a.m. to 5 p.m. Friday and Saturday, and 12 p.m. to 4 p.m. o
     ON CONFLICT (id) DO NOTHING
   `);
 
-  // ── Article 7 — kept separate so edits here flow to both environments ────────
+  // ── Synced articles — DO UPDATE so both environments always match ────────────
+  await db.execute(sql`
+    INSERT INTO articles (id, title, subtitle, content, author, category, featured, published_at, created_at, updated_at, archived, photo_url, photo_credit) VALUES
+    (1,
+      'Haskell Oklahoma to Receive first ever Traffic Light',
+      'Residents asked to conserve water during two-week maintenance window',
+      'After nearly three years of petitions from residents on the east side of town, the Municipal Water Authority has confirmed that repairs to the aging Elm Street water tower will begin the week of April 14th. The tower, which was constructed in 1961, has shown significant rust deterioration along its lower support struts and has been the subject of ongoing concern from the county health inspector.
+
+Public Works Director Harold Finney told the Bulletin on Wednesday that the project will require partial drainage of the reservoir during the first week of work. "We''re asking folks to be mindful of their water use," said Finney. "Morning showers, yes. Washing the car, let''s hold off."
+
+The two-week project is expected to cost the town approximately $84,000, a portion of which will be offset by a state infrastructure grant secured last fall by Councilwoman Dolores Hutchins. Work is set to begin at 7 a.m. and conclude by 4 p.m. on weekdays, with no weekend operations planned in consideration of the Elm Street neighborhood.',
+      'Ashley Morgan', 'Local News', false,
+      '2026-04-03 00:00:00', '2026-04-04 18:22:23.52855', '2026-04-04 18:22:23.52855', false, NULL, NULL)
+    ON CONFLICT (id) DO UPDATE SET
+      title        = EXCLUDED.title,
+      subtitle     = EXCLUDED.subtitle,
+      content      = EXCLUDED.content,
+      author       = EXCLUDED.author,
+      category     = EXCLUDED.category,
+      featured     = EXCLUDED.featured,
+      published_at = EXCLUDED.published_at,
+      updated_at   = EXCLUDED.updated_at,
+      archived     = EXCLUDED.archived,
+      photo_url    = EXCLUDED.photo_url,
+      photo_credit = EXCLUDED.photo_credit
+  `);
+
   await db.execute(sql`
     INSERT INTO articles (id, title, subtitle, content, author, category, featured, published_at, created_at, updated_at, archived, photo_url, photo_credit) VALUES
     (7,
@@ -98,7 +113,7 @@ The sale runs from 9 a.m. to 5 p.m. Friday and Saturday, and 12 p.m. to 4 p.m. o
       'From the Editor;
 
 This is a letter from the editor to express our gratitude to all the patrons who have helped to build this into what it is. ',
-      'Ashley Morgan', 'Letters to the Editor', false,
+      'Ashley Morgan', 'Front Page', true,
       '2026-03-28 00:00:00', '2026-04-13 17:35:34.35', '2026-04-13 17:35:34.35', false, NULL, NULL)
     ON CONFLICT (id) DO UPDATE SET
       title        = EXCLUDED.title,
@@ -112,6 +127,18 @@ This is a letter from the editor to express our gratitude to all the patrons who
       archived     = EXCLUDED.archived,
       photo_url    = EXCLUDED.photo_url,
       photo_credit = EXCLUDED.photo_credit
+  `);
+
+  // ── Article 12 — user-created in production, insert if missing in dev ─────────
+  await db.execute(sql`
+    INSERT INTO articles (id, title, subtitle, content, author, category, featured, published_at, created_at, updated_at, archived, photo_url, photo_credit) VALUES
+    (12,
+      'A Porch Full Of Memories',
+      'Haskell''s Current Oldest Living Resident.  ',
+      'There are people who don''t just live in a town, they help carry its memory. In Haskell, that kind of living history is still among us. Sitting down with the town''s current oldest living resident is more than an interview; it''s a chance to slow down and listen to a lifetime of stories, changes, and moments that shaped the community we know today. From brick roads and early storefronts to the rhythms of modern life, their memories offer a glimpse into where Haskell has been and a reminder of the roots that still hold it together.',
+      'Ashley Morgan', 'Local News', true,
+      '2026-05-01 00:00:00', '2026-05-01 00:00:00', '2026-05-01 00:00:00', false, NULL, NULL)
+    ON CONFLICT (id) DO NOTHING
   `);
 
   // ── Churches ─────────────────────────────────────────────────────────────────
