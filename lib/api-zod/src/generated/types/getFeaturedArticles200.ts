@@ -9,5 +9,6 @@ import type { Article } from "./article";
 
 export type GetFeaturedArticles200 = {
   headline?: Article;
+  frontPage: Article[];
   secondary: Article[];
 };

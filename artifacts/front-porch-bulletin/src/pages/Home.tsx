@@ -30,12 +30,39 @@ export default function Home() {
             <NewspaperSkeleton />
           ) : (
             <>
-              {/* Headline — full width */}
+              {/* Front Page Articles — adaptive layout */}
               <div className="mb-8 pb-8 border-b-2 border-foreground">
-                {featuredData?.headline ? (
-                  <ArticleTeaser article={featuredData.headline} featured={true} />
-                ) : (
+                {!featuredData?.frontPage?.length ? (
                   <p className="text-sm font-serif text-foreground/60 italic">No featured story today.</p>
+                ) : featuredData.frontPage.length === 1 ? (
+                  /* Single article — full-width hero */
+                  <ArticleTeaser article={featuredData.frontPage[0]} size="hero" />
+                ) : featuredData.frontPage.length === 2 ? (
+                  /* Two articles — dominant left + secondary right */
+                  <div className="grid grid-cols-1 md:grid-cols-5 gap-0 md:divide-x divide-foreground">
+                    <div className="md:col-span-3 md:pr-6 pb-6 md:pb-0">
+                      <ArticleTeaser article={featuredData.frontPage[0]} size="feature" />
+                    </div>
+                    <div className="md:col-span-2 md:pl-6 pt-6 md:pt-0">
+                      <ArticleTeaser article={featuredData.frontPage[1]} size="standard" />
+                    </div>
+                  </div>
+                ) : (
+                  /* Three or more — lead spans top, rest in columns below */
+                  <div className="space-y-6">
+                    <div className="pb-6 border-b border-foreground/40">
+                      <ArticleTeaser article={featuredData.frontPage[0]} size="hero" />
+                    </div>
+                    <div className={`grid grid-cols-1 gap-6 divide-y md:divide-y-0 md:divide-x divide-foreground ${
+                      featuredData.frontPage.length === 3 ? "md:grid-cols-2" : "md:grid-cols-3"
+                    }`}>
+                      {featuredData.frontPage.slice(1).map((article, i) => (
+                        <div key={article.id} className={i > 0 ? "md:pl-6 pt-6 md:pt-0" : "md:pr-6"}>
+                          <ArticleTeaser article={article} size="standard" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 )}
               </div>
 

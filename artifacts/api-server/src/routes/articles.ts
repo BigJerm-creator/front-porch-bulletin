@@ -73,7 +73,13 @@ router.get("/featured", async (_req, res) => {
     .orderBy(desc(articlesTable.publishedAt))
     .limit(20);
 
-  const headline = articles.find((a) => a.featured) ?? articles[0] ?? null;
+  // All "Front Page" articles — featured ones sort to the top
+  const frontPage = articles
+    .filter((a) => a.category === "Front Page")
+    .sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+
+  // Backward-compat: headline is the first front-page article (or any featured)
+  const headline = frontPage[0] ?? articles.find((a) => a.featured) ?? articles[0] ?? null;
 
   const eventCategories = await db
     .select({ name: categoriesTable.name })
@@ -82,11 +88,12 @@ router.get("/featured", async (_req, res) => {
 
   const eventCategoryNames = new Set(eventCategories.map((c) => c.name));
 
+  const frontPageIds = new Set(frontPage.map((a) => a.id));
   const secondary = articles
-    .filter((a) => a.id !== headline?.id && eventCategoryNames.has(a.category))
+    .filter((a) => !frontPageIds.has(a.id) && eventCategoryNames.has(a.category))
     .slice(0, 5);
 
-  res.json({ headline, secondary });
+  res.json({ headline, frontPage, secondary });
 });
 
 router.get("/summary", async (_req, res) => {
