@@ -73,13 +73,13 @@ router.get("/featured", async (_req, res) => {
     .orderBy(desc(articlesTable.publishedAt))
     .limit(20);
 
-  // All "Front Page" articles — featured ones sort to the top
+  // All articles with the featured checkbox checked go to the front page
   const frontPage = articles
-    .filter((a) => a.category === "Front Page")
-    .sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+    .filter((a) => a.featured)
+    .sort((a, b) => (b.publishedAt > a.publishedAt ? 1 : -1));
 
-  // Backward-compat: headline is the first front-page article (or any featured)
-  const headline = frontPage[0] ?? articles.find((a) => a.featured) ?? articles[0] ?? null;
+  // Backward-compat: headline is the first featured article
+  const headline = frontPage[0] ?? articles[0] ?? null;
 
   const eventCategories = await db
     .select({ name: categoriesTable.name })
