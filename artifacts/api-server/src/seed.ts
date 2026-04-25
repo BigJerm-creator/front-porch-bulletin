@@ -33,6 +33,14 @@ export async function seedIfEmpty(): Promise<void> {
     ON CONFLICT (id) DO NOTHING
   `);
 
+  // Backup: guarantee Library News and 4H News exist by slug even if ID rows already existed
+  await db.execute(sql`
+    INSERT INTO categories (name, slug, description, show_in_events) VALUES
+    ('Library News', 'library-news', 'News and events from the Rieger Memorial Library', true),
+    ('4H News',      '4h-news',      '4H club updates and activities',                   true)
+    ON CONFLICT (slug) DO NOTHING
+  `);
+
   // ── User Roles — always upsert so admin access is never lost ─────────────────
   await db.execute(sql`
     INSERT INTO user_roles (clerk_user_id, role) VALUES
