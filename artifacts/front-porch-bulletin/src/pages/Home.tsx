@@ -31,13 +31,14 @@ export default function Home() {
     }
   }, [isLoading]);
 
-  const mainArticle = featuredData?.frontPage?.[0] ?? null;
+  const mainArticle  = featuredData?.frontPage?.[0] ?? null;
+  const page2Article = (featuredData as any)?.page2 ?? null;
 
   // All non-main featured articles + secondary articles, split by letters vs other
   const allOtherArticles = [
     ...(featuredData?.frontPage?.slice(1) ?? []),
     ...(featuredData?.secondary ?? []),
-  ];
+  ].filter(a => a.id !== page2Article?.id);
   const letterArticles = allOtherArticles.filter(isLetter);
   const otherArticles  = allOtherArticles.filter(a => !isLetter(a));
 
@@ -149,6 +150,54 @@ export default function Home() {
                   )}
                 </div>
               </div>
+
+              {/* ── Page 2 Top Story (full width) ── */}
+              {page2Article && (
+                <div className="mb-8 pb-8 border-b-2 border-foreground">
+                  <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-6">Featured</div>
+                  <article>
+                    {page2Article.photoUrl && (
+                      <div className="mb-4 text-center">
+                        <img
+                          src={page2Article.photoUrl}
+                          alt={page2Article.title}
+                          className="inline-block max-h-72 max-w-full object-contain border border-foreground"
+                        />
+                        {page2Article.photoCredit && (
+                          <p className="font-mono text-[9px] text-right text-foreground/50 italic mt-1">Photo: {page2Article.photoCredit}</p>
+                        )}
+                      </div>
+                    )}
+                    <Link href={`/articles/${page2Article.id}`}>
+                      <h2 className="font-headline font-bold text-3xl md:text-4xl lg:text-5xl leading-tight mb-3 hover:underline underline-offset-4 decoration-1">
+                        {page2Article.title}
+                      </h2>
+                    </Link>
+                    {page2Article.subtitle && (
+                      <p className="font-headline italic text-xl text-foreground/80 mb-3">{page2Article.subtitle}</p>
+                    )}
+                    <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wide text-foreground/60 mb-4 border-t border-b border-foreground/20 py-2">
+                      <span>By <span className="italic">{page2Article.author}</span></span>
+                      <span>·</span>
+                      <span>{page2Article.category}</span>
+                      <span>·</span>
+                      <span>{formatDateline(page2Article.publishedAt)}</span>
+                    </div>
+                    <div className="columns-1 md:columns-2 gap-6 font-serif text-base leading-relaxed text-foreground/90">
+                      {page2Article.content.split('\n\n').map((para: string, i: number) => (
+                        <p key={i} className={i > 0 ? "mt-4" : ""}>
+                          {i === 0 && (
+                            <span className="font-mono font-bold text-xs uppercase tracking-wider mr-2">
+                              {formatDateline(page2Article.publishedAt)}—
+                            </span>
+                          )}
+                          {para}
+                        </p>
+                      ))}
+                    </div>
+                  </article>
+                </div>
+              )}
 
               {/* ── Letters from / to the Editor (full width) ── */}
               {letterArticles.length > 0 && (

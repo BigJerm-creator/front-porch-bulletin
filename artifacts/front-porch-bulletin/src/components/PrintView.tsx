@@ -294,7 +294,18 @@ export function PrintView() {
       {page2Article && (
         <div style={{ marginBottom: "22pt", paddingBottom: "18pt", borderBottom: RULE_DOUBLE }}>
           {page2Article.photoUrl && (
-            <PhotoBox url={page2Article.photoUrl} alt={page2Article.title} credit={page2Article.photoCredit} aspect="21/9" />
+            <div style={{ marginBottom: "6pt", textAlign: "center" }}>
+              <img
+                src={page2Article.photoUrl}
+                alt={page2Article.title}
+                style={{ maxHeight: "130pt", maxWidth: "100%", objectFit: "contain", display: "inline-block", border: RULE }}
+              />
+              {page2Article.photoCredit && (
+                <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "1pt 0 0" }}>
+                  Photo credit — {page2Article.photoCredit}
+                </p>
+              )}
+            </div>
           )}
           <h2 style={{
             fontFamily: FONT_HEADLINE, fontWeight: "bold",
