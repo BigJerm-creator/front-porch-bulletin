@@ -298,9 +298,8 @@ export function PrintView() {
         </div>
       </div>
 
-      {/* ══════════ PAGE 2 ══════════ */}
-      <div style={{ pageBreakBefore: "always", breakBefore: "page" }} />
-      <SlimHeader page="02" />
+      {/* ══ Continuation ══ */}
+      <div style={{ borderTop: RULE_DOUBLE, marginTop: "18pt", marginBottom: "14pt" }} />
 
       {/* Page 2 Top Story — full-width, chosen from admin */}
       {page2Article && (
@@ -346,6 +345,7 @@ export function PrintView() {
       )}
 
       {/* 4H News (left) | Community (right) — two-column split */}
+      {(h4Articles.length > 0 || communityArticles.length > 0) && (
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0", borderTop: RULE, borderBottom: RULE, marginBottom: "18pt", paddingTop: "10pt", paddingBottom: "10pt" }}>
         {/* 4H News — left */}
         <div style={{ paddingRight: "14pt", borderRight: RULE }}>
@@ -387,12 +387,13 @@ export function PrintView() {
           )}
         </div>
       </div>
+      )}
 
       {/* Library News — full width */}
+      {libraryArticles.length > 0 && (
       <div style={{ marginBottom: "18pt", paddingBottom: "14pt", borderBottom: RULE_DOUBLE }}>
         <SectionLabel>Library News</SectionLabel>
-        {libraryArticles.length > 0 ? (
-          <div>
+        <div>
             {libraryArticles.map((art, i) => (
               <div key={art.id} style={{ marginBottom: "14pt", paddingBottom: "12pt", borderBottom: i < libraryArticles.length - 1 ? RULE_LIGHT : "none" }}>
                 <h3 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 3pt" }}>{art.title}</h3>
@@ -412,11 +413,9 @@ export function PrintView() {
                 </div>
               </div>
             ))}
-          </div>
-        ) : (
-          <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", color: INK_MUTED, fontSize: "9pt" }}>No library news this issue.</p>
-        )}
+        </div>
       </div>
+      )}
 
       {/* Letters from / to the Editor — full-width */}
       {letterArticles.length > 0 && (
@@ -460,9 +459,7 @@ export function PrintView() {
       )}
 
       {/* Other secondary articles */}
-      {otherArticles.length === 0 && letterArticles.length === 0 ? (
-        <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", color: INK_MUTED }}>More community stories coming next issue.</p>
-      ) : (
+      {otherArticles.length > 0 && (
         <div>
           {otherArticles.map((art, i) => (
             <div key={art.id} style={{ marginBottom: "22pt", paddingBottom: "18pt", borderBottom: i < otherArticles.length - 1 ? RULE_LIGHT : "none" }}>
@@ -500,9 +497,8 @@ export function PrintView() {
         </div>
       )}
 
-      {/* ══════════ PAGE 3 ══════════ */}
-      <div style={{ pageBreakBefore: "always", breakBefore: "page" }} />
-      <SlimHeader page="03" />
+      {/* ══ Church & Calendar ══ */}
+      <div style={{ borderTop: RULE_DOUBLE, marginTop: "6pt", marginBottom: "14pt" }} />
 
       {/* Church Directory */}
       {churches.length > 0 && (
