@@ -210,56 +210,11 @@ export default function Home() {
                 </div>
               )}
 
-              {/* ── Community ── */}
-              {communityArticles.length > 0 && (
-                <div className="mb-8 pb-8 border-b-2 border-foreground">
-                  <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-6">Community</div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 divide-y md:divide-y-0 md:divide-x divide-foreground/30">
-                    {communityArticles.map((art, i) => (
-                      <div key={art.id} className={i > 0 ? "md:pl-6 pt-6 md:pt-0" : ""}>
-                        <ArticleTeaser article={art} size="standard" photoFit="contain" />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* ── Library News | 4H News — two columns ── */}
+              {/* ── 4H News (left) | Community (right) — two columns ── */}
               <div className="mb-8 pb-8 border-b-2 border-foreground">
                 <div className="grid grid-cols-2 gap-0 divide-x-2 divide-foreground">
-                  {/* Library News */}
+                  {/* 4H News — left */}
                   <div className="pr-6">
-                    <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Library News</div>
-                    {libraryArticles.length > 0 ? (
-                      <div className="flex flex-col gap-6">
-                        {libraryArticles.map(art => (
-                          <article key={art.id}>
-                            {art.photoUrl && (
-                              <div className="w-full overflow-hidden border border-foreground/20 mb-2 bg-muted">
-                                <img src={art.photoUrl} alt={art.title} className="w-full object-cover" style={{ maxHeight: "160px", display: "block" }} />
-                                {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 px-1 py-0.5 italic">Photo: {art.photoCredit}</p>}
-                              </div>
-                            )}
-                            <Link href={`/articles/${art.id}`}>
-                              <h3 className="font-headline font-bold text-2xl leading-tight mb-1 hover:underline underline-offset-4 decoration-1">{art.title}</h3>
-                            </Link>
-                            {art.subtitle && <p className="font-headline italic text-base text-foreground/70 mb-1">{art.subtitle}</p>}
-                            <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wide text-foreground/50 border-t border-b border-foreground/20 py-1 mb-2">
-                              <span>By <span className="italic">{art.author}</span></span>
-                              <span>·</span>
-                              <span>{formatDateline(art.publishedAt)}</span>
-                            </div>
-                            <p className="font-serif text-sm leading-relaxed text-foreground/80 line-clamp-4">{art.content.split('\n\n')[0]}</p>
-                          </article>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="font-serif italic text-sm text-foreground/40">No library news this issue.</p>
-                    )}
-                  </div>
-
-                  {/* 4H News */}
-                  <div className="pl-6">
                     <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">4H News</div>
                     {h4Articles.length > 0 ? (
                       <div className="flex flex-col gap-6">
@@ -288,7 +243,69 @@ export default function Home() {
                       <p className="font-serif italic text-sm text-foreground/40">No 4H news this issue.</p>
                     )}
                   </div>
+
+                  {/* Community — right */}
+                  <div className="pl-6">
+                    <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Community</div>
+                    {communityArticles.length > 0 ? (
+                      <div className="flex flex-col gap-6">
+                        {communityArticles.map(art => (
+                          <article key={art.id}>
+                            {art.photoUrl && (
+                              <div className="w-full overflow-hidden border border-foreground/20 mb-2 bg-muted">
+                                <img src={art.photoUrl} alt={art.title} className="w-full object-contain" style={{ maxHeight: "160px", display: "block" }} />
+                                {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 px-1 py-0.5 italic">Photo: {art.photoCredit}</p>}
+                              </div>
+                            )}
+                            <Link href={`/articles/${art.id}`}>
+                              <h3 className="font-headline font-bold text-2xl leading-tight mb-1 hover:underline underline-offset-4 decoration-1">{art.title}</h3>
+                            </Link>
+                            {art.subtitle && <p className="font-headline italic text-base text-foreground/70 mb-1">{art.subtitle}</p>}
+                            <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wide text-foreground/50 border-t border-b border-foreground/20 py-1 mb-2">
+                              <span>By <span className="italic">{art.author}</span></span>
+                              <span>·</span>
+                              <span>{formatDateline(art.publishedAt)}</span>
+                            </div>
+                            <p className="font-serif text-sm leading-relaxed text-foreground/80 line-clamp-4">{art.content.split('\n\n')[0]}</p>
+                          </article>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="font-serif italic text-sm text-foreground/40">No community news this issue.</p>
+                    )}
+                  </div>
                 </div>
+              </div>
+
+              {/* ── Library News — full width ── */}
+              <div className="mb-8 pb-8 border-b-2 border-foreground">
+                <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Library News</div>
+                {libraryArticles.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 divide-y md:divide-y-0 md:divide-x divide-foreground/30">
+                    {libraryArticles.map((art, i) => (
+                      <article key={art.id} className={i > 0 ? "md:pl-8 pt-6 md:pt-0" : ""}>
+                        {art.photoUrl && (
+                          <div className="w-full overflow-hidden border border-foreground/20 mb-2 bg-muted">
+                            <img src={art.photoUrl} alt={art.title} className="w-full object-cover" style={{ maxHeight: "200px", display: "block" }} />
+                            {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 px-1 py-0.5 italic">Photo: {art.photoCredit}</p>}
+                          </div>
+                        )}
+                        <Link href={`/articles/${art.id}`}>
+                          <h3 className="font-headline font-bold text-2xl leading-tight mb-1 hover:underline underline-offset-4 decoration-1">{art.title}</h3>
+                        </Link>
+                        {art.subtitle && <p className="font-headline italic text-base text-foreground/70 mb-1">{art.subtitle}</p>}
+                        <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wide text-foreground/50 border-t border-b border-foreground/20 py-1 mb-2">
+                          <span>By <span className="italic">{art.author}</span></span>
+                          <span>·</span>
+                          <span>{formatDateline(art.publishedAt)}</span>
+                        </div>
+                        <p className="font-serif text-sm leading-relaxed text-foreground/80 line-clamp-5">{art.content.split('\n\n')[0]}</p>
+                      </article>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="font-serif italic text-sm text-foreground/40">No library news this issue.</p>
+                )}
               </div>
 
               {/* ── Letters from / to the Editor (full width) ── */}

@@ -345,56 +345,10 @@ export function PrintView() {
         </div>
       )}
 
-      {/* Community section */}
-      {communityArticles.length > 0 && (
-        <div style={{ marginBottom: "18pt", paddingBottom: "14pt", borderBottom: RULE_DOUBLE }}>
-          <SectionLabel>Community</SectionLabel>
-          {communityArticles.map((art, i) => (
-            <div key={art.id} style={{ marginBottom: "16pt", paddingBottom: "14pt", borderBottom: i < communityArticles.length - 1 ? RULE_LIGHT : "none" }}>
-              <h3 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "20pt", lineHeight: 1.1, margin: "0 0 3pt" }}>{art.title}</h3>
-              {art.subtitle && <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "11pt", margin: "0 0 3pt", color: "#333" }}>{art.subtitle}</p>}
-              <ArticleByline author={art.author} date={art.publishedAt} />
-              <div style={{ display: "grid", gridTemplateColumns: art.photoUrl ? "180pt 1fr" : "1fr", gap: "14pt", alignItems: "flex-start" }}>
-                {art.photoUrl && (
-                  <div style={{ flexShrink: 0 }}>
-                    <PhotoBox url={art.photoUrl} alt={art.title} credit={art.photoCredit} aspect="4/3" objectFit="contain" />
-                  </div>
-                )}
-                <div style={{ columns: art.photoUrl ? 1 : 2, columnGap: "18pt", columnRule: RULE_LIGHT, fontSize: "10.5pt", lineHeight: 1.55, textAlign: "justify" }}>
-                  {art.content.split('\n\n').map((para, j) => (
-                    <p key={j} style={{ margin: j === 0 ? "0" : "6pt 0 0", breakInside: "avoid" }}>{para}</p>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Library News | 4H News — two-column split */}
+      {/* 4H News (left) | Community (right) — two-column split */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0", borderTop: RULE, borderBottom: RULE, marginBottom: "18pt", paddingTop: "10pt", paddingBottom: "10pt" }}>
-        {/* Library News */}
+        {/* 4H News — left */}
         <div style={{ paddingRight: "14pt", borderRight: RULE }}>
-          <SectionLabel>Library News</SectionLabel>
-          {libraryArticles.length > 0 ? libraryArticles.map((art, i) => (
-            <div key={art.id} style={{ marginBottom: "12pt", paddingBottom: "10pt", borderBottom: i < libraryArticles.length - 1 ? RULE_LIGHT : "none" }}>
-              {art.photoUrl && (
-                <div style={{ marginBottom: "6pt" }}>
-                  <PhotoBox url={art.photoUrl} alt={art.title} credit={art.photoCredit} aspect="4/3" />
-                </div>
-              )}
-              <h3 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 3pt" }}>{art.title}</h3>
-              {art.subtitle && <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "10pt", margin: "0 0 2pt", color: "#333" }}>{art.subtitle}</p>}
-              <ArticleByline author={art.author} date={art.publishedAt} />
-              <p style={{ fontSize: "9.5pt", lineHeight: 1.5, margin: 0, textAlign: "justify" }}>{art.content.split('\n\n')[0]}</p>
-            </div>
-          )) : (
-            <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", color: INK_MUTED, fontSize: "9pt" }}>No library news this issue.</p>
-          )}
-        </div>
-
-        {/* 4H News */}
-        <div style={{ paddingLeft: "14pt" }}>
           <SectionLabel>4H News</SectionLabel>
           {h4Articles.length > 0 ? h4Articles.map((art, i) => (
             <div key={art.id} style={{ marginBottom: "12pt", paddingBottom: "10pt", borderBottom: i < h4Articles.length - 1 ? RULE_LIGHT : "none" }}>
@@ -412,6 +366,50 @@ export function PrintView() {
             <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", color: INK_MUTED, fontSize: "9pt" }}>No 4H news this issue.</p>
           )}
         </div>
+
+        {/* Community — right */}
+        <div style={{ paddingLeft: "14pt" }}>
+          <SectionLabel>Community</SectionLabel>
+          {communityArticles.length > 0 ? communityArticles.map((art, i) => (
+            <div key={art.id} style={{ marginBottom: "12pt", paddingBottom: "10pt", borderBottom: i < communityArticles.length - 1 ? RULE_LIGHT : "none" }}>
+              {art.photoUrl && (
+                <div style={{ marginBottom: "6pt" }}>
+                  <PhotoBox url={art.photoUrl} alt={art.title} credit={art.photoCredit} aspect="4/3" objectFit="contain" />
+                </div>
+              )}
+              <h3 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 3pt" }}>{art.title}</h3>
+              {art.subtitle && <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "10pt", margin: "0 0 2pt", color: "#333" }}>{art.subtitle}</p>}
+              <ArticleByline author={art.author} date={art.publishedAt} />
+              <p style={{ fontSize: "9.5pt", lineHeight: 1.5, margin: 0, textAlign: "justify" }}>{art.content.split('\n\n')[0]}</p>
+            </div>
+          )) : (
+            <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", color: INK_MUTED, fontSize: "9pt" }}>No community news this issue.</p>
+          )}
+        </div>
+      </div>
+
+      {/* Library News — full width */}
+      <div style={{ marginBottom: "18pt", paddingBottom: "14pt", borderBottom: RULE_DOUBLE }}>
+        <SectionLabel>Library News</SectionLabel>
+        {libraryArticles.length > 0 ? (
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 18pt" }}>
+            {libraryArticles.map((art, i) => (
+              <div key={art.id} style={{ paddingLeft: i % 2 === 1 ? "18pt" : "0", borderLeft: i % 2 === 1 ? RULE_LIGHT : "none", marginBottom: "12pt" }}>
+                {art.photoUrl && (
+                  <div style={{ marginBottom: "6pt" }}>
+                    <PhotoBox url={art.photoUrl} alt={art.title} credit={art.photoCredit} aspect="4/3" />
+                  </div>
+                )}
+                <h3 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 3pt" }}>{art.title}</h3>
+                {art.subtitle && <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "10pt", margin: "0 0 2pt", color: "#333" }}>{art.subtitle}</p>}
+                <ArticleByline author={art.author} date={art.publishedAt} />
+                <p style={{ fontSize: "9.5pt", lineHeight: 1.5, margin: 0, textAlign: "justify" }}>{art.content.split('\n\n')[0]}</p>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", color: INK_MUTED, fontSize: "9pt" }}>No library news this issue.</p>
+        )}
       </div>
 
       {/* Letters from / to the Editor — full-width */}
