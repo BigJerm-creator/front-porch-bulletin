@@ -240,9 +240,6 @@ export function PrintView() {
         <div style={{ paddingLeft: "14pt" }}>
           {mainArticle ? (
             <>
-              {mainArticle.photoUrl && (
-                <PhotoBox url={mainArticle.photoUrl} alt={mainArticle.title} credit={mainArticle.photoCredit} maxHeight="108pt" />
-              )}
               <h1 style={{
                 fontFamily: FONT_HEADLINE, fontWeight: "bold",
                 fontSize: "42pt", lineHeight: 1.0,
@@ -255,16 +252,18 @@ export function PrintView() {
               )}
               <ArticleByline author={mainArticle.author} date={mainArticle.publishedAt} />
               <div style={{ fontSize: "11pt", lineHeight: 1.6, textAlign: "justify" }}>
-                {mainArticle.content.split('\n\n').map((para, i) => (
-                  <p key={i} style={{ margin: i === 0 ? "0" : "7pt 0 0", breakInside: "avoid" }}>
-                    {i === 0 && (
-                      <span style={{ fontFamily: FONT_MONO, fontWeight: "bold", fontSize: "7pt", textTransform: "uppercase", letterSpacing: "0.1em", marginRight: "3pt" }}>
-                        {formatDateline(mainArticle.publishedAt)}—
-                      </span>
+                {mainArticle.photoUrl && (
+                  <div style={{ float: "left", marginRight: "10pt", marginBottom: "5pt", maxWidth: "45%" }}>
+                    <img src={mainArticle.photoUrl} alt={mainArticle.title} style={{ display: "block", maxWidth: "100%", height: "auto" }} />
+                    {mainArticle.photoCredit && (
+                      <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "1pt 0 0" }}>Photo credit — {mainArticle.photoCredit}</p>
                     )}
-                    {para}
-                  </p>
+                  </div>
+                )}
+                {mainArticle.content.split('\n\n').map((para, i) => (
+                  <p key={i} style={{ margin: i === 0 ? "0" : "7pt 0 0", breakInside: "avoid" }}>{para}</p>
                 ))}
+                <div style={{ clear: "both" }} />
               </div>
             </>
           ) : (
@@ -325,20 +324,6 @@ export function PrintView() {
       {/* Page 2 Top Story — full-width, chosen from admin */}
       {page2Article && (
         <div style={{ marginBottom: "22pt", paddingBottom: "18pt", borderBottom: RULE_DOUBLE }}>
-          {page2Article.photoUrl && (
-            <div style={{ marginBottom: "6pt", textAlign: "center" }}>
-              <img
-                src={page2Article.photoUrl}
-                alt={page2Article.title}
-                style={{ maxHeight: "130pt", maxWidth: "100%", objectFit: "contain", display: "inline-block", border: RULE }}
-              />
-              {page2Article.photoCredit && (
-                <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "1pt 0 0" }}>
-                  Photo credit — {page2Article.photoCredit}
-                </p>
-              )}
-            </div>
-          )}
           <h2 style={{
             fontFamily: FONT_HEADLINE, fontWeight: "bold",
             fontSize: "38pt", lineHeight: 1.0,
@@ -351,16 +336,18 @@ export function PrintView() {
           )}
           <ArticleByline author={page2Article.author} date={String(page2Article.publishedAt)} />
           <div style={{ columns: 2, columnGap: "22pt", columnRule: RULE_LIGHT, fontSize: "11pt", lineHeight: 1.6, textAlign: "justify" }}>
-            {page2Article.content.split('\n\n').map((para, i) => (
-              <p key={i} style={{ margin: i === 0 ? "0" : "7pt 0 0", breakInside: "avoid" }}>
-                {i === 0 && (
-                  <span style={{ fontFamily: FONT_MONO, fontWeight: "bold", fontSize: "7pt", textTransform: "uppercase", letterSpacing: "0.1em", marginRight: "3pt" }}>
-                    {formatDateline(String(page2Article.publishedAt))}—
-                  </span>
+            {page2Article.photoUrl && (
+              <div style={{ float: "left", marginRight: "10pt", marginBottom: "5pt", maxWidth: "45%" }}>
+                <img src={page2Article.photoUrl} alt={page2Article.title} style={{ display: "block", maxWidth: "100%", height: "auto" }} />
+                {page2Article.photoCredit && (
+                  <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "1pt 0 0" }}>Photo credit — {page2Article.photoCredit}</p>
                 )}
-                {para}
-              </p>
+              </div>
+            )}
+            {page2Article.content.split('\n\n').map((para, i) => (
+              <p key={i} style={{ margin: i === 0 ? "0" : "7pt 0 0", breakInside: "avoid" }}>{para}</p>
             ))}
+            <div style={{ clear: "both" }} />
           </div>
         </div>
       )}
@@ -374,9 +361,7 @@ export function PrintView() {
           {h4Articles.length > 0 ? h4Articles.map((art, i) => (
             <div key={art.id} style={{ marginBottom: "12pt", paddingBottom: "10pt", borderBottom: i < h4Articles.length - 1 ? RULE_LIGHT : "none" }}>
               {art.photoUrl && (
-                <div style={{ marginBottom: "6pt" }}>
-                  <PhotoBox url={art.photoUrl} alt={art.title} credit={art.photoCredit} aspect="4/3" />
-                </div>
+                <img src={art.photoUrl} alt={art.title} style={{ display: "block", maxWidth: "100%", height: "auto", marginBottom: "4pt" }} />
               )}
               <h3 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 3pt" }}>{art.title}</h3>
               {art.subtitle && <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "10pt", margin: "0 0 2pt", color: "#333" }}>{art.subtitle}</p>}
@@ -394,9 +379,7 @@ export function PrintView() {
           {communityArticles.length > 0 ? communityArticles.map((art, i) => (
             <div key={art.id} style={{ marginBottom: "12pt", paddingBottom: "10pt", borderBottom: i < communityArticles.length - 1 ? RULE_LIGHT : "none" }}>
               {art.photoUrl && (
-                <div style={{ marginBottom: "6pt" }}>
-                  <PhotoBox url={art.photoUrl} alt={art.title} credit={art.photoCredit} aspect="4/3" objectFit="contain" />
-                </div>
+                <img src={art.photoUrl} alt={art.title} style={{ display: "block", maxWidth: "100%", height: "auto", marginBottom: "4pt" }} />
               )}
               <h3 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 3pt" }}>{art.title}</h3>
               {art.subtitle && <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "10pt", margin: "0 0 2pt", color: "#333" }}>{art.subtitle}</p>}
@@ -420,17 +403,17 @@ export function PrintView() {
                 <h3 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 3pt" }}>{art.title}</h3>
                 {art.subtitle && <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "10pt", margin: "0 0 2pt", color: "#333" }}>{art.subtitle}</p>}
                 <ArticleByline author={art.author} date={art.publishedAt} />
-                <div style={{ display: "grid", gridTemplateColumns: art.photoUrl ? "160pt 1fr" : "1fr", gap: "12pt", alignItems: "flex-start" }}>
+                <div style={{ fontSize: "9.5pt", lineHeight: 1.5, textAlign: "justify" }}>
                   {art.photoUrl && (
-                    <div style={{ flexShrink: 0 }}>
-                      <PhotoBox url={art.photoUrl} alt={art.title} credit={art.photoCredit} aspect="4/3" />
+                    <div style={{ float: "left", marginRight: "10pt", marginBottom: "4pt", maxWidth: "45%" }}>
+                      <img src={art.photoUrl} alt={art.title} style={{ display: "block", maxWidth: "100%", height: "auto" }} />
+                      {art.photoCredit && <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "1pt 0 0" }}>Photo credit — {art.photoCredit}</p>}
                     </div>
                   )}
-                  <div style={{ columns: 1, fontSize: "9.5pt", lineHeight: 1.5, textAlign: "justify" }}>
-                    {art.content.split('\n\n').map((para, j) => (
-                      <p key={j} style={{ margin: j === 0 ? "0" : "6pt 0 0", breakInside: "avoid" }}>{para}</p>
-                    ))}
-                  </div>
+                  {art.content.split('\n\n').map((para, j) => (
+                    <p key={j} style={{ margin: j === 0 ? "0" : "6pt 0 0", breakInside: "avoid" }}>{para}</p>
+                  ))}
+                  <div style={{ clear: "both" }} />
                 </div>
               </div>
             ))}
@@ -444,11 +427,6 @@ export function PrintView() {
           <SectionLabel>Letters</SectionLabel>
           {letterArticles.map((art, i) => (
             <div key={art.id} style={{ marginBottom: "22pt", paddingBottom: "18pt", borderBottom: i < letterArticles.length - 1 ? RULE_LIGHT : "none" }}>
-              {art.photoUrl && (
-                <div style={{ marginBottom: "8pt" }}>
-                  <PhotoBox url={art.photoUrl} alt={art.title} credit={art.photoCredit} aspect="16/9" />
-                </div>
-              )}
               <h2 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "32pt", lineHeight: 1.0, margin: "0 0 4pt", letterSpacing: "-0.01em" }}>
                 {art.title}
               </h2>
@@ -459,16 +437,16 @@ export function PrintView() {
               )}
               <ArticleByline author={art.author} date={art.publishedAt} />
               <div style={{ columns: 2, columnGap: "18pt", columnRule: RULE_LIGHT, fontSize: "11pt", lineHeight: 1.6, textAlign: "justify" }}>
+                {art.photoUrl && (
+                  <div style={{ float: "left", marginRight: "10pt", marginBottom: "5pt", maxWidth: "45%" }}>
+                    <img src={art.photoUrl} alt={art.title} style={{ display: "block", maxWidth: "100%", height: "auto" }} />
+                    {art.photoCredit && <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "1pt 0 0" }}>Photo credit — {art.photoCredit}</p>}
+                  </div>
+                )}
                 {art.content.split('\n\n').map((para, j) => (
-                  <p key={j} style={{ margin: j === 0 ? "0" : "7pt 0 0", breakInside: "avoid" }}>
-                    {j === 0 && (
-                      <span style={{ fontFamily: FONT_MONO, fontWeight: "bold", fontSize: "7pt", textTransform: "uppercase", letterSpacing: "0.1em", marginRight: "3pt" }}>
-                        {formatDateline(art.publishedAt)}—
-                      </span>
-                    )}
-                    {para}
-                  </p>
+                  <p key={j} style={{ margin: j === 0 ? "0" : "7pt 0 0", breakInside: "avoid" }}>{para}</p>
                 ))}
+                <div style={{ clear: "both" }} />
               </div>
             </div>
           ))}

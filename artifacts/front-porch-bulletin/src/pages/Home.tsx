@@ -91,14 +91,6 @@ export default function Home() {
                 <div className={hasSpotlights ? "w-full md:w-[72%] md:pl-6" : "w-full"}>
                   {mainArticle ? (
                     <article>
-                      {mainArticle.photoUrl && (
-                        <div className="w-full overflow-hidden border border-foreground mb-4 bg-muted" style={{ maxHeight: "340px" }}>
-                          <img src={mainArticle.photoUrl} alt={mainArticle.title} className="w-full h-full object-contain" style={{ maxHeight: "340px" }} />
-                          {mainArticle.photoCredit && (
-                            <p className="font-mono text-[9px] text-right text-foreground/50 p-1 italic">Photo: {mainArticle.photoCredit}</p>
-                          )}
-                        </div>
-                      )}
                       <Link href={`/articles/${mainArticle.id}`}>
                         <h1 className="font-headline font-bold text-4xl md:text-5xl lg:text-6xl leading-tight mb-3 hover:underline underline-offset-4 decoration-1">
                           {mainArticle.title}
@@ -116,17 +108,19 @@ export default function Home() {
                         <span>·</span>
                         <span>{formatDateline(mainArticle.publishedAt)}</span>
                       </div>
-                      <div className="columns-1 md:columns-2 gap-6 font-serif text-lg leading-relaxed text-foreground/90">
-                        {mainArticle.content.split('\n\n').map((para, i) => (
-                          <p key={i} className={i === 0 ? "first-letter-drop" : "mt-4"}>
-                            {i === 0 && (
-                              <span className="font-mono font-bold text-xs uppercase tracking-wider mr-2">
-                                {formatDateline(mainArticle.publishedAt)}—
-                              </span>
+                      <div className="font-serif text-lg leading-relaxed text-foreground/90">
+                        {mainArticle.photoUrl && (
+                          <div className="float-left mr-4 mb-2 max-w-[45%]">
+                            <img src={mainArticle.photoUrl} alt={mainArticle.title} className="block max-w-full h-auto" />
+                            {mainArticle.photoCredit && (
+                              <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {mainArticle.photoCredit}</p>
                             )}
-                            {para}
-                          </p>
+                          </div>
+                        )}
+                        {mainArticle.content.split('\n\n').map((para, i) => (
+                          <p key={i} className={i === 0 ? "first-letter-drop" : "mt-4"}>{para}</p>
                         ))}
+                        <div className="clear-both" />
                       </div>
                     </article>
                   ) : (
@@ -182,18 +176,6 @@ export default function Home() {
                 <div className="mb-8 pb-8 border-b-2 border-foreground">
                   <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-6">Page 2 Feature</div>
                   <article>
-                    {page2Article.photoUrl && (
-                      <div className="mb-4 text-center">
-                        <img
-                          src={page2Article.photoUrl}
-                          alt={page2Article.title}
-                          className="inline-block max-h-72 max-w-full object-contain border border-foreground"
-                        />
-                        {page2Article.photoCredit && (
-                          <p className="font-mono text-[9px] text-right text-foreground/50 italic mt-1">Photo: {page2Article.photoCredit}</p>
-                        )}
-                      </div>
-                    )}
                     <Link href={`/articles/${page2Article.id}`}>
                       <h2 className="font-headline font-bold text-3xl md:text-4xl lg:text-5xl leading-tight mb-3 hover:underline underline-offset-4 decoration-1">
                         {page2Article.title}
@@ -209,17 +191,19 @@ export default function Home() {
                       <span>·</span>
                       <span>{formatDateline(page2Article.publishedAt)}</span>
                     </div>
-                    <div className="columns-1 md:columns-2 gap-6 font-serif text-base leading-relaxed text-foreground/90">
-                      {page2Article.content.split('\n\n').map((para: string, i: number) => (
-                        <p key={i} className={i > 0 ? "mt-4" : ""}>
-                          {i === 0 && (
-                            <span className="font-mono font-bold text-xs uppercase tracking-wider mr-2">
-                              {formatDateline(page2Article.publishedAt)}—
-                            </span>
+                    <div className="font-serif text-base leading-relaxed text-foreground/90">
+                      {page2Article.photoUrl && (
+                        <div className="float-left mr-4 mb-2 max-w-[45%]">
+                          <img src={page2Article.photoUrl} alt={page2Article.title} className="block max-w-full h-auto" />
+                          {page2Article.photoCredit && (
+                            <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {page2Article.photoCredit}</p>
                           )}
-                          {para}
-                        </p>
+                        </div>
+                      )}
+                      {page2Article.content.split('\n\n').map((para: string, i: number) => (
+                        <p key={i} className={i > 0 ? "mt-4" : ""}>{para}</p>
                       ))}
+                      <div className="clear-both" />
                     </div>
                   </article>
                 </div>
@@ -236,9 +220,9 @@ export default function Home() {
                         {h4Articles.map(art => (
                           <article key={art.id}>
                             {art.photoUrl && (
-                              <div className="w-full overflow-hidden border border-foreground/20 mb-2 bg-muted">
-                                <img src={art.photoUrl} alt={art.title} className="w-full object-contain" style={{ maxHeight: "160px", display: "block" }} />
-                                {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 px-1 py-0.5 italic">Photo: {art.photoCredit}</p>}
+                              <div className="mb-2">
+                                <img src={art.photoUrl} alt={art.title} className="block max-w-full h-auto" />
+                                {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
                               </div>
                             )}
                             <Link href={`/articles/${art.id}`}>
@@ -267,9 +251,9 @@ export default function Home() {
                         {communityArticles.map(art => (
                           <article key={art.id}>
                             {art.photoUrl && (
-                              <div className="w-full overflow-hidden border border-foreground/20 mb-2 bg-muted">
-                                <img src={art.photoUrl} alt={art.title} className="w-full object-contain" style={{ maxHeight: "160px", display: "block" }} />
-                                {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 px-1 py-0.5 italic">Photo: {art.photoCredit}</p>}
+                              <div className="mb-2">
+                                <img src={art.photoUrl} alt={art.title} className="block max-w-full h-auto" />
+                                {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
                               </div>
                             )}
                             <Link href={`/articles/${art.id}`}>
@@ -299,12 +283,6 @@ export default function Home() {
                   <div className="flex flex-col gap-8 divide-y divide-foreground/30">
                     {libraryArticles.map((art, i) => (
                       <article key={art.id} className={i > 0 ? "pt-6" : ""}>
-                        {art.photoUrl && (
-                          <div className="w-full overflow-hidden border border-foreground/20 mb-2 bg-muted">
-                            <img src={art.photoUrl} alt={art.title} className="w-full object-contain" style={{ maxHeight: "280px", display: "block" }} />
-                            {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 px-1 py-0.5 italic">Photo: {art.photoCredit}</p>}
-                          </div>
-                        )}
                         <Link href={`/articles/${art.id}`}>
                           <h3 className="font-headline font-bold text-2xl leading-tight mb-1 hover:underline underline-offset-4 decoration-1">{art.title}</h3>
                         </Link>
@@ -314,7 +292,16 @@ export default function Home() {
                           <span>·</span>
                           <span>{formatDateline(art.publishedAt)}</span>
                         </div>
-                        <p className="font-serif text-sm leading-relaxed text-foreground/80 line-clamp-5">{art.content.split('\n\n')[0]}</p>
+                        <div className="font-serif text-sm leading-relaxed text-foreground/80">
+                          {art.photoUrl && (
+                            <div className="float-left mr-3 mb-1 max-w-[40%]">
+                              <img src={art.photoUrl} alt={art.title} className="block max-w-full h-auto" />
+                              {art.photoCredit && <p className="font-mono text-[7px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
+                            </div>
+                          )}
+                          <p>{art.content.split('\n\n')[0]}</p>
+                          <div className="clear-both" />
+                        </div>
                       </article>
                     ))}
                   </div>
@@ -330,12 +317,6 @@ export default function Home() {
                   <div className="flex flex-col gap-10">
                     {letterArticles.map(art => (
                       <article key={art.id}>
-                        {art.photoUrl && (
-                          <div className="w-full overflow-hidden border border-foreground mb-4 bg-muted">
-                            <img src={art.photoUrl} alt={art.title} className="w-full object-contain" style={{ maxHeight: "280px", display: "block" }} />
-                            {art.photoCredit && <p className="font-mono text-[9px] text-right text-foreground/50 p-1 italic">Photo: {art.photoCredit}</p>}
-                          </div>
-                        )}
                         <Link href={`/articles/${art.id}`}>
                           <h2 className="font-headline font-bold text-3xl md:text-4xl leading-tight mb-2 hover:underline underline-offset-4 decoration-1">
                             {art.title}
@@ -349,17 +330,17 @@ export default function Home() {
                           <span>·</span>
                           <span>{formatDateline(art.publishedAt)}</span>
                         </div>
-                        <div className="columns-1 md:columns-2 gap-6 font-serif text-base leading-relaxed text-foreground/90">
+                        <div className="font-serif text-base leading-relaxed text-foreground/90">
+                          {art.photoUrl && (
+                            <div className="float-left mr-4 mb-2 max-w-[45%]">
+                              <img src={art.photoUrl} alt={art.title} className="block max-w-full h-auto" />
+                              {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
+                            </div>
+                          )}
                           {art.content.split('\n\n').map((para, i) => (
-                            <p key={i} className={i > 0 ? "mt-4" : ""}>
-                              {i === 0 && (
-                                <span className="font-mono font-bold text-xs uppercase tracking-wider mr-2">
-                                  {formatDateline(art.publishedAt)}—
-                                </span>
-                              )}
-                              {para}
-                            </p>
+                            <p key={i} className={i > 0 ? "mt-4" : ""}>{para}</p>
                           ))}
+                          <div className="clear-both" />
                         </div>
                       </article>
                     ))}
