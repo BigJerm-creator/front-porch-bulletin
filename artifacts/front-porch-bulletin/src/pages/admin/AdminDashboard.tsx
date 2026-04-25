@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { useUser } from "@clerk/react";
 import { useGetArticlesSummary, getGetArticlesSummaryQueryKey, useGetMyRole, getGetMyRoleQueryKey, useListChurches, getListChurchesQueryKey, useGetSpotlight, getGetSpotlightQueryKey } from "@workspace/api-client-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FileText, Star, Church, Tags, Users, ArrowRight, PlusCircle } from "lucide-react";
+import { FileText, Star, Church, Info, Users, ArrowRight, PlusCircle } from "lucide-react";
 
 function SectionCard({
   href,
@@ -99,12 +99,10 @@ export default function AdminDashboard() {
           />
 
           <SectionCard
-            href="/admin/categories"
-            icon={Tags}
-            title="Categories"
-            description="Organize articles into sections. Add new categories or manage the existing ones."
-            meta={summaryLoading ? undefined : `${summary?.byCategory.length ?? 0} categories`}
-            metaLoading={summaryLoading}
+            href="/admin/about"
+            icon={Info}
+            title="About"
+            description="Edit the founding story, body text, office location, and editorial staff listed on the About page."
           />
 
           {roleData?.isAdmin && (

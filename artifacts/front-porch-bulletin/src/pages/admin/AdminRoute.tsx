@@ -5,7 +5,7 @@ import AdminLayout from "./AdminLayout";
 import AdminDashboard from "./AdminDashboard";
 import AdminArticles from "./AdminArticles";
 import AdminArticleForm from "./AdminArticleForm";
-import AdminCategories from "./AdminCategories";
+import AdminAbout from "./AdminAbout";
 import AdminUsers from "./AdminUsers";
 import AdminSpotlight from "./AdminSpotlight";
 import AdminBusinessSpotlight from "./AdminBusinessSpotlight";
@@ -53,7 +53,7 @@ export default function AdminRoute() {
               <Route path="/admin/articles" component={AdminArticles} />
               <Route path="/admin/articles/new" component={AdminArticleForm} />
               <Route path="/admin/articles/:id/edit" component={AdminArticleForm} />
-              <Route path="/admin/categories" component={AdminCategories} />
+              <Route path="/admin/about" component={AdminAbout} />
               <Route path="/admin/spotlight" component={AdminSpotlight} />
               <Route path="/admin/business-spotlight" component={AdminBusinessSpotlight} />
               <Route path="/admin/group-spotlight" component={AdminGroupSpotlight} />

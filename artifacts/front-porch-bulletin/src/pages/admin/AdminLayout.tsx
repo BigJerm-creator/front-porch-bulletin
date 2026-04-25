@@ -1,7 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { useClerk, useUser } from "@clerk/react";
 import { useGetMyRole, getGetMyRoleQueryKey } from "@workspace/api-client-react";
-import { FileText, Tags, Users, LogOut, LayoutDashboard, Star, Church, Printer, CalendarDays, Building2 } from "lucide-react";
+import { FileText, Users, LogOut, LayoutDashboard, Star, Church, Printer, CalendarDays, Building2, Info } from "lucide-react";
 import logoSrc from "@assets/The_(1)_1775854639167.png";
 import { BulkEmailDialog } from "@/components/admin/BulkEmailDialog";
 
@@ -14,7 +14,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const navItems = [
     { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
     { href: "/admin/articles", label: "Articles", icon: FileText },
-    { href: "/admin/categories", label: "Categories", icon: Tags },
+    { href: "/admin/about", label: "About", icon: Info },
     { href: "/admin/spotlight", label: "Student", icon: Star },
     { href: "/admin/business-spotlight", label: "Business", icon: Building2 },
     { href: "/admin/group-spotlight", label: "Group", icon: Users },

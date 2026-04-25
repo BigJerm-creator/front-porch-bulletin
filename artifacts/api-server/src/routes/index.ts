@@ -10,6 +10,7 @@ import churchesRouter from "./churches";
 import storageRouter from "./storage";
 import newsletterRouter from "./newsletter";
 import calendarEventsRouter from "./calendarEvents";
+import aboutRouter from "./about";
 
 const router: IRouter = Router();
 
@@ -24,5 +25,6 @@ router.use("/group-spotlight", groupSpotlightRouter);
 router.use("/churches", churchesRouter);
 router.use("/newsletter", newsletterRouter);
 router.use("/calendar-events", calendarEventsRouter);
+router.use("/about", aboutRouter);
 
 export default router;
