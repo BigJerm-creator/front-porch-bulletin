@@ -109,6 +109,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
       fontFamily: FONT_MONO, fontSize: "7pt", textTransform: "uppercase",
       letterSpacing: "0.14em", fontWeight: "bold", color: INK,
       borderBottom: RULE, paddingBottom: "2.5pt", marginBottom: "6pt",
+      breakAfter: "avoid", pageBreakAfter: "avoid",
     }}>{children}</div>
   );
 }
