@@ -318,7 +318,7 @@ export function PrintView() {
             </p>
           )}
           <ArticleByline author={page2Article.author} date={String(page2Article.publishedAt)} />
-          <div style={{ columns: 3, columnGap: "18pt", columnRule: RULE_LIGHT, fontSize: "11pt", lineHeight: 1.55, textAlign: "justify" }}>
+          <div style={{ columns: 2, columnGap: "22pt", columnRule: RULE_LIGHT, fontSize: "11pt", lineHeight: 1.6, textAlign: "justify" }}>
             {page2Article.content.split('\n\n').map((para, i) => (
               <p key={i} style={{ margin: i === 0 ? "0" : "7pt 0 0", breakInside: "avoid" }}>
                 {i === 0 && (
