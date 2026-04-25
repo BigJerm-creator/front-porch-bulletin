@@ -78,7 +78,7 @@ The sale runs from 9 a.m. to 5 p.m. Friday and Saturday, and 12 p.m. to 4 p.m. o
     ON CONFLICT (id) DO NOTHING
   `);
 
-  // ── Synced articles — DO UPDATE so both environments always match ────────────
+  // ── Additional articles — only insert if not already present ─────────────────
   await db.execute(sql`
     INSERT INTO articles (id, title, subtitle, content, author, category, featured, published_at, created_at, updated_at, archived, photo_url, photo_credit) VALUES
     (1,
@@ -91,18 +91,7 @@ Public Works Director Harold Finney told the Bulletin on Wednesday that the proj
 The two-week project is expected to cost the town approximately $84,000, a portion of which will be offset by a state infrastructure grant secured last fall by Councilwoman Dolores Hutchins. Work is set to begin at 7 a.m. and conclude by 4 p.m. on weekdays, with no weekend operations planned in consideration of the Elm Street neighborhood.',
       'Ashley Morgan', 'Local News', false,
       '2026-04-03 00:00:00', '2026-04-04 18:22:23.52855', '2026-04-04 18:22:23.52855', false, NULL, NULL)
-    ON CONFLICT (id) DO UPDATE SET
-      title        = EXCLUDED.title,
-      subtitle     = EXCLUDED.subtitle,
-      content      = EXCLUDED.content,
-      author       = EXCLUDED.author,
-      category     = EXCLUDED.category,
-      featured     = EXCLUDED.featured,
-      published_at = EXCLUDED.published_at,
-      updated_at   = EXCLUDED.updated_at,
-      archived     = EXCLUDED.archived,
-      photo_url    = EXCLUDED.photo_url,
-      photo_credit = EXCLUDED.photo_credit
+    ON CONFLICT (id) DO NOTHING
   `);
 
   await db.execute(sql`
@@ -113,20 +102,9 @@ The two-week project is expected to cost the town approximately $84,000, a porti
       'From the Editor;
 
 This is a letter from the editor to express our gratitude to all the patrons who have helped to build this into what it is. ',
-      'Ashley Morgan', 'Front Page', true,
+      'Ashley Morgan', 'letters', true,
       '2026-03-28 00:00:00', '2026-04-13 17:35:34.35', '2026-04-13 17:35:34.35', false, NULL, NULL)
-    ON CONFLICT (id) DO UPDATE SET
-      title        = EXCLUDED.title,
-      subtitle     = EXCLUDED.subtitle,
-      content      = EXCLUDED.content,
-      author       = EXCLUDED.author,
-      category     = EXCLUDED.category,
-      featured     = EXCLUDED.featured,
-      published_at = EXCLUDED.published_at,
-      updated_at   = EXCLUDED.updated_at,
-      archived     = EXCLUDED.archived,
-      photo_url    = EXCLUDED.photo_url,
-      photo_credit = EXCLUDED.photo_credit
+    ON CONFLICT (id) DO NOTHING
   `);
 
   // ── Article 12 — user-created in production, insert if missing in dev ─────────
