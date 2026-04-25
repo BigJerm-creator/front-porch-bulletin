@@ -404,7 +404,7 @@ export function PrintView() {
                       <PhotoBox url={art.photoUrl} alt={art.title} credit={art.photoCredit} aspect="4/3" />
                     </div>
                   )}
-                  <div style={{ columns: art.photoUrl ? 1 : 2, columnGap: "18pt", columnRule: RULE_LIGHT, fontSize: "9.5pt", lineHeight: 1.5, textAlign: "justify" }}>
+                  <div style={{ columns: 1, fontSize: "9.5pt", lineHeight: 1.5, textAlign: "justify" }}>
                     {art.content.split('\n\n').map((para, j) => (
                       <p key={j} style={{ margin: j === 0 ? "0" : "6pt 0 0", breakInside: "avoid" }}>{para}</p>
                     ))}
