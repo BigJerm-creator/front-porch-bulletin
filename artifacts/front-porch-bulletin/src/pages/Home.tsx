@@ -4,6 +4,7 @@ import {
   useGetSpotlight, getGetSpotlightQueryKey,
   useGetBusinessSpotlight, getGetBusinessSpotlightQueryKey,
   useGetGroupSpotlight, getGetGroupSpotlightQueryKey,
+  useListArticles, getListArticlesQueryKey,
 } from "@workspace/api-client-react";
 import { Layout } from "@/components/layout/Layout";
 import { ArticleTeaser } from "@/components/ArticleTeaser";
@@ -31,14 +32,24 @@ export default function Home() {
     }
   }, [isLoading]);
 
+  const { data: libraryData }   = useListArticles({ category: "Library News", limit: 10 }, { query: { queryKey: getListArticlesQueryKey({ category: "Library News", limit: 10 }) } });
+  const { data: h4Data }        = useListArticles({ category: "4H News",      limit: 10 }, { query: { queryKey: getListArticlesQueryKey({ category: "4H News",      limit: 10 }) } });
+  const { data: communityData } = useListArticles({ category: "Community",    limit: 10 }, { query: { queryKey: getListArticlesQueryKey({ category: "Community",    limit: 10 }) } });
+
+  const libraryArticles   = libraryData?.articles   ?? [];
+  const h4Articles        = h4Data?.articles        ?? [];
+  const communityArticles = communityData?.articles ?? [];
+
   const mainArticle  = featuredData?.frontPage?.[0] ?? null;
   const page2Article = (featuredData as any)?.page2 ?? null;
 
-  // All non-main featured articles + secondary articles, split by letters vs other
+  const DEDICATED = new Set(["Library News", "4H News", "Community"]);
+
+  // Remaining featured/secondary articles — deduplicated against dedicated sections
   const allOtherArticles = [
     ...(featuredData?.frontPage?.slice(1) ?? []),
     ...(featuredData?.secondary ?? []),
-  ].filter(a => a.id !== page2Article?.id);
+  ].filter(a => a.id !== page2Article?.id && !DEDICATED.has(a.category));
   const letterArticles = allOtherArticles.filter(isLetter);
   const otherArticles  = allOtherArticles.filter(a => !isLetter(a));
 
@@ -154,7 +165,7 @@ export default function Home() {
               {/* ── Page 2 Top Story (full width) ── */}
               {page2Article && (
                 <div className="mb-8 pb-8 border-b-2 border-foreground">
-                  <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-6">Featured</div>
+                  <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-6">Page 2 Feature</div>
                   <article>
                     {page2Article.photoUrl && (
                       <div className="mb-4 text-center">
@@ -196,6 +207,75 @@ export default function Home() {
                       ))}
                     </div>
                   </article>
+                </div>
+              )}
+
+              {/* ── Library News | 4H News — two columns ── */}
+              <div className="mb-8 pb-8 border-b-2 border-foreground">
+                <div className="grid grid-cols-2 gap-0 divide-x-2 divide-foreground">
+                  {/* Library News */}
+                  <div className="pr-6">
+                    <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Library News</div>
+                    {libraryArticles.length > 0 ? (
+                      <div className="flex flex-col gap-6">
+                        {libraryArticles.map(art => (
+                          <article key={art.id}>
+                            <Link href={`/articles/${art.id}`}>
+                              <h3 className="font-headline font-bold text-2xl leading-tight mb-1 hover:underline underline-offset-4 decoration-1">{art.title}</h3>
+                            </Link>
+                            {art.subtitle && <p className="font-headline italic text-base text-foreground/70 mb-1">{art.subtitle}</p>}
+                            <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wide text-foreground/50 border-t border-b border-foreground/20 py-1 mb-2">
+                              <span>By <span className="italic">{art.author}</span></span>
+                              <span>·</span>
+                              <span>{formatDateline(art.publishedAt)}</span>
+                            </div>
+                            <p className="font-serif text-sm leading-relaxed text-foreground/80 line-clamp-4">{art.content.split('\n\n')[0]}</p>
+                          </article>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="font-serif italic text-sm text-foreground/40">No library news this issue.</p>
+                    )}
+                  </div>
+
+                  {/* 4H News */}
+                  <div className="pl-6">
+                    <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">4H News</div>
+                    {h4Articles.length > 0 ? (
+                      <div className="flex flex-col gap-6">
+                        {h4Articles.map(art => (
+                          <article key={art.id}>
+                            <Link href={`/articles/${art.id}`}>
+                              <h3 className="font-headline font-bold text-2xl leading-tight mb-1 hover:underline underline-offset-4 decoration-1">{art.title}</h3>
+                            </Link>
+                            {art.subtitle && <p className="font-headline italic text-base text-foreground/70 mb-1">{art.subtitle}</p>}
+                            <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wide text-foreground/50 border-t border-b border-foreground/20 py-1 mb-2">
+                              <span>By <span className="italic">{art.author}</span></span>
+                              <span>·</span>
+                              <span>{formatDateline(art.publishedAt)}</span>
+                            </div>
+                            <p className="font-serif text-sm leading-relaxed text-foreground/80 line-clamp-4">{art.content.split('\n\n')[0]}</p>
+                          </article>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="font-serif italic text-sm text-foreground/40">No 4H news this issue.</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* ── Community ── */}
+              {communityArticles.length > 0 && (
+                <div className="mb-8 pb-8 border-b-2 border-foreground">
+                  <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-6">Community</div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 divide-y md:divide-y-0 md:divide-x divide-foreground/30">
+                    {communityArticles.map((art, i) => (
+                      <div key={art.id} className={i > 0 ? "md:pl-6 pt-6 md:pt-0" : ""}>
+                        <ArticleTeaser article={art} size="standard" />
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
 

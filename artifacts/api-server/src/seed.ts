@@ -22,12 +22,14 @@ export async function seedIfEmpty(): Promise<void> {
   // ── Categories — always seed; needed for app to function ─────────────────────
   await db.execute(sql`
     INSERT INTO categories (id, name, slug, description, show_in_events) VALUES
-    (1,  'Front Page',            'front-page',   'The biggest stories of the week',          false),
-    (2,  'Local News',            'local-news',   'What''s happening around town',            true),
-    (3,  'Community',             'community',    'Neighbor spotlights and community events', true),
-    (5,  'Letters to the Editor', 'letters',      'Reader letters and opinions',              false),
-    (7,  'Church & Faith',        'church-faith', 'Announcements from local congregations',   false),
-    (10, 'School News',           'school-news',  'Learn about new thing happening with our Schools', true)
+    (1,  'Front Page',            'front-page',   'The biggest stories of the week',                    false),
+    (2,  'Local News',            'local-news',   'What''s happening around town',                      true),
+    (3,  'Community',             'community',    'Neighbor spotlights and community events',            true),
+    (5,  'Letters to the Editor', 'letters',      'Reader letters and opinions',                        false),
+    (7,  'Church & Faith',        'church-faith', 'Announcements from local congregations',             false),
+    (10, 'School News',           'school-news',  'Learn about new thing happening with our Schools',   true),
+    (11, 'Library News',          'library-news', 'News and events from the Rieger Memorial Library',   true),
+    (12, '4H News',               '4h-news',      '4H club updates and activities',                     true)
     ON CONFLICT (id) DO NOTHING
   `);
 

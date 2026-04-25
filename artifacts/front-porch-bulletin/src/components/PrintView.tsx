@@ -6,6 +6,7 @@ import {
   useGetBusinessSpotlight, getGetBusinessSpotlightQueryKey,
   useGetGroupSpotlight, getGetGroupSpotlightQueryKey,
   useListChurches, getListChurchesQueryKey,
+  useListArticles, getListArticlesQueryKey,
 } from "@workspace/api-client-react";
 import { formatDateline } from "@/lib/format";
 
@@ -140,6 +141,14 @@ export function PrintView() {
       .then(d => setCalEvents(d.events ?? []));
   }, []);
 
+  const { data: libraryData }   = useListArticles({ category: "Library News", limit: 10 }, { query: { queryKey: getListArticlesQueryKey({ category: "Library News", limit: 10 }) } });
+  const { data: h4Data }        = useListArticles({ category: "4H News",      limit: 10 }, { query: { queryKey: getListArticlesQueryKey({ category: "4H News",      limit: 10 }) } });
+  const { data: communityData } = useListArticles({ category: "Community",    limit: 10 }, { query: { queryKey: getListArticlesQueryKey({ category: "Community",    limit: 10 }) } });
+
+  const libraryArticles   = libraryData?.articles   ?? [];
+  const h4Articles        = h4Data?.articles        ?? [];
+  const communityArticles = communityData?.articles ?? [];
+
   const frontPage = featured?.frontPage ?? [];
   const secondary = featured?.secondary ?? [];
   const page2Article = featured?.page2 ?? null;
@@ -150,10 +159,13 @@ export function PrintView() {
 
   const mainArticle = frontPage[0] ?? null;
 
-  // All non-main articles, separated into letters and everything else
-  const allOtherArticles = [...frontPage.slice(1), ...secondary];
-  const letterArticles   = allOtherArticles.filter(isLetter);
-  const otherArticles    = allOtherArticles.filter(a => !isLetter(a));
+  const DEDICATED = new Set(["Library News", "4H News", "Community"]);
+
+  // All non-main articles: deduplicated against dedicated sections
+  const allOtherArticles = [...frontPage.slice(1), ...secondary]
+    .filter(a => a.id !== page2Article?.id && !DEDICATED.has(a.category));
+  const letterArticles = allOtherArticles.filter(isLetter);
+  const otherArticles  = allOtherArticles.filter(a => !isLetter(a));
 
   /* ── Photo helper ── */
   function PhotoBox({ url, alt, credit, aspect = "4/3" }: { url?: string | null; alt: string; credit?: string | null; aspect?: string }) {
@@ -267,7 +279,7 @@ export function PrintView() {
                 </p>
               )}
               <ArticleByline author={mainArticle.author} date={mainArticle.publishedAt} />
-              <div style={{ columns: 2, columnGap: "18pt", columnRule: RULE_LIGHT, fontSize: "11pt", lineHeight: 1.55, textAlign: "justify" }}>
+              <div style={{ fontSize: "11pt", lineHeight: 1.6, textAlign: "justify" }}>
                 {mainArticle.content.split('\n\n').map((para, i) => (
                   <p key={i} style={{ margin: i === 0 ? "0" : "7pt 0 0", breakInside: "avoid" }}>
                     {i === 0 && (
@@ -333,7 +345,59 @@ export function PrintView() {
         </div>
       )}
 
-      {/* Letters from / to the Editor — full-width, first on page 2 */}
+      {/* Library News | 4H News — two-column split */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0", borderTop: RULE, borderBottom: RULE, marginBottom: "18pt", paddingTop: "10pt", paddingBottom: "10pt" }}>
+        {/* Library News */}
+        <div style={{ paddingRight: "14pt", borderRight: RULE }}>
+          <SectionLabel>Library News</SectionLabel>
+          {libraryArticles.length > 0 ? libraryArticles.map((art, i) => (
+            <div key={art.id} style={{ marginBottom: "12pt", paddingBottom: "10pt", borderBottom: i < libraryArticles.length - 1 ? RULE_LIGHT : "none" }}>
+              <h3 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 3pt" }}>{art.title}</h3>
+              {art.subtitle && <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "10pt", margin: "0 0 2pt", color: "#333" }}>{art.subtitle}</p>}
+              <ArticleByline author={art.author} date={art.publishedAt} />
+              <p style={{ fontSize: "9.5pt", lineHeight: 1.5, margin: 0, textAlign: "justify" }}>{art.content.split('\n\n')[0]}</p>
+            </div>
+          )) : (
+            <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", color: INK_MUTED, fontSize: "9pt" }}>No library news this issue.</p>
+          )}
+        </div>
+
+        {/* 4H News */}
+        <div style={{ paddingLeft: "14pt" }}>
+          <SectionLabel>4H News</SectionLabel>
+          {h4Articles.length > 0 ? h4Articles.map((art, i) => (
+            <div key={art.id} style={{ marginBottom: "12pt", paddingBottom: "10pt", borderBottom: i < h4Articles.length - 1 ? RULE_LIGHT : "none" }}>
+              <h3 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 3pt" }}>{art.title}</h3>
+              {art.subtitle && <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "10pt", margin: "0 0 2pt", color: "#333" }}>{art.subtitle}</p>}
+              <ArticleByline author={art.author} date={art.publishedAt} />
+              <p style={{ fontSize: "9.5pt", lineHeight: 1.5, margin: 0, textAlign: "justify" }}>{art.content.split('\n\n')[0]}</p>
+            </div>
+          )) : (
+            <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", color: INK_MUTED, fontSize: "9pt" }}>No 4H news this issue.</p>
+          )}
+        </div>
+      </div>
+
+      {/* Community section */}
+      {communityArticles.length > 0 && (
+        <div style={{ marginBottom: "18pt", paddingBottom: "14pt", borderBottom: RULE_DOUBLE }}>
+          <SectionLabel>Community</SectionLabel>
+          {communityArticles.map((art, i) => (
+            <div key={art.id} style={{ marginBottom: "16pt", paddingBottom: "14pt", borderBottom: i < communityArticles.length - 1 ? RULE_LIGHT : "none" }}>
+              <h3 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "20pt", lineHeight: 1.1, margin: "0 0 3pt" }}>{art.title}</h3>
+              {art.subtitle && <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "11pt", margin: "0 0 3pt", color: "#333" }}>{art.subtitle}</p>}
+              <ArticleByline author={art.author} date={art.publishedAt} />
+              <div style={{ columns: 2, columnGap: "18pt", columnRule: RULE_LIGHT, fontSize: "10.5pt", lineHeight: 1.55, textAlign: "justify" }}>
+                {art.content.split('\n\n').map((para, j) => (
+                  <p key={j} style={{ margin: j === 0 ? "0" : "6pt 0 0", breakInside: "avoid" }}>{para}</p>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Letters from / to the Editor — full-width */}
       {letterArticles.length > 0 && (
         <div style={{ marginBottom: "22pt" }}>
           <SectionLabel>Letters</SectionLabel>
@@ -472,32 +536,6 @@ export function PrintView() {
           </div>
         </div>
 
-        {/* Event list */}
-        {calEvents.length > 0 && (
-          <div>
-            <div style={{ fontFamily: FONT_MONO, fontSize: "7pt", textTransform: "uppercase", letterSpacing: "0.12em", borderBottom: RULE_LIGHT, paddingBottom: "2pt", marginBottom: "6pt", color: INK_MUTED }}>
-              Upcoming Events
-            </div>
-            <div style={{ columns: 3, columnGap: "14pt", columnRule: RULE_LIGHT }}>
-              {calEvents.slice(0, 24).map(ev => {
-                const d = new Date(ev.eventDate + "T12:00:00");
-                const label = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-                return (
-                  <div key={ev.id} style={{ breakInside: "avoid", marginBottom: "5pt" }}>
-                    <span style={{ fontFamily: FONT_MONO, fontWeight: "bold", fontSize: "7pt", marginRight: "3pt" }}>{label}</span>
-                    {ev.eventTime && (
-                      <span style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", color: INK_MUTED, marginRight: "3pt" }}>{formatTime(ev.eventTime)}</span>
-                    )}
-                    <span style={{ fontSize: "8.5pt" }}>{ev.title}</span>
-                    {ev.location && (
-                      <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", color: INK_MUTED, display: "block", marginTop: "0.5pt" }}>{ev.location}</span>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
       </div>
 
     </div>
