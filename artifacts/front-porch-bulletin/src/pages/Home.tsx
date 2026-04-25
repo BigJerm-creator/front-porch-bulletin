@@ -14,6 +14,9 @@ import { PrintView } from "@/components/PrintView";
 import { formatDateline } from "@/lib/format";
 import { Link } from "wouter";
 
+const isLetter = (art: { category: string }) =>
+  art.category?.toLowerCase() === "letters";
+
 export default function Home() {
   const { data: featuredData, isLoading } = useGetFeaturedArticles();
   const { data: spotlight }         = useGetSpotlight({ query: { queryKey: getGetSpotlightQueryKey(), retry: false } as any });
@@ -28,11 +31,17 @@ export default function Home() {
     }
   }, [isLoading]);
 
-  const mainArticle      = featuredData?.frontPage?.[0] ?? null;
-  const sidebarArticles  = [
+  const mainArticle = featuredData?.frontPage?.[0] ?? null;
+
+  // All non-main featured articles + secondary articles, split by letters vs other
+  const allOtherArticles = [
     ...(featuredData?.frontPage?.slice(1) ?? []),
     ...(featuredData?.secondary ?? []),
-  ].slice(0, 5);
+  ];
+  const letterArticles = allOtherArticles.filter(isLetter);
+  const otherArticles  = allOtherArticles.filter(a => !isLetter(a));
+
+  const hasSpotlights = !!(spotlight || businessSpotlight || groupSpotlight);
 
   return (
     <>
@@ -46,78 +55,55 @@ export default function Home() {
               {/* ── Front page: sidebar + main ── */}
               <div className="flex flex-col md:flex-row gap-0 border-b-2 border-foreground mb-8 pb-8">
 
-                {/* Left sidebar */}
-                <div className="w-full md:w-[28%] md:pr-6 md:border-r border-foreground flex flex-col gap-6 mb-6 md:mb-0">
-                  {/* Spotlights */}
-                  {spotlight && (
-                    <div className="border-b border-foreground/30 pb-4">
-                      <div className="font-mono text-[10px] uppercase tracking-widest border-b border-foreground pb-1 mb-2">Student Spotlight</div>
-                      {spotlight.photoUrl && (
-                        <div className="w-full aspect-[4/3] overflow-hidden border border-foreground mb-2 bg-muted">
-                          <img src={spotlight.photoUrl} alt={spotlight.name} className="w-full h-full object-cover" />
-                        </div>
-                      )}
-                      <h3 className="font-headline font-bold text-base leading-tight mb-0.5">{spotlight.name}</h3>
-                      <p className="font-mono text-[10px] uppercase tracking-wide text-foreground/60 mb-1">{spotlight.school} · {spotlight.grade}</p>
-                      <p className="text-sm leading-snug text-foreground/80 line-clamp-4">{spotlight.description}</p>
-                    </div>
-                  )}
+                {/* Left sidebar — spotlights only */}
+                {hasSpotlights && (
+                  <div className="w-full md:w-[28%] md:pr-6 md:border-r border-foreground flex flex-col gap-6 mb-6 md:mb-0">
+                    {spotlight && (
+                      <div className="border-b border-foreground/30 pb-4">
+                        <div className="font-mono text-[10px] uppercase tracking-widest border-b border-foreground pb-1 mb-2">Student Spotlight</div>
+                        {spotlight.photoUrl && (
+                          <div className="w-full aspect-[4/3] overflow-hidden border border-foreground mb-2 bg-muted">
+                            <img src={spotlight.photoUrl} alt={spotlight.name} className="w-full h-full object-cover" />
+                          </div>
+                        )}
+                        <h3 className="font-headline font-bold text-base leading-tight mb-0.5">{spotlight.name}</h3>
+                        <p className="font-mono text-[10px] uppercase tracking-wide text-foreground/60 mb-1">{spotlight.school} · {spotlight.grade}</p>
+                        <p className="text-sm leading-snug text-foreground/80 line-clamp-4">{spotlight.description}</p>
+                      </div>
+                    )}
 
-                  {businessSpotlight && (
-                    <div className="border-b border-foreground/30 pb-4">
-                      <div className="font-mono text-[10px] uppercase tracking-widest border-b border-foreground pb-1 mb-2">Business Spotlight</div>
-                      {businessSpotlight.photoUrl && (
-                        <div className="w-full aspect-[4/3] overflow-hidden border border-foreground mb-2 bg-muted">
-                          <img src={businessSpotlight.photoUrl} alt={businessSpotlight.name} className="w-full h-full object-cover" />
-                        </div>
-                      )}
-                      <h3 className="font-headline font-bold text-base leading-tight mb-0.5">{businessSpotlight.name}</h3>
-                      <p className="font-mono text-[10px] uppercase tracking-wide text-foreground/60 mb-1">{businessSpotlight.businessType}</p>
-                      <p className="text-sm leading-snug text-foreground/80 line-clamp-4">{businessSpotlight.description}</p>
-                    </div>
-                  )}
+                    {businessSpotlight && (
+                      <div className="border-b border-foreground/30 pb-4">
+                        <div className="font-mono text-[10px] uppercase tracking-widest border-b border-foreground pb-1 mb-2">Business Spotlight</div>
+                        {businessSpotlight.photoUrl && (
+                          <div className="w-full aspect-[4/3] overflow-hidden border border-foreground mb-2 bg-muted">
+                            <img src={businessSpotlight.photoUrl} alt={businessSpotlight.name} className="w-full h-full object-cover" />
+                          </div>
+                        )}
+                        <h3 className="font-headline font-bold text-base leading-tight mb-0.5">{businessSpotlight.name}</h3>
+                        <p className="font-mono text-[10px] uppercase tracking-wide text-foreground/60 mb-1">{businessSpotlight.businessType}</p>
+                        <p className="text-sm leading-snug text-foreground/80 line-clamp-4">{businessSpotlight.description}</p>
+                      </div>
+                    )}
 
-                  {groupSpotlight && (
-                    <div className="border-b border-foreground/30 pb-4">
-                      <div className="font-mono text-[10px] uppercase tracking-widest border-b border-foreground pb-1 mb-2">Group Spotlight</div>
-                      {groupSpotlight.photoUrl && (
-                        <div className="w-full aspect-[4/3] overflow-hidden border border-foreground mb-2 bg-muted">
-                          <img src={groupSpotlight.photoUrl} alt={groupSpotlight.name} className="w-full h-full object-cover" />
-                        </div>
-                      )}
-                      <h3 className="font-headline font-bold text-base leading-tight mb-0.5">{groupSpotlight.name}</h3>
-                      <p className="font-mono text-[10px] uppercase tracking-wide text-foreground/60 mb-1">{groupSpotlight.groupType}</p>
-                      <p className="text-sm leading-snug text-foreground/80 line-clamp-4">{groupSpotlight.description}</p>
-                    </div>
-                  )}
-
-                  {/* Secondary sidebar articles */}
-                  {sidebarArticles.map(art => (
-                    <div key={art.id} className="border-b border-foreground/30 pb-4">
-                      {art.photoUrl && (
-                        <div className="w-full aspect-[4/3] overflow-hidden border border-foreground mb-2 bg-muted">
-                          <img src={art.photoUrl} alt={art.title} className="w-full h-full object-cover" />
-                        </div>
-                      )}
-                      <Link href={`/articles/${art.id}`}>
-                        <h3 className="font-headline font-bold text-base leading-tight mb-1 hover:underline underline-offset-2">{art.title}</h3>
-                      </Link>
-                      <p className="font-mono text-[10px] uppercase tracking-wide text-foreground/60 mb-1">
-                        By {art.author}
-                      </p>
-                      <p className="text-sm leading-snug text-foreground/80 line-clamp-5">
-                        {art.content.split('\n\n')[0]}
-                      </p>
-                    </div>
-                  ))}
-
-                  {!spotlight && !businessSpotlight && !groupSpotlight && sidebarArticles.length === 0 && (
-                    <p className="text-sm font-serif italic text-foreground/50">More stories coming soon.</p>
-                  )}
-                </div>
+                    {groupSpotlight && (
+                      <div className="border-b border-foreground/30 pb-4">
+                        <div className="font-mono text-[10px] uppercase tracking-widest border-b border-foreground pb-1 mb-2">Group Spotlight</div>
+                        {groupSpotlight.photoUrl && (
+                          <div className="w-full aspect-[4/3] overflow-hidden border border-foreground mb-2 bg-muted">
+                            <img src={groupSpotlight.photoUrl} alt={groupSpotlight.name} className="w-full h-full object-cover" />
+                          </div>
+                        )}
+                        <h3 className="font-headline font-bold text-base leading-tight mb-0.5">{groupSpotlight.name}</h3>
+                        <p className="font-mono text-[10px] uppercase tracking-wide text-foreground/60 mb-1">{groupSpotlight.groupType}</p>
+                        <p className="text-sm leading-snug text-foreground/80 line-clamp-4">{groupSpotlight.description}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* Main featured article */}
-                <div className="w-full md:w-[72%] md:pl-6">
+                <div className={hasSpotlights ? "w-full md:w-[72%] md:pl-6" : "w-full"}>
                   {mainArticle ? (
                     <article>
                       {mainArticle.photoUrl && (
@@ -164,12 +150,50 @@ export default function Home() {
                 </div>
               </div>
 
-              {/* ── Rest of content: secondary articles ── */}
-              {(featuredData?.secondary?.length ?? 0) > 0 && (
+              {/* ── Letters from / to the Editor (full width) ── */}
+              {letterArticles.length > 0 && (
+                <div className="mb-8 pb-8 border-b-2 border-foreground">
+                  <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-6">Letters</div>
+                  <div className="flex flex-col gap-10">
+                    {letterArticles.map(art => (
+                      <article key={art.id}>
+                        <Link href={`/articles/${art.id}`}>
+                          <h2 className="font-headline font-bold text-3xl md:text-4xl leading-tight mb-2 hover:underline underline-offset-4 decoration-1">
+                            {art.title}
+                          </h2>
+                        </Link>
+                        {art.subtitle && (
+                          <p className="font-headline italic text-lg text-foreground/80 mb-2">{art.subtitle}</p>
+                        )}
+                        <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wide text-foreground/60 mb-4 border-t border-b border-foreground/20 py-2">
+                          <span>By <span className="italic">{art.author}</span></span>
+                          <span>·</span>
+                          <span>{formatDateline(art.publishedAt)}</span>
+                        </div>
+                        <div className="columns-1 md:columns-2 gap-6 font-serif text-base leading-relaxed text-foreground/90">
+                          {art.content.split('\n\n').map((para, i) => (
+                            <p key={i} className={i > 0 ? "mt-4" : ""}>
+                              {i === 0 && (
+                                <span className="font-mono font-bold text-xs uppercase tracking-wider mr-2">
+                                  {formatDateline(art.publishedAt)}—
+                                </span>
+                              )}
+                              {para}
+                            </p>
+                          ))}
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* ── More from the community ── */}
+              {otherArticles.length > 0 && (
                 <div className="mb-8 pb-8 border-b-2 border-foreground">
                   <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-6">More From the Community</div>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 divide-y md:divide-y-0 md:divide-x divide-foreground/30">
-                    {featuredData!.secondary.map((art, i) => (
+                    {otherArticles.map((art, i) => (
                       <div key={art.id} className={i > 0 ? "md:pl-6 pt-6 md:pt-0" : ""}>
                         <ArticleTeaser article={art} size="standard" />
                       </div>

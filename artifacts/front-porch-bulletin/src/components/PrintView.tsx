@@ -144,8 +144,15 @@ export function PrintView() {
   const secondary = featured?.secondary ?? [];
   const churches  = churchData?.churches ?? [];
 
-  const mainArticle     = frontPage[0] ?? null;
-  const sidebarArticles = frontPage.slice(1);
+  const isLetter = (art: { category: string }) =>
+    art.category?.toLowerCase() === "letters";
+
+  const mainArticle = frontPage[0] ?? null;
+
+  // All non-main articles, separated into letters and everything else
+  const allOtherArticles = [...frontPage.slice(1), ...secondary];
+  const letterArticles   = allOtherArticles.filter(isLetter);
+  const otherArticles    = allOtherArticles.filter(a => !isLetter(a));
 
   /* ── Photo helper ── */
   function PhotoBox({ url, alt, credit, aspect = "4/3" }: { url?: string | null; alt: string; credit?: string | null; aspect?: string }) {
@@ -239,22 +246,6 @@ export function PrintView() {
             </div>
           )}
 
-          {/* Additional front-page sidebar articles */}
-          {sidebarArticles.map((art, i) => (
-            <div key={art.id} style={{ marginBottom: "12pt", paddingBottom: "10pt", borderBottom: i < sidebarArticles.length - 1 ? RULE_LIGHT : "none" }}>
-              <PhotoBox url={art.photoUrl} alt={art.title} credit={art.photoCredit} />
-              <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "13pt", lineHeight: 1.1, margin: "0 0 2pt" }}>{art.title}</p>
-              {art.subtitle && (
-                <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "9pt", lineHeight: 1.2, margin: "0 0 2pt", color: "#333" }}>{art.subtitle}</p>
-              )}
-              <p style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 4pt" }}>
-                By {art.author}
-              </p>
-              <p style={{ fontSize: "9pt", lineHeight: 1.45, margin: 0, color: "#333" }}>
-                {art.content.split('\n\n')[0]}
-              </p>
-            </div>
-          ))}
         </div>
 
         {/* ─── Main featured article ─── */}
@@ -298,13 +289,49 @@ export function PrintView() {
       <div style={{ pageBreakBefore: "always", breakBefore: "page" }} />
       <SlimHeader page="02" />
 
-      {/* Secondary (non-featured) articles */}
-      {secondary.length === 0 ? (
+      {/* Letters from / to the Editor — full-width, first on page 2 */}
+      {letterArticles.length > 0 && (
+        <div style={{ marginBottom: "22pt" }}>
+          <SectionLabel>Letters</SectionLabel>
+          {letterArticles.map((art, i) => (
+            <div key={art.id} style={{ marginBottom: "22pt", paddingBottom: "18pt", borderBottom: i < letterArticles.length - 1 ? RULE_LIGHT : "none" }}>
+              <h2 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "32pt", lineHeight: 1.0, margin: "0 0 4pt", letterSpacing: "-0.01em" }}>
+                {art.title}
+              </h2>
+              {art.subtitle && (
+                <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "14pt", lineHeight: 1.2, margin: "0 0 4pt", color: "#333" }}>
+                  {art.subtitle}
+                </p>
+              )}
+              <ArticleByline author={art.author} date={art.publishedAt} />
+              <div style={{ columns: 2, columnGap: "18pt", columnRule: RULE_LIGHT, fontSize: "11pt", lineHeight: 1.6, textAlign: "justify" }}>
+                {art.content.split('\n\n').map((para, j) => (
+                  <p key={j} style={{ margin: j === 0 ? "0" : "7pt 0 0", breakInside: "avoid" }}>
+                    {j === 0 && (
+                      <span style={{ fontFamily: FONT_MONO, fontWeight: "bold", fontSize: "7pt", textTransform: "uppercase", letterSpacing: "0.1em", marginRight: "3pt" }}>
+                        {formatDateline(art.publishedAt)}—
+                      </span>
+                    )}
+                    {para}
+                  </p>
+                ))}
+              </div>
+            </div>
+          ))}
+          {/* Divider before other articles */}
+          {otherArticles.length > 0 && (
+            <div style={{ borderTop: RULE_DOUBLE, marginTop: "4pt", marginBottom: "18pt" }} />
+          )}
+        </div>
+      )}
+
+      {/* Other secondary articles */}
+      {otherArticles.length === 0 && letterArticles.length === 0 ? (
         <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", color: INK_MUTED }}>More community stories coming next issue.</p>
       ) : (
         <div>
-          {secondary.map((art, i) => (
-            <div key={art.id} style={{ marginBottom: "22pt", paddingBottom: "18pt", borderBottom: i < secondary.length - 1 ? RULE_LIGHT : "none" }}>
+          {otherArticles.map((art, i) => (
+            <div key={art.id} style={{ marginBottom: "22pt", paddingBottom: "18pt", borderBottom: i < otherArticles.length - 1 ? RULE_LIGHT : "none" }}>
               <SectionLabel>{art.category}</SectionLabel>
               <h2 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "28pt", lineHeight: 1.05, margin: "0 0 4pt", letterSpacing: "-0.01em" }}>
                 {art.title}
