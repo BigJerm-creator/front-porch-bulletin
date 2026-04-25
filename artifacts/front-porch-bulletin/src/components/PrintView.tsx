@@ -414,48 +414,6 @@ export function PrintView() {
       <div style={{ pageBreakBefore: "always", breakBefore: "page" }} />
       <SlimHeader page="03" />
 
-      {/* "This Month in Pictures" — spotlights as photo features */}
-      {(spotlight || businessSpotlight || groupSpotlight) && (
-        <div style={{ marginBottom: "20pt" }}>
-          <SectionLabel>This Month in Pictures</SectionLabel>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "14pt" }}>
-            {spotlight && (
-              <div style={{ breakInside: "avoid" }}>
-                <PhotoBox url={spotlight.photoUrl} alt={spotlight.name} credit={spotlight.photoCredit} aspect="3/4" />
-                <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", fontSize: "8.5pt", lineHeight: 1.4, textAlign: "center", margin: "3pt 0 0", color: "#333" }}>
-                  {spotlight.description?.split('.')[0]}.
-                </p>
-              </div>
-            )}
-            {businessSpotlight && (
-              <div style={{ breakInside: "avoid" }}>
-                <PhotoBox url={businessSpotlight.photoUrl} alt={businessSpotlight.name} credit={businessSpotlight.photoCredit} aspect="3/4" />
-                <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", fontSize: "8.5pt", lineHeight: 1.4, textAlign: "center", margin: "3pt 0 0", color: "#333" }}>
-                  {businessSpotlight.description?.split('.')[0]}.
-                </p>
-              </div>
-            )}
-            {groupSpotlight && (
-              <div style={{ breakInside: "avoid" }}>
-                <PhotoBox url={groupSpotlight.photoUrl} alt={groupSpotlight.name} credit={groupSpotlight.photoCredit} aspect="3/4" />
-                <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", fontSize: "8.5pt", lineHeight: 1.4, textAlign: "center", margin: "3pt 0 0", color: "#333" }}>
-                  {groupSpotlight.description?.split('.')[0]}.
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Remaining secondary articles that didn't fit on page 2 */}
-      <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", color: INK_MUTED, fontSize: "9pt" }}>
-        Additional community stories and announcements continue on the next page.
-      </p>
-
-      {/* ══════════ PAGE 4 ══════════ */}
-      <div style={{ pageBreakBefore: "always", breakBefore: "page" }} />
-      <SlimHeader page="04" />
-
       {/* Church Directory */}
       {churches.length > 0 && (
         <div style={{ marginBottom: "18pt" }}>
