@@ -392,18 +392,24 @@ export function PrintView() {
       <div style={{ marginBottom: "18pt", paddingBottom: "14pt", borderBottom: RULE_DOUBLE }}>
         <SectionLabel>Library News</SectionLabel>
         {libraryArticles.length > 0 ? (
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 18pt" }}>
+          <div>
             {libraryArticles.map((art, i) => (
-              <div key={art.id} style={{ paddingLeft: i % 2 === 1 ? "18pt" : "0", borderLeft: i % 2 === 1 ? RULE_LIGHT : "none", marginBottom: "12pt" }}>
-                {art.photoUrl && (
-                  <div style={{ marginBottom: "6pt" }}>
-                    <PhotoBox url={art.photoUrl} alt={art.title} credit={art.photoCredit} aspect="4/3" />
-                  </div>
-                )}
+              <div key={art.id} style={{ marginBottom: "14pt", paddingBottom: "12pt", borderBottom: i < libraryArticles.length - 1 ? RULE_LIGHT : "none" }}>
                 <h3 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 3pt" }}>{art.title}</h3>
                 {art.subtitle && <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "10pt", margin: "0 0 2pt", color: "#333" }}>{art.subtitle}</p>}
                 <ArticleByline author={art.author} date={art.publishedAt} />
-                <p style={{ fontSize: "9.5pt", lineHeight: 1.5, margin: 0, textAlign: "justify" }}>{art.content.split('\n\n')[0]}</p>
+                <div style={{ display: "grid", gridTemplateColumns: art.photoUrl ? "160pt 1fr" : "1fr", gap: "12pt", alignItems: "flex-start" }}>
+                  {art.photoUrl && (
+                    <div style={{ flexShrink: 0 }}>
+                      <PhotoBox url={art.photoUrl} alt={art.title} credit={art.photoCredit} aspect="4/3" />
+                    </div>
+                  )}
+                  <div style={{ columns: art.photoUrl ? 1 : 2, columnGap: "18pt", columnRule: RULE_LIGHT, fontSize: "9.5pt", lineHeight: 1.5, textAlign: "justify" }}>
+                    {art.content.split('\n\n').map((para, j) => (
+                      <p key={j} style={{ margin: j === 0 ? "0" : "6pt 0 0", breakInside: "avoid" }}>{para}</p>
+                    ))}
+                  </div>
+                </div>
               </div>
             ))}
           </div>

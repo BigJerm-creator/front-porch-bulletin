@@ -281,12 +281,12 @@ export default function Home() {
               <div className="mb-8 pb-8 border-b-2 border-foreground">
                 <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Library News</div>
                 {libraryArticles.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 divide-y md:divide-y-0 md:divide-x divide-foreground/30">
+                  <div className="flex flex-col gap-8 divide-y divide-foreground/30">
                     {libraryArticles.map((art, i) => (
-                      <article key={art.id} className={i > 0 ? "md:pl-8 pt-6 md:pt-0" : ""}>
+                      <article key={art.id} className={i > 0 ? "pt-6" : ""}>
                         {art.photoUrl && (
                           <div className="w-full overflow-hidden border border-foreground/20 mb-2 bg-muted">
-                            <img src={art.photoUrl} alt={art.title} className="w-full object-cover" style={{ maxHeight: "200px", display: "block" }} />
+                            <img src={art.photoUrl} alt={art.title} className="w-full object-cover" style={{ maxHeight: "280px", display: "block" }} />
                             {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 px-1 py-0.5 italic">Photo: {art.photoCredit}</p>}
                           </div>
                         )}
