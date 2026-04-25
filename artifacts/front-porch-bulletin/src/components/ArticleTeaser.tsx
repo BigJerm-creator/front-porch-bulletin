@@ -31,38 +31,62 @@ export function ArticleTeaser({ article, featured = false, size }: ArticleTeaser
     standard: "text-base line-clamp-4",
   }[resolvedSize];
 
+  const photoMaxH = {
+    hero:     "320px",
+    feature:  "240px",
+    standard: "200px",
+  }[resolvedSize];
+
   return (
     <article className="group break-inside-avoid">
       <Link href={`/articles/${article.id}`} className="block">
-        <div className="hover:bg-foreground/[0.02] p-2 -m-2 transition-colors cursor-pointer">
-          <h3 className={`font-headline font-bold leading-tight text-foreground group-hover:underline underline-offset-4 decoration-1 ${headingClass}`}>
-            {article.title}
-          </h3>
-
-          {article.subtitle && (
-            <p className={`font-headline italic text-foreground/80 mb-2 ${subtitleClass}`}>
-              {article.subtitle}
-            </p>
+        <div className="hover:bg-foreground/[0.02] transition-colors cursor-pointer">
+          {article.photoUrl && (
+            <div className="w-full overflow-hidden border border-foreground/20 mb-3 bg-muted">
+              <img
+                src={article.photoUrl}
+                alt={article.title}
+                className="w-full object-cover"
+                style={{ maxHeight: photoMaxH, display: "block" }}
+              />
+              {article.photoCredit && (
+                <p className="font-mono text-[8px] text-right text-foreground/40 px-1 py-0.5 italic">
+                  Photo: {article.photoCredit}
+                </p>
+              )}
+            </div>
           )}
 
-          <div className="flex items-center gap-2 text-xs font-mono mb-3 text-foreground/70 uppercase tracking-wide">
-            <span>By <span className="italic">{article.author}</span></span>
-            <span>•</span>
-            <span className="bg-foreground/5 px-1">{article.category}</span>
-          </div>
+          <div className="p-2 -m-2">
+            <h3 className={`font-headline font-bold leading-tight text-foreground group-hover:underline underline-offset-4 decoration-1 ${headingClass}`}>
+              {article.title}
+            </h3>
 
-          <p className={`font-serif text-foreground/90 leading-relaxed ${bodyClass}`}>
-            <span className="font-bold text-xs uppercase tracking-wider font-mono mr-2">
-              {formatDateline(article.publishedAt)}—
-            </span>
-            {resolvedSize === "hero" ? (
-              <span className="first-letter-drop">
-                {article.content.split('\n')[0]}
-              </span>
-            ) : (
-              article.content.split('\n')[0]
+            {article.subtitle && (
+              <p className={`font-headline italic text-foreground/80 mb-2 ${subtitleClass}`}>
+                {article.subtitle}
+              </p>
             )}
-          </p>
+
+            <div className="flex items-center gap-2 text-xs font-mono mb-3 text-foreground/70 uppercase tracking-wide">
+              <span>By <span className="italic">{article.author}</span></span>
+              <span>•</span>
+              <span className="bg-foreground/5 px-1">{article.category}</span>
+            </div>
+
+            <p className={`font-serif text-foreground/90 leading-relaxed ${bodyClass}`}>
+              <span className="font-bold text-xs uppercase tracking-wider font-mono mr-2">
+                {formatDateline(article.publishedAt)}—
+              </span>
+              {resolvedSize === "hero" ? (
+                <span className="first-letter-drop">
+                  {article.content.split('\n')[0]}
+                </span>
+              ) : (
+                article.content.split('\n')[0]
+              )}
+            </p>
+          </div>
         </div>
       </Link>
     </article>

@@ -220,6 +220,12 @@ export default function Home() {
                       <div className="flex flex-col gap-6">
                         {libraryArticles.map(art => (
                           <article key={art.id}>
+                            {art.photoUrl && (
+                              <div className="w-full overflow-hidden border border-foreground/20 mb-2 bg-muted">
+                                <img src={art.photoUrl} alt={art.title} className="w-full object-cover" style={{ maxHeight: "160px", display: "block" }} />
+                                {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 px-1 py-0.5 italic">Photo: {art.photoCredit}</p>}
+                              </div>
+                            )}
                             <Link href={`/articles/${art.id}`}>
                               <h3 className="font-headline font-bold text-2xl leading-tight mb-1 hover:underline underline-offset-4 decoration-1">{art.title}</h3>
                             </Link>
@@ -245,6 +251,12 @@ export default function Home() {
                       <div className="flex flex-col gap-6">
                         {h4Articles.map(art => (
                           <article key={art.id}>
+                            {art.photoUrl && (
+                              <div className="w-full overflow-hidden border border-foreground/20 mb-2 bg-muted">
+                                <img src={art.photoUrl} alt={art.title} className="w-full object-cover" style={{ maxHeight: "160px", display: "block" }} />
+                                {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 px-1 py-0.5 italic">Photo: {art.photoCredit}</p>}
+                              </div>
+                            )}
                             <Link href={`/articles/${art.id}`}>
                               <h3 className="font-headline font-bold text-2xl leading-tight mb-1 hover:underline underline-offset-4 decoration-1">{art.title}</h3>
                             </Link>
@@ -286,6 +298,12 @@ export default function Home() {
                   <div className="flex flex-col gap-10">
                     {letterArticles.map(art => (
                       <article key={art.id}>
+                        {art.photoUrl && (
+                          <div className="w-full overflow-hidden border border-foreground mb-4 bg-muted">
+                            <img src={art.photoUrl} alt={art.title} className="w-full object-cover" style={{ maxHeight: "280px", display: "block" }} />
+                            {art.photoCredit && <p className="font-mono text-[9px] text-right text-foreground/50 p-1 italic">Photo: {art.photoCredit}</p>}
+                          </div>
+                        )}
                         <Link href={`/articles/${art.id}`}>
                           <h2 className="font-headline font-bold text-3xl md:text-4xl leading-tight mb-2 hover:underline underline-offset-4 decoration-1">
                             {art.title}
