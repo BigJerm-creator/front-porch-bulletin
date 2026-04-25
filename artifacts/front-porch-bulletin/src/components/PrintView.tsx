@@ -233,32 +233,6 @@ export function PrintView() {
             </div>
           )}
 
-          {/* Business Spotlight */}
-          {businessSpotlight && (
-            <div style={{ marginBottom: "12pt", paddingBottom: "10pt", borderBottom: RULE_LIGHT }}>
-              <SectionLabel>Business Spotlight</SectionLabel>
-              <PhotoBox url={businessSpotlight.photoUrl} alt={businessSpotlight.name} credit={businessSpotlight.photoCredit} />
-              <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "12pt", lineHeight: 1.1, margin: "0 0 1.5pt" }}>{businessSpotlight.name}</p>
-              <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 3pt" }}>
-                {businessSpotlight.businessType}
-              </p>
-              <p style={{ fontSize: "9pt", lineHeight: 1.45, margin: 0, color: "#333" }}>{businessSpotlight.description}</p>
-            </div>
-          )}
-
-          {/* Group Spotlight */}
-          {groupSpotlight && (
-            <div style={{ marginBottom: "12pt", paddingBottom: "10pt", borderBottom: RULE_LIGHT }}>
-              <SectionLabel>Group Spotlight</SectionLabel>
-              <PhotoBox url={groupSpotlight.photoUrl} alt={groupSpotlight.name} credit={groupSpotlight.photoCredit} />
-              <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "12pt", lineHeight: 1.1, margin: "0 0 1.5pt" }}>{groupSpotlight.name}</p>
-              <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 3pt" }}>
-                {groupSpotlight.groupType}
-              </p>
-              <p style={{ fontSize: "9pt", lineHeight: 1.45, margin: 0, color: "#333" }}>{groupSpotlight.description}</p>
-            </div>
-          )}
-
         </div>
 
         {/* ─── Main featured article ─── */}
@@ -300,6 +274,52 @@ export function PrintView() {
 
       {/* ══ Continuation ══ */}
       <div style={{ borderTop: RULE_DOUBLE, marginTop: "18pt", marginBottom: "14pt" }} />
+
+      {/* Business Spotlight — full width */}
+      {businessSpotlight && (
+        <div style={{ marginBottom: "18pt", paddingBottom: "14pt", borderBottom: RULE_DOUBLE }}>
+          <SectionLabel>Business Spotlight</SectionLabel>
+          <div style={{ display: "grid", gridTemplateColumns: businessSpotlight.photoUrl ? "160pt 1fr" : "1fr", gap: "12pt", alignItems: "flex-start" }}>
+            {businessSpotlight.photoUrl && (
+              <div style={{ flexShrink: 0 }}>
+                <PhotoBox url={businessSpotlight.photoUrl} alt={businessSpotlight.name} credit={businessSpotlight.photoCredit} aspect="4/3" />
+              </div>
+            )}
+            <div>
+              <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 2pt" }}>{businessSpotlight.name}</p>
+              {businessSpotlight.businessType && (
+                <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 5pt" }}>
+                  {businessSpotlight.businessType}
+                </p>
+              )}
+              <p style={{ fontSize: "9.5pt", lineHeight: 1.5, textAlign: "justify", margin: 0 }}>{businessSpotlight.description}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Group Spotlight — full width */}
+      {groupSpotlight && (
+        <div style={{ marginBottom: "18pt", paddingBottom: "14pt", borderBottom: RULE_DOUBLE }}>
+          <SectionLabel>Group Spotlight</SectionLabel>
+          <div style={{ display: "grid", gridTemplateColumns: groupSpotlight.photoUrl ? "160pt 1fr" : "1fr", gap: "12pt", alignItems: "flex-start" }}>
+            {groupSpotlight.photoUrl && (
+              <div style={{ flexShrink: 0 }}>
+                <PhotoBox url={groupSpotlight.photoUrl} alt={groupSpotlight.name} credit={groupSpotlight.photoCredit} aspect="4/3" />
+              </div>
+            )}
+            <div>
+              <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 2pt" }}>{groupSpotlight.name}</p>
+              {groupSpotlight.groupType && (
+                <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 5pt" }}>
+                  {groupSpotlight.groupType}
+                </p>
+              )}
+              <p style={{ fontSize: "9.5pt", lineHeight: 1.5, textAlign: "justify", margin: 0 }}>{groupSpotlight.description}</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Page 2 Top Story — full-width, chosen from admin */}
       {page2Article && (
