@@ -8,9 +8,10 @@ interface ArticleTeaserProps {
   article: Article;
   featured?: boolean;
   size?: ArticleSize;
+  photoFit?: "cover" | "contain";
 }
 
-export function ArticleTeaser({ article, featured = false, size }: ArticleTeaserProps) {
+export function ArticleTeaser({ article, featured = false, size, photoFit = "cover" }: ArticleTeaserProps) {
   const resolvedSize: ArticleSize = size ?? (featured ? "hero" : "standard");
 
   const headingClass = {
@@ -46,8 +47,8 @@ export function ArticleTeaser({ article, featured = false, size }: ArticleTeaser
               <img
                 src={article.photoUrl}
                 alt={article.title}
-                className="w-full object-cover"
-                style={{ maxHeight: photoMaxH, display: "block" }}
+                className="w-full"
+                style={{ maxHeight: photoMaxH, display: "block", objectFit: photoFit }}
               />
               {article.photoCredit && (
                 <p className="font-mono text-[8px] text-right text-foreground/40 px-1 py-0.5 italic">

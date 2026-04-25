@@ -210,6 +210,20 @@ export default function Home() {
                 </div>
               )}
 
+              {/* ── Community ── */}
+              {communityArticles.length > 0 && (
+                <div className="mb-8 pb-8 border-b-2 border-foreground">
+                  <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-6">Community</div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 divide-y md:divide-y-0 md:divide-x divide-foreground/30">
+                    {communityArticles.map((art, i) => (
+                      <div key={art.id} className={i > 0 ? "md:pl-6 pt-6 md:pt-0" : ""}>
+                        <ArticleTeaser article={art} size="standard" photoFit="contain" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* ── Library News | 4H News — two columns ── */}
               <div className="mb-8 pb-8 border-b-2 border-foreground">
                 <div className="grid grid-cols-2 gap-0 divide-x-2 divide-foreground">
@@ -276,20 +290,6 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-
-              {/* ── Community ── */}
-              {communityArticles.length > 0 && (
-                <div className="mb-8 pb-8 border-b-2 border-foreground">
-                  <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-6">Community</div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 divide-y md:divide-y-0 md:divide-x divide-foreground/30">
-                    {communityArticles.map((art, i) => (
-                      <div key={art.id} className={i > 0 ? "md:pl-6 pt-6 md:pt-0" : ""}>
-                        <ArticleTeaser article={art} size="standard" />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
 
               {/* ── Letters from / to the Editor (full width) ── */}
               {letterArticles.length > 0 && (

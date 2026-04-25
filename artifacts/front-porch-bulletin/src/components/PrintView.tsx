@@ -168,12 +168,12 @@ export function PrintView() {
   const otherArticles  = allOtherArticles.filter(a => !isLetter(a));
 
   /* ── Photo helper ── */
-  function PhotoBox({ url, alt, credit, aspect = "4/3" }: { url?: string | null; alt: string; credit?: string | null; aspect?: string }) {
+  function PhotoBox({ url, alt, credit, aspect = "4/3", objectFit = "cover" }: { url?: string | null; alt: string; credit?: string | null; aspect?: string; objectFit?: "cover" | "contain" }) {
     return (
       <div style={{ marginBottom: "4pt" }}>
         <div style={{ width: "100%", aspectRatio: aspect, overflow: "hidden", border: RULE, background: "#d6cfc4" }}>
           {url ? (
-            <img src={url} alt={alt} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+            <img src={url} alt={alt} style={{ width: "100%", height: "100%", objectFit: objectFit, display: "block" }} />
           ) : (
             <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", color: INK_MUTED, textTransform: "uppercase" }}>Photo</span>
@@ -345,6 +345,32 @@ export function PrintView() {
         </div>
       )}
 
+      {/* Community section */}
+      {communityArticles.length > 0 && (
+        <div style={{ marginBottom: "18pt", paddingBottom: "14pt", borderBottom: RULE_DOUBLE }}>
+          <SectionLabel>Community</SectionLabel>
+          {communityArticles.map((art, i) => (
+            <div key={art.id} style={{ marginBottom: "16pt", paddingBottom: "14pt", borderBottom: i < communityArticles.length - 1 ? RULE_LIGHT : "none" }}>
+              <h3 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "20pt", lineHeight: 1.1, margin: "0 0 3pt" }}>{art.title}</h3>
+              {art.subtitle && <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "11pt", margin: "0 0 3pt", color: "#333" }}>{art.subtitle}</p>}
+              <ArticleByline author={art.author} date={art.publishedAt} />
+              <div style={{ display: "grid", gridTemplateColumns: art.photoUrl ? "180pt 1fr" : "1fr", gap: "14pt", alignItems: "flex-start" }}>
+                {art.photoUrl && (
+                  <div style={{ flexShrink: 0 }}>
+                    <PhotoBox url={art.photoUrl} alt={art.title} credit={art.photoCredit} aspect="4/3" objectFit="contain" />
+                  </div>
+                )}
+                <div style={{ columns: art.photoUrl ? 1 : 2, columnGap: "18pt", columnRule: RULE_LIGHT, fontSize: "10.5pt", lineHeight: 1.55, textAlign: "justify" }}>
+                  {art.content.split('\n\n').map((para, j) => (
+                    <p key={j} style={{ margin: j === 0 ? "0" : "6pt 0 0", breakInside: "avoid" }}>{para}</p>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Library News | 4H News — two-column split */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0", borderTop: RULE, borderBottom: RULE, marginBottom: "18pt", paddingTop: "10pt", paddingBottom: "10pt" }}>
         {/* Library News */}
@@ -387,32 +413,6 @@ export function PrintView() {
           )}
         </div>
       </div>
-
-      {/* Community section */}
-      {communityArticles.length > 0 && (
-        <div style={{ marginBottom: "18pt", paddingBottom: "14pt", borderBottom: RULE_DOUBLE }}>
-          <SectionLabel>Community</SectionLabel>
-          {communityArticles.map((art, i) => (
-            <div key={art.id} style={{ marginBottom: "16pt", paddingBottom: "14pt", borderBottom: i < communityArticles.length - 1 ? RULE_LIGHT : "none" }}>
-              <h3 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "20pt", lineHeight: 1.1, margin: "0 0 3pt" }}>{art.title}</h3>
-              {art.subtitle && <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "11pt", margin: "0 0 3pt", color: "#333" }}>{art.subtitle}</p>}
-              <ArticleByline author={art.author} date={art.publishedAt} />
-              <div style={{ display: "grid", gridTemplateColumns: art.photoUrl ? "180pt 1fr" : "1fr", gap: "14pt", alignItems: "flex-start" }}>
-                {art.photoUrl && (
-                  <div style={{ flexShrink: 0 }}>
-                    <PhotoBox url={art.photoUrl} alt={art.title} credit={art.photoCredit} aspect="4/3" />
-                  </div>
-                )}
-                <div style={{ columns: art.photoUrl ? 1 : 2, columnGap: "18pt", columnRule: RULE_LIGHT, fontSize: "10.5pt", lineHeight: 1.55, textAlign: "justify" }}>
-                  {art.content.split('\n\n').map((para, j) => (
-                    <p key={j} style={{ margin: j === 0 ? "0" : "6pt 0 0", breakInside: "avoid" }}>{para}</p>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
 
       {/* Letters from / to the Editor — full-width */}
       {letterArticles.length > 0 && (
