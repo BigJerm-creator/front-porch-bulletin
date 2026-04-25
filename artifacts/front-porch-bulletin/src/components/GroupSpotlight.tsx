@@ -30,7 +30,7 @@ export function GroupSpotlight() {
         style={{ aspectRatio: "4/3", background: "#d6cfc4" }}
       >
         {data.photoUrl ? (
-          <img src={data.photoUrl} alt={data.name} className="w-full h-full object-cover" />
+          <img src={data.photoUrl} alt={data.name} className="w-full h-full object-contain" />
         ) : (
           <div className="flex-1 flex items-center justify-center w-full">
             <Users className="h-16 w-16 text-foreground/20" />

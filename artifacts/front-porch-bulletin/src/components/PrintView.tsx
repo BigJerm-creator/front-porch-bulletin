@@ -169,7 +169,7 @@ export function PrintView() {
   const otherArticles  = allOtherArticles.filter(a => !isLetter(a));
 
   /* ── Photo helper ── */
-  function PhotoBox({ url, alt, credit, aspect = "4/3", objectFit = "cover" }: { url?: string | null; alt: string; credit?: string | null; aspect?: string; objectFit?: "cover" | "contain" }) {
+  function PhotoBox({ url, alt, credit, aspect = "4/3", objectFit = "contain" }: { url?: string | null; alt: string; credit?: string | null; aspect?: string; objectFit?: "cover" | "contain" }) {
     return (
       <div style={{ marginBottom: "4pt" }}>
         <div style={{ width: "100%", aspectRatio: aspect, overflow: "hidden", border: RULE, background: "#d6cfc4" }}>

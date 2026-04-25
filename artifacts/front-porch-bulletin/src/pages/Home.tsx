@@ -75,7 +75,7 @@ export default function Home() {
                         <div className="font-mono text-[10px] uppercase tracking-widest border-b border-foreground pb-1 mb-2">Student Spotlight</div>
                         {spotlight.photoUrl && (
                           <div className="w-full aspect-[4/3] overflow-hidden border border-foreground mb-2 bg-muted">
-                            <img src={spotlight.photoUrl} alt={spotlight.name} className="w-full h-full object-cover" />
+                            <img src={spotlight.photoUrl} alt={spotlight.name} className="w-full h-full object-contain" />
                           </div>
                         )}
                         <h3 className="font-headline font-bold text-base leading-tight mb-0.5">{spotlight.name}</h3>
@@ -93,7 +93,7 @@ export default function Home() {
                     <article>
                       {mainArticle.photoUrl && (
                         <div className="w-full overflow-hidden border border-foreground mb-4 bg-muted" style={{ maxHeight: "340px" }}>
-                          <img src={mainArticle.photoUrl} alt={mainArticle.title} className="w-full h-full object-cover" style={{ maxHeight: "340px" }} />
+                          <img src={mainArticle.photoUrl} alt={mainArticle.title} className="w-full h-full object-contain" style={{ maxHeight: "340px" }} />
                           {mainArticle.photoCredit && (
                             <p className="font-mono text-[9px] text-right text-foreground/50 p-1 italic">Photo: {mainArticle.photoCredit}</p>
                           )}
@@ -142,7 +142,7 @@ export default function Home() {
                   <div className={businessSpotlight.photoUrl ? "grid grid-cols-1 md:grid-cols-[280px_1fr] gap-6 items-start" : ""}>
                     {businessSpotlight.photoUrl && (
                       <div className="w-full overflow-hidden border border-foreground/20 bg-muted">
-                        <img src={businessSpotlight.photoUrl} alt={businessSpotlight.name} className="w-full object-cover" style={{ maxHeight: "280px", display: "block" }} />
+                        <img src={businessSpotlight.photoUrl} alt={businessSpotlight.name} className="w-full object-contain" style={{ maxHeight: "280px", display: "block" }} />
                       </div>
                     )}
                     <div>
@@ -163,7 +163,7 @@ export default function Home() {
                   <div className={groupSpotlight.photoUrl ? "grid grid-cols-1 md:grid-cols-[280px_1fr] gap-6 items-start" : ""}>
                     {groupSpotlight.photoUrl && (
                       <div className="w-full overflow-hidden border border-foreground/20 bg-muted">
-                        <img src={groupSpotlight.photoUrl} alt={groupSpotlight.name} className="w-full object-cover" style={{ maxHeight: "280px", display: "block" }} />
+                        <img src={groupSpotlight.photoUrl} alt={groupSpotlight.name} className="w-full object-contain" style={{ maxHeight: "280px", display: "block" }} />
                       </div>
                     )}
                     <div>
@@ -237,7 +237,7 @@ export default function Home() {
                           <article key={art.id}>
                             {art.photoUrl && (
                               <div className="w-full overflow-hidden border border-foreground/20 mb-2 bg-muted">
-                                <img src={art.photoUrl} alt={art.title} className="w-full object-cover" style={{ maxHeight: "160px", display: "block" }} />
+                                <img src={art.photoUrl} alt={art.title} className="w-full object-contain" style={{ maxHeight: "160px", display: "block" }} />
                                 {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 px-1 py-0.5 italic">Photo: {art.photoCredit}</p>}
                               </div>
                             )}
@@ -301,7 +301,7 @@ export default function Home() {
                       <article key={art.id} className={i > 0 ? "pt-6" : ""}>
                         {art.photoUrl && (
                           <div className="w-full overflow-hidden border border-foreground/20 mb-2 bg-muted">
-                            <img src={art.photoUrl} alt={art.title} className="w-full object-cover" style={{ maxHeight: "280px", display: "block" }} />
+                            <img src={art.photoUrl} alt={art.title} className="w-full object-contain" style={{ maxHeight: "280px", display: "block" }} />
                             {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 px-1 py-0.5 italic">Photo: {art.photoCredit}</p>}
                           </div>
                         )}
@@ -332,7 +332,7 @@ export default function Home() {
                       <article key={art.id}>
                         {art.photoUrl && (
                           <div className="w-full overflow-hidden border border-foreground mb-4 bg-muted">
-                            <img src={art.photoUrl} alt={art.title} className="w-full object-cover" style={{ maxHeight: "280px", display: "block" }} />
+                            <img src={art.photoUrl} alt={art.title} className="w-full object-contain" style={{ maxHeight: "280px", display: "block" }} />
                             {art.photoCredit && <p className="font-mono text-[9px] text-right text-foreground/50 p-1 italic">Photo: {art.photoCredit}</p>}
                           </div>
                         )}

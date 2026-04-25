@@ -11,7 +11,7 @@ interface ArticleTeaserProps {
   photoFit?: "cover" | "contain";
 }
 
-export function ArticleTeaser({ article, featured = false, size, photoFit = "cover" }: ArticleTeaserProps) {
+export function ArticleTeaser({ article, featured = false, size, photoFit = "contain" }: ArticleTeaserProps) {
   const resolvedSize: ArticleSize = size ?? (featured ? "hero" : "standard");
 
   const headingClass = {
