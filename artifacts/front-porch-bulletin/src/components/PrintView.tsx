@@ -169,10 +169,10 @@ export function PrintView() {
   const otherArticles  = allOtherArticles.filter(a => !isLetter(a));
 
   /* ── Photo helper ── */
-  function PhotoBox({ url, alt, credit, aspect = "4/3", objectFit = "contain" }: { url?: string | null; alt: string; credit?: string | null; aspect?: string; objectFit?: "cover" | "contain" }) {
+  function PhotoBox({ url, alt, credit, aspect = "4/3", objectFit = "contain", maxHeight }: { url?: string | null; alt: string; credit?: string | null; aspect?: string; objectFit?: "cover" | "contain"; maxHeight?: string }) {
     return (
       <div style={{ marginBottom: "4pt" }}>
-        <div style={{ width: "100%", aspectRatio: aspect, overflow: "hidden", border: RULE, background: "#d6cfc4" }}>
+        <div style={{ width: "100%", ...(maxHeight ? { height: maxHeight, maxHeight } : { aspectRatio: aspect }), overflow: "hidden", border: RULE, background: "#d6cfc4" }}>
           {url ? (
             <img src={url} alt={alt} style={{ width: "100%", height: "100%", objectFit: objectFit, display: "block" }} />
           ) : (
@@ -241,7 +241,7 @@ export function PrintView() {
           {mainArticle ? (
             <>
               {mainArticle.photoUrl && (
-                <PhotoBox url={mainArticle.photoUrl} alt={mainArticle.title} credit={mainArticle.photoCredit} aspect="16/9" />
+                <PhotoBox url={mainArticle.photoUrl} alt={mainArticle.title} credit={mainArticle.photoCredit} maxHeight="108pt" />
               )}
               <h1 style={{
                 fontFamily: FONT_HEADLINE, fontWeight: "bold",
