@@ -53,7 +53,7 @@ export default function Home() {
   const letterArticles = allOtherArticles.filter(isLetter);
   const otherArticles  = allOtherArticles.filter(a => !isLetter(a));
 
-  const hasSpotlights = !!(spotlight || businessSpotlight || groupSpotlight);
+  const hasSpotlights = !!spotlight;
 
   return (
     <>
@@ -84,33 +84,6 @@ export default function Home() {
                       </div>
                     )}
 
-                    {businessSpotlight && (
-                      <div className="border-b border-foreground/30 pb-4">
-                        <div className="font-mono text-[10px] uppercase tracking-widest border-b border-foreground pb-1 mb-2">Business Spotlight</div>
-                        {businessSpotlight.photoUrl && (
-                          <div className="w-full aspect-[4/3] overflow-hidden border border-foreground mb-2 bg-muted">
-                            <img src={businessSpotlight.photoUrl} alt={businessSpotlight.name} className="w-full h-full object-cover" />
-                          </div>
-                        )}
-                        <h3 className="font-headline font-bold text-base leading-tight mb-0.5">{businessSpotlight.name}</h3>
-                        <p className="font-mono text-[10px] uppercase tracking-wide text-foreground/60 mb-1">{businessSpotlight.businessType}</p>
-                        <p className="text-sm leading-snug text-foreground/80 line-clamp-4">{businessSpotlight.description}</p>
-                      </div>
-                    )}
-
-                    {groupSpotlight && (
-                      <div className="border-b border-foreground/30 pb-4">
-                        <div className="font-mono text-[10px] uppercase tracking-widest border-b border-foreground pb-1 mb-2">Group Spotlight</div>
-                        {groupSpotlight.photoUrl && (
-                          <div className="w-full aspect-[4/3] overflow-hidden border border-foreground mb-2 bg-muted">
-                            <img src={groupSpotlight.photoUrl} alt={groupSpotlight.name} className="w-full h-full object-cover" />
-                          </div>
-                        )}
-                        <h3 className="font-headline font-bold text-base leading-tight mb-0.5">{groupSpotlight.name}</h3>
-                        <p className="font-mono text-[10px] uppercase tracking-wide text-foreground/60 mb-1">{groupSpotlight.groupType}</p>
-                        <p className="text-sm leading-snug text-foreground/80 line-clamp-4">{groupSpotlight.description}</p>
-                      </div>
-                    )}
                   </div>
                 )}
 
@@ -161,6 +134,48 @@ export default function Home() {
                   )}
                 </div>
               </div>
+
+              {/* ── Business Spotlight (full width) ── */}
+              {businessSpotlight && (
+                <div className="mb-8 pb-8 border-b-2 border-foreground">
+                  <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Business Spotlight</div>
+                  <div className={businessSpotlight.photoUrl ? "grid grid-cols-1 md:grid-cols-[280px_1fr] gap-6 items-start" : ""}>
+                    {businessSpotlight.photoUrl && (
+                      <div className="w-full overflow-hidden border border-foreground/20 bg-muted">
+                        <img src={businessSpotlight.photoUrl} alt={businessSpotlight.name} className="w-full object-cover" style={{ maxHeight: "280px", display: "block" }} />
+                      </div>
+                    )}
+                    <div>
+                      <h3 className="font-headline font-bold text-2xl leading-tight mb-1">{businessSpotlight.name}</h3>
+                      {businessSpotlight.businessType && (
+                        <p className="font-mono text-[10px] uppercase tracking-wide text-foreground/60 mb-2">{businessSpotlight.businessType}</p>
+                      )}
+                      <p className="font-serif text-base leading-relaxed text-foreground/80">{businessSpotlight.description}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ── Group Spotlight (full width) ── */}
+              {groupSpotlight && (
+                <div className="mb-8 pb-8 border-b-2 border-foreground">
+                  <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Group Spotlight</div>
+                  <div className={groupSpotlight.photoUrl ? "grid grid-cols-1 md:grid-cols-[280px_1fr] gap-6 items-start" : ""}>
+                    {groupSpotlight.photoUrl && (
+                      <div className="w-full overflow-hidden border border-foreground/20 bg-muted">
+                        <img src={groupSpotlight.photoUrl} alt={groupSpotlight.name} className="w-full object-cover" style={{ maxHeight: "280px", display: "block" }} />
+                      </div>
+                    )}
+                    <div>
+                      <h3 className="font-headline font-bold text-2xl leading-tight mb-1">{groupSpotlight.name}</h3>
+                      {groupSpotlight.groupType && (
+                        <p className="font-mono text-[10px] uppercase tracking-wide text-foreground/60 mb-2">{groupSpotlight.groupType}</p>
+                      )}
+                      <p className="font-serif text-base leading-relaxed text-foreground/80">{groupSpotlight.description}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* ── Page 2 Top Story (full width) ── */}
               {page2Article && (
