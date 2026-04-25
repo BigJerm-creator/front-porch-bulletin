@@ -63,6 +63,7 @@ export const CreateArticleBody = zod.object({
   author: zod.string(),
   category: zod.string(),
   featured: zod.boolean().default(createArticleBodyFeaturedDefault),
+  page2Featured: zod.boolean().default(false),
   photoUrl: zod.string().nullish(),
   publishedAt: zod.coerce.date().optional(),
 });
@@ -96,6 +97,7 @@ export const GetFeaturedArticlesResponse = zod.object({
       author: zod.string(),
       category: zod.string(),
       featured: zod.boolean(),
+      page2Featured: zod.boolean(),
       archived: zod.boolean(),
       photoUrl: zod.string().nullish(),
       publishedAt: zod.coerce.date(),
@@ -103,6 +105,24 @@ export const GetFeaturedArticlesResponse = zod.object({
       updatedAt: zod.coerce.date(),
     }),
   ),
+  page2: zod
+    .object({
+      id: zod.number(),
+      title: zod.string(),
+      subtitle: zod.string().nullish(),
+      content: zod.string(),
+      author: zod.string(),
+      category: zod.string(),
+      featured: zod.boolean(),
+      page2Featured: zod.boolean(),
+      archived: zod.boolean(),
+      photoUrl: zod.string().nullish(),
+      publishedAt: zod.coerce.date(),
+      createdAt: zod.coerce.date(),
+      updatedAt: zod.coerce.date(),
+    })
+    .nullable()
+    .optional(),
 });
 
 /**
@@ -156,6 +176,7 @@ export const UpdateArticleBody = zod.object({
   author: zod.string().optional(),
   category: zod.string().optional(),
   featured: zod.boolean().optional(),
+  page2Featured: zod.boolean().optional(),
   photoUrl: zod.string().nullish(),
   publishedAt: zod.coerce.date().optional(),
 });

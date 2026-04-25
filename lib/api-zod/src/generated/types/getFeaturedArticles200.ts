@@ -11,4 +11,5 @@ export type GetFeaturedArticles200 = {
   headline?: Article;
   frontPage: Article[];
   secondary: Article[];
+  page2?: Article | null;
 };

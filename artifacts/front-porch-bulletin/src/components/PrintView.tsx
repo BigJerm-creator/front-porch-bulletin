@@ -142,6 +142,7 @@ export function PrintView() {
 
   const frontPage = featured?.frontPage ?? [];
   const secondary = featured?.secondary ?? [];
+  const page2Article = featured?.page2 ?? null;
   const churches  = churchData?.churches ?? [];
 
   const isLetter = (art: { category: string }) =>
@@ -288,6 +289,38 @@ export function PrintView() {
       {/* ══════════ PAGE 2 ══════════ */}
       <div style={{ pageBreakBefore: "always", breakBefore: "page" }} />
       <SlimHeader page="02" />
+
+      {/* Page 2 Top Story — full-width, chosen from admin */}
+      {page2Article && (
+        <div style={{ marginBottom: "22pt", paddingBottom: "18pt", borderBottom: RULE_DOUBLE }}>
+          {page2Article.photoUrl && (
+            <PhotoBox url={page2Article.photoUrl} alt={page2Article.title} credit={page2Article.photoCredit} aspect="21/9" />
+          )}
+          <h2 style={{
+            fontFamily: FONT_HEADLINE, fontWeight: "bold",
+            fontSize: "38pt", lineHeight: 1.0,
+            margin: "0 0 5pt", letterSpacing: "-0.02em",
+          }}>{page2Article.title}</h2>
+          {page2Article.subtitle && (
+            <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "15pt", lineHeight: 1.2, margin: "0 0 4pt", color: "#333" }}>
+              {page2Article.subtitle}
+            </p>
+          )}
+          <ArticleByline author={page2Article.author} date={String(page2Article.publishedAt)} />
+          <div style={{ columns: 3, columnGap: "18pt", columnRule: RULE_LIGHT, fontSize: "11pt", lineHeight: 1.55, textAlign: "justify" }}>
+            {page2Article.content.split('\n\n').map((para, i) => (
+              <p key={i} style={{ margin: i === 0 ? "0" : "7pt 0 0", breakInside: "avoid" }}>
+                {i === 0 && (
+                  <span style={{ fontFamily: FONT_MONO, fontWeight: "bold", fontSize: "7pt", textTransform: "uppercase", letterSpacing: "0.1em", marginRight: "3pt" }}>
+                    {formatDateline(String(page2Article.publishedAt))}—
+                  </span>
+                )}
+                {para}
+              </p>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Letters from / to the Editor — full-width, first on page 2 */}
       {letterArticles.length > 0 && (

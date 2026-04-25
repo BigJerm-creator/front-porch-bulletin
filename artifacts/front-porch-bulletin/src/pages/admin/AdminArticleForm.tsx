@@ -23,6 +23,7 @@ const formSchema = z.object({
   author: z.string().min(1, "Author is required"),
   category: z.string().min(1, "Category is required"),
   featured: z.boolean().default(false),
+  page2Featured: z.boolean().default(false),
   publishedAt: z.string().min(1, "Publish date is required"),
 });
 
@@ -57,6 +58,7 @@ export default function AdminArticleForm() {
       author: "",
       category: "",
       featured: false,
+      page2Featured: false,
       publishedAt: new Date().toISOString().split('T')[0],
     },
   });
@@ -70,6 +72,7 @@ export default function AdminArticleForm() {
         author: article.author,
         category: article.category,
         featured: article.featured,
+        page2Featured: (article as any).page2Featured ?? false,
         publishedAt: article.publishedAt.split('T')[0],
       });
       setPhotoUrl(article.photoUrl ?? null);
@@ -213,29 +216,55 @@ export default function AdminArticleForm() {
               />
             </div>
 
-            <FormField
-              control={form.control}
-              name="featured"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-4 space-y-0 rounded-none border-2 border-foreground p-4 bg-primary/5">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                      className="border-2 border-foreground rounded-none data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground h-6 w-6 mt-0.5"
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel className="font-headline font-bold uppercase tracking-widest text-lg cursor-pointer">
-                      Front Page Story (Featured)
-                    </FormLabel>
-                    <FormDescription className="text-foreground/70 italic font-serif text-base mt-1">
-                      Pin this story to the top of the publication's front page.
-                    </FormDescription>
-                  </div>
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="featured"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-4 space-y-0 rounded-none border-2 border-foreground p-4 bg-primary/5">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        className="border-2 border-foreground rounded-none data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground h-6 w-6 mt-0.5"
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel className="font-headline font-bold uppercase tracking-widest text-lg cursor-pointer">
+                        Front Page Story
+                      </FormLabel>
+                      <FormDescription className="text-foreground/70 italic font-serif text-base mt-1">
+                        Pin this story to the top of the front page.
+                      </FormDescription>
+                    </div>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="page2Featured"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-start space-x-4 space-y-0 rounded-none border-2 border-foreground p-4 bg-amber-50">
+                    <FormControl>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                        className="border-2 border-foreground rounded-none data-[state=checked]:bg-amber-700 data-[state=checked]:text-white h-6 w-6 mt-0.5"
+                      />
+                    </FormControl>
+                    <div className="space-y-1 leading-none">
+                      <FormLabel className="font-headline font-bold uppercase tracking-widest text-lg cursor-pointer">
+                        Page 2 Top Story
+                      </FormLabel>
+                      <FormDescription className="text-foreground/70 italic font-serif text-base mt-1">
+                        Pin this story full-width at the top of page 2.
+                      </FormDescription>
+                    </div>
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <div className="border-2 border-foreground/20 p-4 bg-[#f5f0e8] space-y-3">
               <ImageUpload

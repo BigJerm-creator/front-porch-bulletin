@@ -14,6 +14,7 @@ export interface Article {
   author: string;
   category: string;
   featured: boolean;
+  page2Featured: boolean;
   archived: boolean;
   photoUrl?: string | null;
   photoCredit?: string | null;

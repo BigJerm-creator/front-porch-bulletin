@@ -81,6 +81,9 @@ router.get("/featured", async (_req, res) => {
   // Backward-compat: headline is the first featured article
   const headline = frontPage[0] ?? articles[0] ?? null;
 
+  // Page 2 top story: first article with page2Featured flag
+  const page2 = articles.find((a) => a.page2Featured) ?? null;
+
   const eventCategories = await db
     .select({ name: categoriesTable.name })
     .from(categoriesTable)
@@ -89,11 +92,12 @@ router.get("/featured", async (_req, res) => {
   const eventCategoryNames = new Set(eventCategories.map((c) => c.name));
 
   const frontPageIds = new Set(frontPage.map((a) => a.id));
+  const page2Id = page2?.id;
   const secondary = articles
-    .filter((a) => !frontPageIds.has(a.id) && eventCategoryNames.has(a.category))
+    .filter((a) => !frontPageIds.has(a.id) && (page2Id === undefined || a.id !== page2Id) && eventCategoryNames.has(a.category))
     .slice(0, 5);
 
-  res.json({ headline, frontPage, secondary });
+  res.json({ headline, frontPage, secondary, page2 });
 });
 
 router.get("/summary", async (_req, res) => {
