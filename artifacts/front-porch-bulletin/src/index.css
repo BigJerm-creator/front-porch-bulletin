@@ -154,24 +154,22 @@
 
 @media print {
   @page {
-    size: letter;
-    margin: 0.2in;
+    size: 11in 17in;
+    margin: 0.45in 0.5in;
   }
 
-  /* Cream newsprint background */
   html,
   body {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
     background-color: #ffffff !important;
+    background-image: none !important;
   }
 
-  /* Hide the screen layout entirely when printing */
   .screen-layout {
     display: none !important;
   }
 
-  /* Show the dedicated print view */
   #print-view-wrapper {
     display: block !important;
   }

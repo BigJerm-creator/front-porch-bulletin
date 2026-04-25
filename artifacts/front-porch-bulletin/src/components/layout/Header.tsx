@@ -1,14 +1,18 @@
 import { Link } from "wouter";
 import { Show } from "@clerk/react";
-import { formatDate } from "@/lib/format";
 import logoSrc from "@assets/The_(1)_1775854639167.png";
 
-export function Header() {
-  const today = new Date().toISOString();
+const ISSUE_NUM  = "01";
+const ISSUE_DATE = "May 2026";
+const EMAIL      = "TheFrontPorchBulletin@gmail.com";
 
+export function Header() {
   return (
-    <header className="mb-4">
-      <div className="flex justify-between items-center border-b border-foreground pb-2 mb-2 text-xs font-mono uppercase tracking-widest">
+    <header className="mb-6">
+      {/* ── Issue / page bar ── */}
+      <div className="flex items-center gap-3 text-xs font-mono uppercase tracking-widest border-t-2 border-b border-foreground py-1 mb-0">
+        <span className="shrink-0 whitespace-nowrap">Issue {ISSUE_NUM} / {ISSUE_DATE}</span>
+        <span className="flex-1 border-t border-foreground mt-0.5" />
         <div className="print:hidden shrink-0">
           <Show when="signed-in">
             <Link href="/admin" className="border border-foreground px-2 py-0.5 hover:bg-foreground hover:text-background transition-colors whitespace-nowrap" data-testid="link-admin">
@@ -21,19 +25,29 @@ export function Header() {
             </Link>
           </Show>
         </div>
-        <span className="whitespace-nowrap px-2 text-center">{formatDate(today)}</span>
-        <span className="whitespace-nowrap shrink-0 hidden sm:inline">Page 1</span>
+        <span className="flex-1 border-t border-foreground mt-0.5" />
+        <span className="shrink-0 whitespace-nowrap">Page 01</span>
       </div>
-      <div className="text-center py-2 md:py-4">
+
+      {/* ── Masthead logo ── */}
+      <div className="py-3 md:py-5 text-center border-b border-foreground">
         <Link href="/" className="inline-block hover:opacity-90 transition-opacity">
           <img
             src={logoSrc}
-            alt="The Front Porch Bulletin — Where Community Comes to Gather"
-            className="max-w-full mx-auto"
-            style={{ maxHeight: "400px", width: "100%", objectFit: "contain" }}
+            alt="The Front Porch Bulletin"
+            className="mx-auto"
+            style={{ maxHeight: "220px", width: "100%", objectFit: "contain" }}
             data-testid="header-logo"
           />
         </Link>
+      </div>
+
+      {/* ── Email ── */}
+      <div className="text-center font-mono text-xs uppercase tracking-widest py-1.5 border-b border-foreground/30">
+        <span className="inline-flex items-center gap-2">
+          <span className="inline-block w-3.5 h-3.5 rounded-full border border-foreground text-[8px] leading-none flex items-center justify-center">✉</span>
+          {EMAIL}
+        </span>
       </div>
     </header>
   );

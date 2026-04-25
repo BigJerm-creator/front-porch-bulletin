@@ -7,36 +7,31 @@ import {
   useGetGroupSpotlight, getGetGroupSpotlightQueryKey,
   useListChurches, getListChurchesQueryKey,
 } from "@workspace/api-client-react";
-import { formatDate, formatDateline } from "@/lib/format";
+import { formatDateline } from "@/lib/format";
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 
-/* ─── shared style tokens ─────────────────────────────────────── */
-const FONT_SERIF   = "'Libre Baskerville', Georgia, serif";
+/* ─── tokens ─────────────────────────────────────────────────── */
+const FONT_SERIF    = "'Libre Baskerville', Georgia, serif";
 const FONT_HEADLINE = "'Old Standard TT', 'Times New Roman', serif";
-const FONT_MONO    = "'Space Mono', 'Courier New', monospace";
-const INK          = "#1a1a1a";
-const INK_MUTED    = "#555";
-const RULE         = "1px solid #1a1a1a";
-const RULE_LIGHT   = "0.5px solid rgba(0,0,0,0.25)";
+const FONT_MONO     = "'Space Mono', 'Courier New', monospace";
+const INK           = "#1a1a1a";
+const INK_MUTED     = "#555";
+const RULE          = "1px solid #1a1a1a";
+const RULE_LIGHT    = "0.5px solid rgba(0,0,0,0.25)";
+const RULE_DOUBLE   = "2.5px solid #1a1a1a";
 
-const sectionHeading = {
-  fontFamily: FONT_MONO,
-  fontSize: "6.5pt",
-  textTransform: "uppercase" as const,
-  letterSpacing: "0.14em",
-  fontWeight: "bold",
-  color: INK,
-  borderBottom: RULE,
-  paddingBottom: "2pt",
-  marginBottom: "5pt",
-};
+const ISSUE_NUM   = "01";
+const ISSUE_DATE  = "May 2026";
+const EMAIL       = "TheFrontPorchBulletin@gmail.com";
+
+const PRINT_YEAR  = 2026;
+const PRINT_MONTH = 5;
 
 type CalendarEvent = {
   id: number; title: string; eventDate: string;
   eventTime?: string | null; location?: string | null;
 };
-
 
 function formatTime(t: string) {
   const [h, m] = t.split(":").map(Number);
@@ -45,18 +40,99 @@ function formatTime(t: string) {
   return m === 0 ? `${hour} ${ampm}` : `${hour}:${String(m).padStart(2, "0")} ${ampm}`;
 }
 
-/* ─── PrintView ───────────────────────────────────────────────── */
-export function PrintView() {
-  const today = new Date().toISOString();
-  const { data: featured }          = useGetFeaturedArticles();
-  const { data: spotlight }         = useGetSpotlight({ query: { queryKey: getGetSpotlightQueryKey() } });
-  const { data: businessSpotlight } = useGetBusinessSpotlight({ query: { queryKey: getGetBusinessSpotlightQueryKey() } });
-  const { data: groupSpotlight }    = useGetGroupSpotlight({ query: { queryKey: getGetGroupSpotlightQueryKey() } });
-  const { data: churchData }        = useListChurches({ query: { queryKey: getListChurchesQueryKey() } });
-  const [calEvents, setCalEvents] = useState<CalendarEvent[]>([]);
+/* ── Shared sub-components ──────────────────────────────────────── */
 
-  const PRINT_YEAR  = 2026;
-  const PRINT_MONTH = 5; // May
+function IssueBar({ page }: { page: string }) {
+  return (
+    <div style={{
+      display: "flex", alignItems: "center", gap: "8pt",
+      borderTop: RULE_DOUBLE, borderBottom: RULE,
+      padding: "3pt 0", marginBottom: "0",
+      fontFamily: FONT_MONO, fontSize: "8pt",
+      textTransform: "uppercase", letterSpacing: "0.12em", color: INK,
+    }}>
+      <span style={{ whiteSpace: "nowrap" }}>Issue {ISSUE_NUM} / {ISSUE_DATE}</span>
+      <span style={{ flex: 1, borderTop: RULE_LIGHT }} />
+      <span style={{ whiteSpace: "nowrap" }}>Page {page}</span>
+    </div>
+  );
+}
+
+function Masthead() {
+  return (
+    <>
+      <div style={{ textAlign: "center", padding: "10pt 0 6pt" }}>
+        <img
+          src={logoSrc}
+          alt="The Front Porch Bulletin"
+          style={{ width: "100%", maxHeight: "180pt", objectFit: "contain", display: "block", margin: "0 auto" }}
+        />
+      </div>
+      {/* Tagline */}
+      <div style={{ display: "flex", alignItems: "center", gap: "8pt", borderTop: RULE_LIGHT, borderBottom: RULE_DOUBLE, padding: "3pt 0", marginBottom: "4pt" }}>
+        <span style={{ flex: 1, borderTop: RULE_LIGHT }} />
+        <span style={{ fontFamily: FONT_SERIF, fontStyle: "italic", fontSize: "9pt", letterSpacing: "0.06em", whiteSpace: "nowrap" }}>
+          Where Community Comes to Gather
+        </span>
+        <span style={{ flex: 1, borderTop: RULE_LIGHT }} />
+      </div>
+      {/* Email */}
+      <div style={{ textAlign: "center", fontFamily: FONT_MONO, fontSize: "7pt", textTransform: "uppercase", letterSpacing: "0.14em", color: INK_MUTED, marginBottom: "10pt" }}>
+        &#9993; {EMAIL}
+      </div>
+    </>
+  );
+}
+
+function SlimHeader({ page }: { page: string }) {
+  return (
+    <div style={{
+      display: "flex", justifyContent: "space-between", alignItems: "center",
+      borderTop: RULE_DOUBLE, borderBottom: RULE_DOUBLE,
+      padding: "3pt 0", marginBottom: "14pt",
+      fontFamily: FONT_MONO, fontSize: "8pt",
+      textTransform: "uppercase", letterSpacing: "0.12em", color: INK,
+    }}>
+      <span>Issue {ISSUE_NUM} / {ISSUE_DATE}</span>
+      <span style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "10pt", letterSpacing: "0.03em", textTransform: "none" }}>
+        The Front Porch Bulletin
+      </span>
+      <span>Page {page}</span>
+    </div>
+  );
+}
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div style={{
+      fontFamily: FONT_MONO, fontSize: "7pt", textTransform: "uppercase",
+      letterSpacing: "0.14em", fontWeight: "bold", color: INK,
+      borderBottom: RULE, paddingBottom: "2.5pt", marginBottom: "6pt",
+    }}>{children}</div>
+  );
+}
+
+function ArticleByline({ author, date }: { author: string; date: string }) {
+  return (
+    <p style={{
+      fontFamily: FONT_MONO, fontSize: "7pt", textTransform: "uppercase",
+      letterSpacing: "0.1em", color: INK_MUTED,
+      margin: "0 0 5pt",
+      borderTop: RULE_LIGHT, borderBottom: RULE_LIGHT, padding: "2.5pt 0",
+    }}>
+      By {author} &nbsp;&middot;&nbsp; {formatDateline(date)}
+    </p>
+  );
+}
+
+/* ── PrintView ───────────────────────────────────────────────── */
+export function PrintView() {
+  const { data: featured }          = useGetFeaturedArticles();
+  const { data: spotlight }         = useGetSpotlight({ query: { queryKey: getGetSpotlightQueryKey(), retry: false } as any });
+  const { data: businessSpotlight } = useGetBusinessSpotlight({ query: { queryKey: getGetBusinessSpotlightQueryKey(), retry: false } as any });
+  const { data: groupSpotlight }    = useGetGroupSpotlight({ query: { queryKey: getGetGroupSpotlightQueryKey(), retry: false } as any });
+  const { data: churchData }        = useListChurches({ query: { queryKey: getListChurchesQueryKey() } });
+  const [calEvents, setCalEvents]   = useState<CalendarEvent[]>([]);
 
   useEffect(() => {
     fetch(`${BASE}/api/calendar-events/month/${PRINT_YEAR}/${PRINT_MONTH}`)
@@ -64,281 +140,267 @@ export function PrintView() {
       .then(d => setCalEvents(d.events ?? []));
   }, []);
 
-  const headline   = featured?.headline;
-  const frontPage  = featured?.frontPage ?? (headline ? [headline] : []);
-  const churches   = churchData?.churches ?? [];
+  const frontPage = featured?.frontPage ?? [];
+  const secondary = featured?.secondary ?? [];
+  const churches  = churchData?.churches ?? [];
 
+  const mainArticle     = frontPage[0] ?? null;
+  const sidebarArticles = frontPage.slice(1);
+
+  /* ── Photo helper ── */
+  function PhotoBox({ url, alt, credit, aspect = "4/3" }: { url?: string | null; alt: string; credit?: string | null; aspect?: string }) {
+    return (
+      <div style={{ marginBottom: "4pt" }}>
+        <div style={{ width: "100%", aspectRatio: aspect, overflow: "hidden", border: RULE, background: "#d6cfc4" }}>
+          {url ? (
+            <img src={url} alt={alt} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+          ) : (
+            <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", color: INK_MUTED, textTransform: "uppercase" }}>Photo</span>
+            </div>
+          )}
+        </div>
+        {credit && (
+          <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "1pt 0 0" }}>
+            Photo credit — {credit}
+          </p>
+        )}
+      </div>
+    );
+  }
+
+  /* ── Calendar helpers ── */
+  const yr       = PRINT_YEAR;
+  const mo       = PRINT_MONTH - 1;
+  const firstDow = new Date(yr, mo, 1).getDay();
+  const daysInMo = new Date(yr, mo + 1, 0).getDate();
+  const eventMap = new Map<number, CalendarEvent[]>();
+  for (const ev of calEvents) {
+    const d = new Date(ev.eventDate + "T12:00:00").getDate();
+    if (!eventMap.has(d)) eventMap.set(d, []);
+    eventMap.get(d)!.push(ev);
+  }
+  const calCells: (number | null)[] = [
+    ...Array(firstDow).fill(null),
+    ...Array.from({ length: daysInMo }, (_, i) => i + 1),
+  ];
+  while (calCells.length % 7 !== 0) calCells.push(null);
+
+  /* ─────────────────────────── RENDER ─────────────────────────── */
   return (
-    <div id="print-view" style={{ fontFamily: FONT_SERIF, color: INK, fontSize: "9.5pt", padding: "5px" }}>
+    <div id="print-view" style={{ fontFamily: FONT_SERIF, color: INK, fontSize: "11pt" }}>
 
-      {/* ══════════════════ PAGE 1 ══════════════════ */}
+      {/* ══════════ PAGE 1 ══════════ */}
+      <IssueBar page="01" />
+      <Masthead />
 
-      {/* Full-width masthead */}
-      <div style={{ textAlign: "center", marginBottom: "6pt" }}>
-        <img
-          src={logoSrc}
-          alt="The Front Porch Bulletin"
-          style={{ width: "100%", maxHeight: "160pt", objectFit: "contain", display: "block", margin: "0 auto" }}
-        />
-        <div style={{
-          borderTop: "2.5px solid " + INK,
-          borderBottom: "2.5px solid " + INK,
-          padding: "2pt 0",
-          marginTop: "3pt",
-          fontFamily: FONT_MONO,
-          fontSize: "6.5pt",
-          textTransform: "uppercase",
-          letterSpacing: "0.15em",
-          display: "flex",
-          justifyContent: "space-between",
-        }}>
-          <span>Haskell, Oklahoma</span>
-          <span>{formatDate(today)}</span>
-          <span>Page 1</span>
+      {/* Content: sidebar + main */}
+      <div style={{ display: "grid", gridTemplateColumns: "22% 78%", gap: "0", alignItems: "flex-start", borderTop: RULE }}>
+
+        {/* ─── Left sidebar ─── */}
+        <div style={{ paddingRight: "12pt", borderRight: RULE }}>
+
+          {/* Student Spotlight */}
+          {spotlight && (
+            <div style={{ marginBottom: "12pt", paddingBottom: "10pt", borderBottom: RULE_LIGHT }}>
+              <SectionLabel>Student Spotlight</SectionLabel>
+              <PhotoBox url={spotlight.photoUrl} alt={spotlight.name} credit={spotlight.photoCredit} />
+              <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "12pt", lineHeight: 1.1, margin: "0 0 1.5pt" }}>{spotlight.name}</p>
+              <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 3pt" }}>
+                {spotlight.school} &bull; {spotlight.grade}
+              </p>
+              <p style={{ fontSize: "9pt", lineHeight: 1.45, margin: 0, color: "#333" }}>{spotlight.description}</p>
+            </div>
+          )}
+
+          {/* Business Spotlight */}
+          {businessSpotlight && (
+            <div style={{ marginBottom: "12pt", paddingBottom: "10pt", borderBottom: RULE_LIGHT }}>
+              <SectionLabel>Business Spotlight</SectionLabel>
+              <PhotoBox url={businessSpotlight.photoUrl} alt={businessSpotlight.name} credit={businessSpotlight.photoCredit} />
+              <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "12pt", lineHeight: 1.1, margin: "0 0 1.5pt" }}>{businessSpotlight.name}</p>
+              <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 3pt" }}>
+                {businessSpotlight.businessType}
+              </p>
+              <p style={{ fontSize: "9pt", lineHeight: 1.45, margin: 0, color: "#333" }}>{businessSpotlight.description}</p>
+            </div>
+          )}
+
+          {/* Group Spotlight */}
+          {groupSpotlight && (
+            <div style={{ marginBottom: "12pt", paddingBottom: "10pt", borderBottom: RULE_LIGHT }}>
+              <SectionLabel>Group Spotlight</SectionLabel>
+              <PhotoBox url={groupSpotlight.photoUrl} alt={groupSpotlight.name} credit={groupSpotlight.photoCredit} />
+              <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "12pt", lineHeight: 1.1, margin: "0 0 1.5pt" }}>{groupSpotlight.name}</p>
+              <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 3pt" }}>
+                {groupSpotlight.groupType}
+              </p>
+              <p style={{ fontSize: "9pt", lineHeight: 1.45, margin: 0, color: "#333" }}>{groupSpotlight.description}</p>
+            </div>
+          )}
+
+          {/* Additional front-page sidebar articles */}
+          {sidebarArticles.map((art, i) => (
+            <div key={art.id} style={{ marginBottom: "12pt", paddingBottom: "10pt", borderBottom: i < sidebarArticles.length - 1 ? RULE_LIGHT : "none" }}>
+              <PhotoBox url={art.photoUrl} alt={art.title} credit={art.photoCredit} />
+              <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "13pt", lineHeight: 1.1, margin: "0 0 2pt" }}>{art.title}</p>
+              {art.subtitle && (
+                <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "9pt", lineHeight: 1.2, margin: "0 0 2pt", color: "#333" }}>{art.subtitle}</p>
+              )}
+              <p style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 4pt" }}>
+                By {art.author}
+              </p>
+              <p style={{ fontSize: "9pt", lineHeight: 1.45, margin: 0, color: "#333" }}>
+                {art.content.split('\n\n')[0]}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* ─── Main featured article ─── */}
+        <div style={{ paddingLeft: "14pt" }}>
+          {mainArticle ? (
+            <>
+              {mainArticle.photoUrl && (
+                <PhotoBox url={mainArticle.photoUrl} alt={mainArticle.title} credit={mainArticle.photoCredit} aspect="16/9" />
+              )}
+              <h1 style={{
+                fontFamily: FONT_HEADLINE, fontWeight: "bold",
+                fontSize: "42pt", lineHeight: 1.0,
+                margin: "0 0 5pt", letterSpacing: "-0.02em",
+              }}>{mainArticle.title}</h1>
+              {mainArticle.subtitle && (
+                <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "16pt", lineHeight: 1.2, margin: "0 0 4pt", color: "#333" }}>
+                  {mainArticle.subtitle}
+                </p>
+              )}
+              <ArticleByline author={mainArticle.author} date={mainArticle.publishedAt} />
+              <div style={{ columns: 2, columnGap: "18pt", columnRule: RULE_LIGHT, fontSize: "11pt", lineHeight: 1.55, textAlign: "justify" }}>
+                {mainArticle.content.split('\n\n').map((para, i) => (
+                  <p key={i} style={{ margin: i === 0 ? "0" : "7pt 0 0", breakInside: "avoid" }}>
+                    {i === 0 && (
+                      <span style={{ fontFamily: FONT_MONO, fontWeight: "bold", fontSize: "7pt", textTransform: "uppercase", letterSpacing: "0.1em", marginRight: "3pt" }}>
+                        {formatDateline(mainArticle.publishedAt)}—
+                      </span>
+                    )}
+                    {para}
+                  </p>
+                ))}
+              </div>
+            </>
+          ) : (
+            <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", color: INK_MUTED }}>No featured story this week.</p>
+          )}
         </div>
       </div>
 
-      {/* ── Front Page Articles — adaptive layout ── */}
-      <div style={{ marginBottom: "10pt" }}>
-        {frontPage.length === 0 ? (
-          <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", color: INK_MUTED }}>No featured story this week.</p>
-
-        ) : frontPage.length === 1 ? (
-          /* ── Single article: full-width hero ── */
-          <article>
-            <h1 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "26pt", lineHeight: 1.05, margin: "0 0 4pt", letterSpacing: "-0.01em", textAlign: "center" }}>
-              {frontPage[0].title}
-            </h1>
-            {frontPage[0].subtitle && (
-              <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "12pt", lineHeight: 1.2, margin: "0 0 4pt", color: "#333", textAlign: "center" }}>
-                {frontPage[0].subtitle}
-              </p>
-            )}
-            <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 6pt", borderBottom: RULE_LIGHT, borderTop: RULE_LIGHT, padding: "3pt 0", textAlign: "center" }}>
-              By {frontPage[0].author} &nbsp;&middot;&nbsp; {formatDateline(frontPage[0].publishedAt)}
-            </p>
-            <p style={{ fontSize: "9.5pt", lineHeight: 1.5, margin: 0, textAlign: "justify" }}>
-              <span style={{ fontFamily: FONT_MONO, fontWeight: "bold", fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", marginRight: "3pt" }}>
-                {formatDateline(frontPage[0].publishedAt)}—
-              </span>
-              {frontPage[0].content}
-            </p>
-          </article>
-
-        ) : frontPage.length === 2 ? (
-          /* ── Two articles: dominant left + secondary right ── */
-          <div style={{ display: "grid", gridTemplateColumns: "3fr 2fr", gap: "0", alignItems: "flex-start" }}>
-            {/* Lead — left */}
-            <div style={{ paddingRight: "10pt", borderRight: RULE }}>
-              <h1 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "20pt", lineHeight: 1.05, margin: "0 0 3pt", letterSpacing: "-0.01em" }}>
-                {frontPage[0].title}
-              </h1>
-              {frontPage[0].subtitle && (
-                <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "10pt", lineHeight: 1.2, margin: "0 0 3pt", color: "#333" }}>
-                  {frontPage[0].subtitle}
-                </p>
-              )}
-              <p style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 5pt", borderBottom: RULE_LIGHT, padding: "2pt 0" }}>
-                By {frontPage[0].author} &nbsp;&middot;&nbsp; {formatDateline(frontPage[0].publishedAt)}
-              </p>
-              <p style={{ fontSize: "9pt", lineHeight: 1.5, margin: 0, textAlign: "justify" }}>
-                <span style={{ fontFamily: FONT_MONO, fontWeight: "bold", fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.1em", marginRight: "3pt" }}>
-                  {formatDateline(frontPage[0].publishedAt)}—
-                </span>
-                {frontPage[0].content.split('\n\n')[0]}
-              </p>
-            </div>
-            {/* Secondary — right */}
-            <div style={{ paddingLeft: "10pt" }}>
-              <h2 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "14pt", lineHeight: 1.1, margin: "0 0 3pt" }}>
-                {frontPage[1].title}
-              </h2>
-              {frontPage[1].subtitle && (
-                <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "8.5pt", lineHeight: 1.2, margin: "0 0 3pt", color: "#333" }}>
-                  {frontPage[1].subtitle}
-                </p>
-              )}
-              <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 5pt", borderBottom: RULE_LIGHT, padding: "2pt 0" }}>
-                By {frontPage[1].author} &nbsp;&middot;&nbsp; {formatDateline(frontPage[1].publishedAt)}
-              </p>
-              <p style={{ fontSize: "8.5pt", lineHeight: 1.45, margin: 0, textAlign: "justify" }}>
-                {frontPage[1].content.split('\n\n')[0]}
-              </p>
-            </div>
-          </div>
-
-        ) : (
-          /* ── Three or more: hero on top, columns below ── */
-          <div>
-            {/* Lead — full width */}
-            <div style={{ paddingBottom: "8pt", marginBottom: "8pt", borderBottom: RULE_LIGHT }}>
-              <h1 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "22pt", lineHeight: 1.05, margin: "0 0 3pt", letterSpacing: "-0.01em", textAlign: "center" }}>
-                {frontPage[0].title}
-              </h1>
-              {frontPage[0].subtitle && (
-                <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "11pt", lineHeight: 1.2, margin: "0 0 3pt", color: "#333", textAlign: "center" }}>
-                  {frontPage[0].subtitle}
-                </p>
-              )}
-              <p style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 5pt", borderBottom: RULE_LIGHT, borderTop: RULE_LIGHT, padding: "2pt 0", textAlign: "center" }}>
-                By {frontPage[0].author} &nbsp;&middot;&nbsp; {formatDateline(frontPage[0].publishedAt)}
-              </p>
-              <p style={{ fontSize: "9pt", lineHeight: 1.5, margin: 0, textAlign: "justify" }}>
-                <span style={{ fontFamily: FONT_MONO, fontWeight: "bold", fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.1em", marginRight: "3pt" }}>
-                  {formatDateline(frontPage[0].publishedAt)}—
-                </span>
-                {frontPage[0].content.split('\n\n')[0]}
-              </p>
-            </div>
-            {/* Remaining — equal columns */}
-            <div style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(frontPage.length - 1, 3)}, 1fr)`, gap: "0" }}>
-              {frontPage.slice(1, 4).map((art, i) => (
-                <div key={art.id} style={{ paddingLeft: i > 0 ? "10pt" : 0, paddingRight: i < Math.min(frontPage.length - 2, 2) ? "10pt" : 0, borderLeft: i > 0 ? RULE : "none" }}>
-                  <h2 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "12pt", lineHeight: 1.1, margin: "0 0 2pt" }}>
-                    {art.title}
-                  </h2>
-                  {art.subtitle && (
-                    <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "8pt", lineHeight: 1.2, margin: "0 0 2pt", color: "#333" }}>
-                      {art.subtitle}
-                    </p>
-                  )}
-                  <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 4pt", borderBottom: RULE_LIGHT, padding: "1.5pt 0" }}>
-                    By {art.author} &nbsp;&middot;&nbsp; {formatDateline(art.publishedAt)}
-                  </p>
-                  <p style={{ fontSize: "8pt", lineHeight: 1.4, margin: 0, textAlign: "justify" }}>
-                    {art.content.split('\n\n')[0]}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* ── Three spotlights side by side — page 1, under headline ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "14pt", alignItems: "flex-start" }}>
-
-        {/* Student Spotlight */}
-        {spotlight && (
-          <div style={{ borderRight: RULE, paddingRight: "12pt" }}>
-            <div style={sectionHeading}>Student Spotlight</div>
-            <div style={{ width: "100%", aspectRatio: "4/3", overflow: "hidden", border: `1pt solid ${INK}`, background: "#d6cfc4", marginBottom: "4pt" }}>
-              {spotlight.photoUrl ? (
-                <img src={spotlight.photoUrl} alt={spotlight.name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-              ) : (
-                <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", color: INK_MUTED, textTransform: "uppercase" }}>Photo</span>
-                </div>
-              )}
-            </div>
-            {spotlight.photoCredit && (
-              <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "0 0 3pt" }}>
-                Picture Credit — {spotlight.photoCredit}
-              </p>
-            )}
-            <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "11pt", lineHeight: 1.1, margin: "0 0 1.5pt" }}>{spotlight.name}</p>
-            <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 3pt" }}>
-              {spotlight.school} &bull; {spotlight.grade}
-            </p>
-            <p style={{ fontSize: "8.5pt", lineHeight: 1.4, margin: 0, color: "#333" }}>{spotlight.description}</p>
-          </div>
-        )}
-
-        {/* Business Spotlight */}
-        {businessSpotlight && (
-          <div style={{ borderRight: RULE, paddingRight: "12pt" }}>
-            <div style={sectionHeading}>Business Spotlight</div>
-            <div style={{ width: "100%", aspectRatio: "4/3", overflow: "hidden", border: `1pt solid ${INK}`, background: "#d6cfc4", marginBottom: "4pt" }}>
-              {businessSpotlight.photoUrl ? (
-                <img src={businessSpotlight.photoUrl} alt={businessSpotlight.name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-              ) : (
-                <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", color: INK_MUTED, textTransform: "uppercase" }}>Photo</span>
-                </div>
-              )}
-            </div>
-            {businessSpotlight.photoCredit && (
-              <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "0 0 3pt" }}>
-                Picture Credit — {businessSpotlight.photoCredit}
-              </p>
-            )}
-            <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "11pt", lineHeight: 1.1, margin: "0 0 1.5pt" }}>{businessSpotlight.name}</p>
-            <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 3pt" }}>
-              {businessSpotlight.businessType}
-            </p>
-            <p style={{ fontSize: "8.5pt", lineHeight: 1.4, margin: 0, color: "#333" }}>{businessSpotlight.description}</p>
-          </div>
-        )}
-
-        {/* Group Spotlight */}
-        {groupSpotlight && (
-          <div>
-            <div style={sectionHeading}>Group Spotlight</div>
-            <div style={{ width: "100%", aspectRatio: "4/3", overflow: "hidden", border: `1pt solid ${INK}`, background: "#d6cfc4", marginBottom: "4pt" }}>
-              {groupSpotlight.photoUrl ? (
-                <img src={groupSpotlight.photoUrl} alt={groupSpotlight.name} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-              ) : (
-                <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", color: INK_MUTED, textTransform: "uppercase" }}>Photo</span>
-                </div>
-              )}
-            </div>
-            {groupSpotlight.photoCredit && (
-              <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "0 0 3pt" }}>
-                Picture Credit — {groupSpotlight.photoCredit}
-              </p>
-            )}
-            <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "11pt", lineHeight: 1.1, margin: "0 0 1.5pt" }}>{groupSpotlight.name}</p>
-            <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 3pt" }}>
-              {groupSpotlight.groupType}
-            </p>
-            <p style={{ fontSize: "8.5pt", lineHeight: 1.4, margin: 0, color: "#333" }}>{groupSpotlight.description}</p>
-          </div>
-        )}
-      </div>
-
-      {/* ══════════════════ PAGE BREAK ══════════════════ */}
+      {/* ══════════ PAGE 2 ══════════ */}
       <div style={{ pageBreakBefore: "always", breakBefore: "page" }} />
+      <SlimHeader page="02" />
 
-      {/* ══════════════════ PAGE 2 ══════════════════ */}
+      {/* Secondary (non-featured) articles */}
+      {secondary.length === 0 ? (
+        <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", color: INK_MUTED }}>More community stories coming next issue.</p>
+      ) : (
+        <div>
+          {secondary.map((art, i) => (
+            <div key={art.id} style={{ marginBottom: "22pt", paddingBottom: "18pt", borderBottom: i < secondary.length - 1 ? RULE_LIGHT : "none" }}>
+              <SectionLabel>{art.category}</SectionLabel>
+              <h2 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "28pt", lineHeight: 1.05, margin: "0 0 4pt", letterSpacing: "-0.01em" }}>
+                {art.title}
+              </h2>
+              {art.subtitle && (
+                <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "13pt", lineHeight: 1.2, margin: "0 0 4pt", color: "#333" }}>
+                  {art.subtitle}
+                </p>
+              )}
+              <ArticleByline author={art.author} date={art.publishedAt} />
+              <div style={{ display: "grid", gridTemplateColumns: art.photoUrl ? "auto 1fr" : "1fr", gap: "14pt", alignItems: "flex-start" }}>
+                {art.photoUrl && (
+                  <div style={{ width: "160pt", flexShrink: 0 }}>
+                    <PhotoBox url={art.photoUrl} alt={art.title} credit={art.photoCredit} aspect="4/3" />
+                  </div>
+                )}
+                <div style={{ columns: 2, columnGap: "18pt", columnRule: RULE_LIGHT, fontSize: "11pt", lineHeight: 1.55, textAlign: "justify" }}>
+                  {art.content.split('\n\n').map((para, j) => (
+                    <p key={j} style={{ margin: j === 0 ? "0" : "7pt 0 0", breakInside: "avoid" }}>
+                      {j === 0 && (
+                        <span style={{ fontFamily: FONT_MONO, fontWeight: "bold", fontSize: "7pt", textTransform: "uppercase", letterSpacing: "0.1em", marginRight: "3pt" }}>
+                          {formatDateline(art.publishedAt)}—
+                        </span>
+                      )}
+                      {para}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
-      {/* Page 2 masthead — slim */}
-      <div style={{
-        borderBottom: "2.5px solid " + INK,
-        borderTop: "2.5px solid " + INK,
-        padding: "2.5pt 0",
-        marginBottom: "8pt",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-      }}>
-        <span style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "9pt", letterSpacing: "0.02em" }}>
-          The Front Porch Bulletin
-        </span>
-        <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.12em", color: INK_MUTED }}>
-          Community Pages &nbsp;&middot;&nbsp; {formatDate(today)}
-        </span>
-        <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.12em", color: INK_MUTED }}>
-          Page 2
-        </span>
-      </div>
+      {/* ══════════ PAGE 3 ══════════ */}
+      <div style={{ pageBreakBefore: "always", breakBefore: "page" }} />
+      <SlimHeader page="03" />
 
-      {/* ── Church Directory ── */}
+      {/* "This Month in Pictures" — spotlights as photo features */}
+      {(spotlight || businessSpotlight || groupSpotlight) && (
+        <div style={{ marginBottom: "20pt" }}>
+          <SectionLabel>This Month in Pictures</SectionLabel>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "14pt" }}>
+            {spotlight && (
+              <div style={{ breakInside: "avoid" }}>
+                <PhotoBox url={spotlight.photoUrl} alt={spotlight.name} credit={spotlight.photoCredit} aspect="3/4" />
+                <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", fontSize: "8.5pt", lineHeight: 1.4, textAlign: "center", margin: "3pt 0 0", color: "#333" }}>
+                  {spotlight.description?.split('.')[0]}.
+                </p>
+              </div>
+            )}
+            {businessSpotlight && (
+              <div style={{ breakInside: "avoid" }}>
+                <PhotoBox url={businessSpotlight.photoUrl} alt={businessSpotlight.name} credit={businessSpotlight.photoCredit} aspect="3/4" />
+                <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", fontSize: "8.5pt", lineHeight: 1.4, textAlign: "center", margin: "3pt 0 0", color: "#333" }}>
+                  {businessSpotlight.description?.split('.')[0]}.
+                </p>
+              </div>
+            )}
+            {groupSpotlight && (
+              <div style={{ breakInside: "avoid" }}>
+                <PhotoBox url={groupSpotlight.photoUrl} alt={groupSpotlight.name} credit={groupSpotlight.photoCredit} aspect="3/4" />
+                <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", fontSize: "8.5pt", lineHeight: 1.4, textAlign: "center", margin: "3pt 0 0", color: "#333" }}>
+                  {groupSpotlight.description?.split('.')[0]}.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Remaining secondary articles that didn't fit on page 2 */}
+      <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", color: INK_MUTED, fontSize: "9pt" }}>
+        Additional community stories and announcements continue on the next page.
+      </p>
+
+      {/* ══════════ PAGE 4 ══════════ */}
+      <div style={{ pageBreakBefore: "always", breakBefore: "page" }} />
+      <SlimHeader page="04" />
+
+      {/* Church Directory */}
       {churches.length > 0 && (
-        <div style={{ marginTop: "6pt", marginBottom: "6pt" }}>
-          <div style={sectionHeading}>Church Directory</div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "3pt 8pt" }}>
+        <div style={{ marginBottom: "18pt" }}>
+          <SectionLabel>Church Directory</SectionLabel>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "4pt 10pt" }}>
             {churches.map(church => (
-              <div key={church.id} style={{ borderLeft: "1.5px solid " + INK, paddingLeft: "4pt", breakInside: "avoid" }}>
-                <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "7pt", lineHeight: 1.1, margin: "0 0 0.5pt" }}>{church.name}</p>
+              <div key={church.id} style={{ borderLeft: "1.5pt solid " + INK, paddingLeft: "5pt", breakInside: "avoid", marginBottom: "4pt" }}>
+                <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "8.5pt", lineHeight: 1.1, margin: "0 0 1pt" }}>{church.name}</p>
                 {church.pastor && (
-                  <p style={{ fontFamily: FONT_MONO, fontSize: "5pt", textTransform: "uppercase", letterSpacing: "0.06em", color: INK_MUTED, margin: "0 0 0.5pt" }}>{church.pastor}</p>
+                  <p style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.06em", color: INK_MUTED, margin: "0 0 1pt" }}>{church.pastor}</p>
                 )}
                 {church.serviceTimes && (
-                  <p style={{ fontSize: "6pt", lineHeight: 1.2, margin: "0 0 0.5pt", color: "#333" }}>{church.serviceTimes}</p>
+                  <p style={{ fontSize: "7pt", lineHeight: 1.3, margin: "0 0 1pt", color: "#333" }}>{church.serviceTimes}</p>
                 )}
                 {church.phone && (
-                  <p style={{ fontFamily: FONT_MONO, fontSize: "5pt", color: INK_MUTED, margin: 0 }}>{church.phone}</p>
+                  <p style={{ fontFamily: FONT_MONO, fontSize: "6pt", color: INK_MUTED, margin: 0 }}>{church.phone}</p>
                 )}
               </div>
             ))}
@@ -346,86 +408,67 @@ export function PrintView() {
         </div>
       )}
 
-      {/* ── Community Calendar ── */}
+      {/* Community Calendar */}
       <div>
+        <SectionLabel>Community Calendar — {ISSUE_DATE}</SectionLabel>
 
-        {/* Community Calendar — monthly grid */}
-        {(() => {
-          const yr        = PRINT_YEAR;
-          const mo        = PRINT_MONTH - 1; // 0-indexed
-          const firstDow  = new Date(yr, mo, 1).getDay();
-          const daysInMo  = new Date(yr, mo + 1, 0).getDate();
-          const monthName = new Date(yr, mo, 1).toLocaleDateString("en-US", { month: "long" });
-          const DAY_HEADS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-
-          const eventsByDay: Record<string, CalendarEvent[]> = {};
-          calEvents.forEach(ev => {
-            if (!eventsByDay[ev.eventDate]) eventsByDay[ev.eventDate] = [];
-            eventsByDay[ev.eventDate].push(ev);
-          });
-
-          const cells: (number | null)[] = [
-            ...Array(firstDow).fill(null),
-            ...Array.from({ length: daysInMo }, (_, i) => i + 1),
-          ];
-          while (cells.length % 7 !== 0) cells.push(null);
-          const weeks: (number | null)[][] = [];
-          for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
-
-          return (
-            <div>
-              <div style={sectionHeading}>Community Calendar</div>
-              <div style={{ fontFamily: FONT_MONO, fontSize: "7pt", textTransform: "uppercase", letterSpacing: "0.12em", textAlign: "center", marginBottom: "3pt", fontWeight: "bold" }}>
-                {monthName} {yr}
+        {/* Month grid */}
+        <div style={{ marginBottom: "10pt" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "1pt", marginBottom: "4pt" }}>
+            {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d => (
+              <div key={d} style={{ fontFamily: FONT_MONO, fontSize: "7pt", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "center", borderBottom: RULE, paddingBottom: "2pt", color: INK_MUTED }}>
+                {d}
               </div>
-              <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "fixed" }}>
-                <thead>
-                  <tr style={{ borderBottom: "1px solid " + INK }}>
-                    {DAY_HEADS.map(d => (
-                      <th key={d} style={{ fontFamily: FONT_MONO, fontSize: "6pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, textAlign: "center", padding: "1.5pt 0", fontWeight: "normal", width: "14.28%" }}>
-                        {d}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {weeks.map((week, wi) => (
-                    <tr key={wi} style={{ height: "52pt" }}>
-                      {week.map((day, di) => {
-                        const baseTd: React.CSSProperties = {
-                          border: "0.5px solid " + INK,
-                          padding: "2.5pt",
-                          verticalAlign: "top",
-                          width: "14.28%",
-                          overflow: "hidden",
-                        };
-                        if (!day) return (
-                          <td key={di} style={{ ...baseTd, background: "rgba(0,0,0,0.03)" }} />
-                        );
-                        const moStr   = String(mo + 1).padStart(2, "0");
-                        const dayStr  = String(day).padStart(2, "0");
-                        const dateKey = `${yr}-${moStr}-${dayStr}`;
-                        const evs     = eventsByDay[dateKey] ?? [];
-                        return (
-                          <td key={di} style={baseTd}>
-                            <div style={{ fontFamily: FONT_MONO, fontSize: "6pt", textAlign: "right", color: INK_MUTED, marginBottom: "1.5pt", lineHeight: 1 }}>{day}</div>
-                            {evs.map(ev => (
-                              <div key={ev.id} style={{ borderLeft: "1.5px solid " + INK, paddingLeft: "2pt", marginBottom: "2pt", breakInside: "avoid" }}>
-                                <div style={{ fontFamily: FONT_SERIF, fontSize: "6pt", fontWeight: "bold", lineHeight: 1.2, color: INK }}>{ev.title}</div>
-                                {ev.eventTime && <div style={{ fontFamily: FONT_MONO, fontSize: "5pt", color: INK, lineHeight: 1.2 }}>{formatTime(ev.eventTime)}</div>}
-                                {ev.location  && <div style={{ fontFamily: FONT_MONO, fontSize: "5pt", color: INK, lineHeight: 1.2 }}>{ev.location}</div>}
-                              </div>
-                            ))}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            ))}
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "1pt" }}>
+            {calCells.map((day, idx) => {
+              const events = day ? (eventMap.get(day) ?? []) : [];
+              return (
+                <div key={idx} style={{ border: RULE_LIGHT, padding: "2pt", minHeight: "36pt", verticalAlign: "top", background: day ? "#fff" : "#f5f0e8" }}>
+                  {day && (
+                    <>
+                      <div style={{ fontFamily: FONT_MONO, fontSize: "7pt", fontWeight: "bold", marginBottom: "1.5pt", color: INK }}>{day}</div>
+                      {events.map(ev => (
+                        <div key={ev.id} style={{ fontSize: "5.5pt", lineHeight: 1.25, color: "#222", marginBottom: "1pt" }}>
+                          <span style={{ fontWeight: "bold" }}>{ev.eventTime ? formatTime(ev.eventTime) : ""}</span>
+                          {ev.eventTime ? " " : ""}{ev.title}
+                        </div>
+                      ))}
+                    </>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Event list */}
+        {calEvents.length > 0 && (
+          <div>
+            <div style={{ fontFamily: FONT_MONO, fontSize: "7pt", textTransform: "uppercase", letterSpacing: "0.12em", borderBottom: RULE_LIGHT, paddingBottom: "2pt", marginBottom: "6pt", color: INK_MUTED }}>
+              Upcoming Events
             </div>
-          );
-        })()}
+            <div style={{ columns: 3, columnGap: "14pt", columnRule: RULE_LIGHT }}>
+              {calEvents.slice(0, 24).map(ev => {
+                const d = new Date(ev.eventDate + "T12:00:00");
+                const label = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+                return (
+                  <div key={ev.id} style={{ breakInside: "avoid", marginBottom: "5pt" }}>
+                    <span style={{ fontFamily: FONT_MONO, fontWeight: "bold", fontSize: "7pt", marginRight: "3pt" }}>{label}</span>
+                    {ev.eventTime && (
+                      <span style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", color: INK_MUTED, marginRight: "3pt" }}>{formatTime(ev.eventTime)}</span>
+                    )}
+                    <span style={{ fontSize: "8.5pt" }}>{ev.title}</span>
+                    {ev.location && (
+                      <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", color: INK_MUTED, display: "block", marginTop: "0.5pt" }}>{ev.location}</span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
     </div>
