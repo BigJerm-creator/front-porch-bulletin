@@ -518,8 +518,8 @@ export function PrintView() {
         </div>
       )}
 
-      {/* ══ Church & Calendar ══ */}
-      <div style={{ borderTop: RULE_DOUBLE, marginTop: "6pt", marginBottom: "14pt" }} />
+      {/* ══ Church & Calendar — always own page ══ */}
+      <div style={{ breakBefore: "page", pageBreakBefore: "always" }}>
 
       {/* Church Directory */}
       {churches.length > 0 && (
@@ -580,6 +580,8 @@ export function PrintView() {
         </div>
 
       </div>
+
+      </div> {/* end page-break wrapper */}
 
     </div>
   );
