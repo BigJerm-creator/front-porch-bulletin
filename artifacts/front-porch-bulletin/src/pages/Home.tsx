@@ -12,7 +12,6 @@ import { NewspaperSkeleton } from "@/components/ui/newspaper-skeleton";
 import { ChurchDirectory } from "@/components/ChurchDirectory";
 import { CalendarEvents } from "@/components/CalendarEvents";
 import { PrintView } from "@/components/PrintView";
-import { formatDateline } from "@/lib/format";
 import { Link } from "wouter";
 
 const isLetter = (art: { category: string }) =>
@@ -105,8 +104,6 @@ export default function Home() {
                         <span>By <span className="italic">{mainArticle.author}</span></span>
                         <span>·</span>
                         <span>{mainArticle.category}</span>
-                        <span>·</span>
-                        <span>{formatDateline(mainArticle.publishedAt)}</span>
                       </div>
                       <div className="font-serif text-lg leading-relaxed text-foreground/90">
                         {mainArticle.photoUrl && (
@@ -188,8 +185,6 @@ export default function Home() {
                       <span>By <span className="italic">{page2Article.author}</span></span>
                       <span>·</span>
                       <span>{page2Article.category}</span>
-                      <span>·</span>
-                      <span>{formatDateline(page2Article.publishedAt)}</span>
                     </div>
                     <div className="font-serif text-base leading-relaxed text-foreground/90">
                       {page2Article.photoUrl && (
@@ -231,8 +226,6 @@ export default function Home() {
                             {art.subtitle && <p className="font-headline italic text-base text-foreground/70 mb-1">{art.subtitle}</p>}
                             <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wide text-foreground/50 border-t border-b border-foreground/20 py-1 mb-2">
                               <span>By <span className="italic">{art.author}</span></span>
-                              <span>·</span>
-                              <span>{formatDateline(art.publishedAt)}</span>
                             </div>
                             <p className="font-serif text-sm leading-relaxed text-foreground/80 line-clamp-4">{art.content.split('\n\n')[0]}</p>
                           </article>
@@ -262,8 +255,6 @@ export default function Home() {
                             {art.subtitle && <p className="font-headline italic text-base text-foreground/70 mb-1">{art.subtitle}</p>}
                             <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wide text-foreground/50 border-t border-b border-foreground/20 py-1 mb-2">
                               <span>By <span className="italic">{art.author}</span></span>
-                              <span>·</span>
-                              <span>{formatDateline(art.publishedAt)}</span>
                             </div>
                             <p className="font-serif text-sm leading-relaxed text-foreground/80 line-clamp-4">{art.content.split('\n\n')[0]}</p>
                           </article>
@@ -289,8 +280,6 @@ export default function Home() {
                         {art.subtitle && <p className="font-headline italic text-base text-foreground/70 mb-1">{art.subtitle}</p>}
                         <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wide text-foreground/50 border-t border-b border-foreground/20 py-1 mb-2">
                           <span>By <span className="italic">{art.author}</span></span>
-                          <span>·</span>
-                          <span>{formatDateline(art.publishedAt)}</span>
                         </div>
                         <div className="font-serif text-sm leading-relaxed text-foreground/80">
                           {art.photoUrl && (
@@ -327,8 +316,6 @@ export default function Home() {
                         )}
                         <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-wide text-foreground/60 mb-4 border-t border-b border-foreground/20 py-2">
                           <span>By <span className="italic">{art.author}</span></span>
-                          <span>·</span>
-                          <span>{formatDateline(art.publishedAt)}</span>
                         </div>
                         <div className="font-serif text-base leading-relaxed text-foreground/90">
                           {art.photoUrl && (

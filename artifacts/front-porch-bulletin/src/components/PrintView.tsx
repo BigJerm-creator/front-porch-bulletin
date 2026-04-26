@@ -8,7 +8,6 @@ import {
   useListChurches, getListChurchesQueryKey,
   useListArticles, getListArticlesQueryKey,
 } from "@workspace/api-client-react";
-import { formatDateline } from "@/lib/format";
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 
@@ -111,7 +110,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
-function ArticleByline({ author, date }: { author: string; date: string }) {
+function ArticleByline({ author }: { author: string }) {
   return (
     <p style={{
       fontFamily: FONT_MONO, fontSize: "7pt", textTransform: "uppercase",
@@ -119,7 +118,7 @@ function ArticleByline({ author, date }: { author: string; date: string }) {
       margin: "0 0 5pt",
       borderTop: RULE_LIGHT, borderBottom: RULE_LIGHT, padding: "2.5pt 0",
     }}>
-      By {author} &nbsp;&middot;&nbsp; {formatDateline(date)}
+      By {author}
     </p>
   );
 }
@@ -226,7 +225,6 @@ export function PrintView() {
     <div id="print-view" style={{ fontFamily: FONT_SERIF, color: INK, fontSize: "11pt" }}>
 
       {/* ══════════ PAGE 1 ══════════ */}
-      <IssueBar page="01" issueNum={issueNum} issueDate={issueDate} />
       <Masthead />
 
       {/* Content: sidebar + main */}
@@ -264,7 +262,7 @@ export function PrintView() {
                   {mainArticle.subtitle}
                 </p>
               )}
-              <ArticleByline author={mainArticle.author} date={mainArticle.publishedAt} />
+              <ArticleByline author={mainArticle.author} />
               <div style={{ fontSize: "11pt", lineHeight: 1.6, textAlign: "justify" }}>
                 {mainArticle.photoUrl && (
                   <div style={{ float: "left", marginRight: "10pt", marginBottom: "5pt", maxWidth: "45%" }}>
@@ -348,7 +346,7 @@ export function PrintView() {
               {page2Article.subtitle}
             </p>
           )}
-          <ArticleByline author={page2Article.author} date={String(page2Article.publishedAt)} />
+          <ArticleByline author={page2Article.author} />
           <div style={{ columns: 2, columnGap: "22pt", columnRule: RULE_LIGHT, fontSize: "11pt", lineHeight: 1.6, textAlign: "justify" }}>
             {page2Article.photoUrl && (
               <div style={{ float: "left", marginRight: "10pt", marginBottom: "5pt", maxWidth: "45%" }}>
@@ -379,7 +377,7 @@ export function PrintView() {
               )}
               <h3 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 3pt" }}>{art.title}</h3>
               {art.subtitle && <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "10pt", margin: "0 0 2pt", color: "#333" }}>{art.subtitle}</p>}
-              <ArticleByline author={art.author} date={art.publishedAt} />
+              <ArticleByline author={art.author} />
               <p style={{ fontSize: "9.5pt", lineHeight: 1.5, margin: 0, textAlign: "justify" }}>{art.content.split('\n\n')[0]}</p>
             </div>
           )) : (
@@ -397,7 +395,7 @@ export function PrintView() {
               )}
               <h3 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 3pt" }}>{art.title}</h3>
               {art.subtitle && <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "10pt", margin: "0 0 2pt", color: "#333" }}>{art.subtitle}</p>}
-              <ArticleByline author={art.author} date={art.publishedAt} />
+              <ArticleByline author={art.author} />
               <p style={{ fontSize: "9.5pt", lineHeight: 1.5, margin: 0, textAlign: "justify" }}>{art.content.split('\n\n')[0]}</p>
             </div>
           )) : (
@@ -416,7 +414,7 @@ export function PrintView() {
               <div key={art.id} style={{ marginBottom: "14pt", paddingBottom: "12pt", borderBottom: i < libraryArticles.length - 1 ? RULE_LIGHT : "none" }}>
                 <h3 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 3pt" }}>{art.title}</h3>
                 {art.subtitle && <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "10pt", margin: "0 0 2pt", color: "#333" }}>{art.subtitle}</p>}
-                <ArticleByline author={art.author} date={art.publishedAt} />
+                <ArticleByline author={art.author} />
                 <div style={{ fontSize: "9.5pt", lineHeight: 1.5, textAlign: "justify" }}>
                   {art.photoUrl && (
                     <div style={{ float: "left", marginRight: "10pt", marginBottom: "4pt", maxWidth: "45%" }}>
@@ -449,7 +447,7 @@ export function PrintView() {
                   {art.subtitle}
                 </p>
               )}
-              <ArticleByline author={art.author} date={art.publishedAt} />
+              <ArticleByline author={art.author} />
               <div style={{ fontSize: "11pt", lineHeight: 1.6, textAlign: "justify" }}>
                 {art.photoUrl && (
                   <div style={{ float: "left", marginRight: "10pt", marginBottom: "5pt", maxWidth: "40%" }}>
@@ -485,7 +483,7 @@ export function PrintView() {
                   {art.subtitle}
                 </p>
               )}
-              <ArticleByline author={art.author} date={art.publishedAt} />
+              <ArticleByline author={art.author} />
               <div style={{ display: "grid", gridTemplateColumns: art.photoUrl ? "auto 1fr" : "1fr", gap: "14pt", alignItems: "flex-start" }}>
                 {art.photoUrl && (
                   <div style={{ width: "160pt", flexShrink: 0 }}>
@@ -495,12 +493,7 @@ export function PrintView() {
                 <div style={{ columns: 2, columnGap: "18pt", columnRule: RULE_LIGHT, fontSize: "11pt", lineHeight: 1.55, textAlign: "justify" }}>
                   {art.content.split('\n\n').map((para, j) => (
                     <p key={j} style={{ margin: j === 0 ? "0" : "7pt 0 0", breakInside: "avoid" }}>
-                      {j === 0 && (
-                        <span style={{ fontFamily: FONT_MONO, fontWeight: "bold", fontSize: "7pt", textTransform: "uppercase", letterSpacing: "0.1em", marginRight: "3pt" }}>
-                          {formatDateline(art.publishedAt)}—
-                        </span>
-                      )}
-                      {para}
+                          {para}
                     </p>
                   ))}
                 </div>
