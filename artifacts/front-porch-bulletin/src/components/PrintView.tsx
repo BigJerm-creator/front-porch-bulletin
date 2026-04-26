@@ -254,7 +254,7 @@ export function PrintView() {
               <div style={{ fontSize: "11pt", lineHeight: 1.6, textAlign: "justify" }}>
                 {mainArticle.photoUrl && (
                   <div style={{ float: "left", marginRight: "10pt", marginBottom: "5pt", maxWidth: "45%" }}>
-                    <img src={mainArticle.photoUrl} alt={mainArticle.title} style={{ display: "block", maxWidth: "100%", height: "auto" }} />
+                    <img src={mainArticle.photoUrl} alt={mainArticle.title} style={{ display: "block", maxWidth: "100%", maxHeight: "110pt", width: "auto", height: "auto" }} />
                     {mainArticle.photoCredit && (
                       <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "1pt 0 0" }}>Photo credit — {mainArticle.photoCredit}</p>
                     )}
@@ -436,9 +436,9 @@ export function PrintView() {
                 </p>
               )}
               <ArticleByline author={art.author} date={art.publishedAt} />
-              <div style={{ columns: 2, columnGap: "18pt", columnRule: RULE_LIGHT, fontSize: "11pt", lineHeight: 1.6, textAlign: "justify" }}>
+              <div style={{ fontSize: "11pt", lineHeight: 1.6, textAlign: "justify" }}>
                 {art.photoUrl && (
-                  <div style={{ float: "left", marginRight: "10pt", marginBottom: "5pt", maxWidth: "45%" }}>
+                  <div style={{ float: "left", marginRight: "10pt", marginBottom: "5pt", maxWidth: "40%" }}>
                     <img src={art.photoUrl} alt={art.title} style={{ display: "block", maxWidth: "100%", height: "auto" }} />
                     {art.photoCredit && <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "1pt 0 0" }}>Photo credit — {art.photoCredit}</p>}
                   </div>
