@@ -22,12 +22,9 @@ const RULE          = "1px solid #1a1a1a";
 const RULE_LIGHT    = "0.5px solid rgba(0,0,0,0.25)";
 const RULE_DOUBLE   = "2.5px solid #1a1a1a";
 
-const ISSUE_NUM   = "01";
-const ISSUE_DATE  = "May 2026";
-const EMAIL       = "TheFrontPorchBulletin@gmail.com";
+const EMAIL = "TheFrontPorchBulletin@gmail.com";
 
-const PRINT_YEAR  = 2026;
-const PRINT_MONTH = 5;
+const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
 type CalendarEvent = {
   id: number; title: string; eventDate: string;
@@ -43,7 +40,7 @@ function formatTime(t: string) {
 
 /* ── Shared sub-components ──────────────────────────────────────── */
 
-function IssueBar({ page }: { page: string }) {
+function IssueBar({ page, issueNum, issueDate }: { page: string; issueNum: string; issueDate: string }) {
   return (
     <div style={{
       display: "flex", alignItems: "center", gap: "8pt",
@@ -52,7 +49,7 @@ function IssueBar({ page }: { page: string }) {
       fontFamily: FONT_MONO, fontSize: "8pt",
       textTransform: "uppercase", letterSpacing: "0.12em", color: INK,
     }}>
-      <span style={{ whiteSpace: "nowrap" }}>Issue {ISSUE_NUM} / {ISSUE_DATE}</span>
+      <span style={{ whiteSpace: "nowrap" }}>Issue {issueNum} / {issueDate}</span>
       <span style={{ flex: 1, borderTop: RULE_LIGHT }} />
       <span style={{ whiteSpace: "nowrap" }}>Page {page}</span>
     </div>
@@ -85,7 +82,7 @@ function Masthead() {
   );
 }
 
-function SlimHeader({ page }: { page: string }) {
+function SlimHeader({ page, issueNum, issueDate }: { page: string; issueNum: string; issueDate: string }) {
   return (
     <div style={{
       display: "flex", justifyContent: "space-between", alignItems: "center",
@@ -94,7 +91,7 @@ function SlimHeader({ page }: { page: string }) {
       fontFamily: FONT_MONO, fontSize: "8pt",
       textTransform: "uppercase", letterSpacing: "0.12em", color: INK,
     }}>
-      <span>Issue {ISSUE_NUM} / {ISSUE_DATE}</span>
+      <span>Issue {issueNum} / {issueDate}</span>
       <span style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "10pt", letterSpacing: "0.03em", textTransform: "none" }}>
         The Front Porch Bulletin
       </span>
@@ -135,12 +132,26 @@ export function PrintView() {
   const { data: groupSpotlight }    = useGetGroupSpotlight({ query: { queryKey: getGetGroupSpotlightQueryKey(), retry: false } as any });
   const { data: churchData }        = useListChurches({ query: { queryKey: getListChurchesQueryKey() } });
   const [calEvents, setCalEvents]   = useState<CalendarEvent[]>([]);
+  const [issueSettings, setIssueSettings] = useState({ issueNumber: "01", issueYear: 2026, issueMonth: 5 });
 
   useEffect(() => {
-    fetch(`${BASE}/api/calendar-events/month/${PRINT_YEAR}/${PRINT_MONTH}`)
+    fetch(`${BASE}/api/issue-settings`)
+      .then(r => r.json())
+      .then(data => {
+        setIssueSettings({
+          issueNumber: data.issueNumber ?? "01",
+          issueYear:   data.issueYear   ?? 2026,
+          issueMonth:  data.issueMonth  ?? 5,
+        });
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    fetch(`${BASE}/api/calendar-events/month/${issueSettings.issueYear}/${issueSettings.issueMonth}`)
       .then(r => r.json())
       .then(d => setCalEvents(d.events ?? []));
-  }, []);
+  }, [issueSettings.issueYear, issueSettings.issueMonth]);
 
   const { data: libraryData }   = useListArticles({ category: "Library News", limit: 10 }, { query: { queryKey: getListArticlesQueryKey({ category: "Library News", limit: 10 }) } });
   const { data: h4Data }        = useListArticles({ category: "4H News",      limit: 10 }, { query: { queryKey: getListArticlesQueryKey({ category: "4H News",      limit: 10 }) } });
@@ -190,9 +201,12 @@ export function PrintView() {
     );
   }
 
+  const issueNum  = issueSettings.issueNumber;
+  const issueDate = `${MONTH_NAMES[issueSettings.issueMonth - 1]} ${issueSettings.issueYear}`;
+
   /* ── Calendar helpers ── */
-  const yr       = PRINT_YEAR;
-  const mo       = PRINT_MONTH - 1;
+  const yr       = issueSettings.issueYear;
+  const mo       = issueSettings.issueMonth - 1;
   const firstDow = new Date(yr, mo, 1).getDay();
   const daysInMo = new Date(yr, mo + 1, 0).getDate();
   const eventMap = new Map<number, CalendarEvent[]>();
@@ -212,7 +226,7 @@ export function PrintView() {
     <div id="print-view" style={{ fontFamily: FONT_SERIF, color: INK, fontSize: "11pt" }}>
 
       {/* ══════════ PAGE 1 ══════════ */}
-      <IssueBar page="01" />
+      <IssueBar page="01" issueNum={issueNum} issueDate={issueDate} />
       <Masthead />
 
       {/* Content: sidebar + main */}
@@ -524,7 +538,7 @@ export function PrintView() {
 
       {/* Community Calendar */}
       <div>
-        <SectionLabel>Community Calendar — {ISSUE_DATE}</SectionLabel>
+        <SectionLabel>Community Calendar — {issueDate}</SectionLabel>
 
         {/* Month grid */}
         <div style={{ marginBottom: "10pt" }}>

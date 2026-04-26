@@ -11,6 +11,7 @@ import storageRouter from "./storage";
 import newsletterRouter from "./newsletter";
 import calendarEventsRouter from "./calendarEvents";
 import aboutRouter from "./about";
+import issueSettingsRouter from "./issueSettings";
 
 const router: IRouter = Router();
 
@@ -26,5 +27,6 @@ router.use("/churches", churchesRouter);
 router.use("/newsletter", newsletterRouter);
 router.use("/calendar-events", calendarEventsRouter);
 router.use("/about", aboutRouter);
+router.use("/issue-settings", issueSettingsRouter);
 
 export default router;

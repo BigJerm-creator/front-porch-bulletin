@@ -8,3 +8,4 @@ export * from "./churches";
 export * from "./newsletterSubscribers";
 export * from "./calendarEvents";
 export * from "./about";
+export * from "./issueSettings";

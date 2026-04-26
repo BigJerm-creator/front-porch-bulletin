@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { useUser } from "@clerk/react";
 import { useGetArticlesSummary, getGetArticlesSummaryQueryKey, useGetMyRole, getGetMyRoleQueryKey, useListChurches, getListChurchesQueryKey, useGetSpotlight, getGetSpotlightQueryKey } from "@workspace/api-client-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { FileText, Star, Church, Info, Users, ArrowRight, PlusCircle } from "lucide-react";
+import { FileText, Star, Church, Info, Users, ArrowRight, PlusCircle, Newspaper } from "lucide-react";
 
 function SectionCard({
   href,
@@ -103,6 +103,13 @@ export default function AdminDashboard() {
             icon={Info}
             title="About"
             description="Edit the founding story, body text, office location, and editorial staff listed on the About page."
+          />
+
+          <SectionCard
+            href="/admin/issue-settings"
+            icon={Newspaper}
+            title="Issue Settings"
+            description="Set the current issue number, month, and year. These appear in the page header and printed edition."
           />
 
           {roleData?.isAdmin && (

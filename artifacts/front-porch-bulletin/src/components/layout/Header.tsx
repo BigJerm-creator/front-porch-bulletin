@@ -1,17 +1,34 @@
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { Show } from "@clerk/react";
 import logoSrc from "@assets/The_(1)_1775854639167.png";
 
-const ISSUE_NUM  = "01";
-const ISSUE_DATE = "May 2026";
-const EMAIL      = "TheFrontPorchBulletin@gmail.com";
+const EMAIL = "TheFrontPorchBulletin@gmail.com";
+const BASE   = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
 export function Header() {
+  const [issueNum,  setIssueNum]  = useState("01");
+  const [issueDate, setIssueDate] = useState("May 2026");
+
+  useEffect(() => {
+    fetch(`${BASE}/api/issue-settings`)
+      .then(r => r.json())
+      .then(data => {
+        setIssueNum(data.issueNumber ?? "01");
+        const yr = data.issueYear ?? 2026;
+        const mo = data.issueMonth ?? 5;
+        setIssueDate(`${MONTH_NAMES[mo - 1]} ${yr}`);
+      })
+      .catch(() => {});
+  }, []);
+
   return (
     <header className="mb-6">
       {/* ── Issue / page bar ── */}
       <div className="flex items-center gap-3 text-xs font-mono uppercase tracking-widest border-t-2 border-b border-foreground py-1 mb-0">
-        <span className="shrink-0 whitespace-nowrap">Issue {ISSUE_NUM} / {ISSUE_DATE}</span>
+        <span className="shrink-0 whitespace-nowrap">Issue {issueNum} / {issueDate}</span>
         <span className="flex-1 border-t border-foreground mt-0.5" />
         <div className="print:hidden shrink-0">
           <Show when="signed-in">
