@@ -373,12 +373,14 @@ export function PrintView() {
           {h4Articles.length > 0 ? h4Articles.map((art, i) => (
             <div key={art.id} style={{ marginBottom: "12pt", paddingBottom: "10pt", borderBottom: i < h4Articles.length - 1 ? RULE_LIGHT : "none" }}>
               {art.photoUrl && (
-                <img src={art.photoUrl} alt={art.title} style={{ display: "block", maxWidth: "100%", height: "auto", marginBottom: "4pt" }} />
+                <img src={art.photoUrl} alt={art.title} style={{ display: "block", maxWidth: "50%", height: "auto", marginBottom: "4pt" }} />
               )}
               <h3 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 3pt" }}>{art.title}</h3>
               {art.subtitle && <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "10pt", margin: "0 0 2pt", color: "#333" }}>{art.subtitle}</p>}
               <ArticleByline author={art.author} />
-              <p style={{ fontSize: "9.5pt", lineHeight: 1.5, margin: 0, textAlign: "justify" }}>{art.content.split('\n\n')[0]}</p>
+              {art.content.split('\n\n').map((para, pi) => (
+                <p key={pi} style={{ fontSize: "9.5pt", lineHeight: 1.5, margin: pi > 0 ? "5pt 0 0" : "0", textAlign: "justify" }}>{para}</p>
+              ))}
             </div>
           )) : (
             <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", color: INK_MUTED, fontSize: "9pt" }}>No 4H news this issue.</p>
@@ -391,7 +393,7 @@ export function PrintView() {
           {communityArticles.length > 0 ? communityArticles.map((art, i) => (
             <div key={art.id} style={{ marginBottom: "12pt", paddingBottom: "10pt", borderBottom: i < communityArticles.length - 1 ? RULE_LIGHT : "none" }}>
               {art.photoUrl && (
-                <img src={art.photoUrl} alt={art.title} style={{ display: "block", maxWidth: "100%", height: "auto", marginBottom: "4pt" }} />
+                <img src={art.photoUrl} alt={art.title} style={{ display: "block", maxWidth: "50%", height: "auto", marginBottom: "4pt" }} />
               )}
               <h3 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 3pt" }}>{art.title}</h3>
               {art.subtitle && <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "10pt", margin: "0 0 2pt", color: "#333" }}>{art.subtitle}</p>}
