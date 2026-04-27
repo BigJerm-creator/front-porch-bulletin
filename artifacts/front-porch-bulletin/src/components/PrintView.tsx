@@ -227,61 +227,51 @@ export function PrintView() {
       {/* ══════════ PAGE 1 ══════════ */}
       <Masthead />
 
-      {/* Content: sidebar + main */}
-      <div style={{ display: "grid", gridTemplateColumns: "22% 78%", gap: "0", alignItems: "flex-start", borderTop: RULE }}>
-
-        {/* ─── Left sidebar ─── */}
-        <div style={{ paddingRight: "12pt", borderRight: RULE }}>
-
-          {/* Student Spotlight */}
-          {spotlight && (
-            <div style={{ marginBottom: "12pt", paddingBottom: "10pt", borderBottom: RULE_LIGHT }}>
-              <SectionLabel>Student Spotlight</SectionLabel>
-              <PhotoBox url={spotlight.photoUrl} alt={spotlight.name} credit={spotlight.photoCredit} />
-              <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "12pt", lineHeight: 1.1, margin: "0 0 1.5pt" }}>{spotlight.name}</p>
-              <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 3pt" }}>
-                {spotlight.school} &bull; {spotlight.grade}
+      {/* ─── Main featured article — full width ─── */}
+      <div style={{ borderTop: RULE }}>
+        {mainArticle ? (
+          <>
+            <h1 style={{
+              fontFamily: FONT_HEADLINE, fontWeight: "bold",
+              fontSize: "42pt", lineHeight: 1.0,
+              margin: "6pt 0 5pt", letterSpacing: "-0.02em",
+            }}>{mainArticle.title}</h1>
+            {mainArticle.subtitle && (
+              <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "16pt", lineHeight: 1.2, margin: "0 0 4pt", color: "#333" }}>
+                {mainArticle.subtitle}
               </p>
-              <p style={{ fontSize: "9pt", lineHeight: 1.45, margin: 0, color: "#333" }}>{spotlight.description}</p>
-            </div>
-          )}
-
-        </div>
-
-        {/* ─── Main featured article ─── */}
-        <div style={{ paddingLeft: "14pt" }}>
-          {mainArticle ? (
-            <>
-              <h1 style={{
-                fontFamily: FONT_HEADLINE, fontWeight: "bold",
-                fontSize: "42pt", lineHeight: 1.0,
-                margin: "0 0 5pt", letterSpacing: "-0.02em",
-              }}>{mainArticle.title}</h1>
-              {mainArticle.subtitle && (
-                <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "16pt", lineHeight: 1.2, margin: "0 0 4pt", color: "#333" }}>
-                  {mainArticle.subtitle}
-                </p>
+            )}
+            <ArticleByline author={mainArticle.author} />
+            <div style={{ fontSize: "11pt", lineHeight: 1.6, textAlign: "justify" }}>
+              {mainArticle.photoUrl && (
+                <div style={{ float: "left", marginRight: "10pt", marginBottom: "5pt", maxWidth: "45%" }}>
+                  <img src={mainArticle.photoUrl} alt={mainArticle.title} style={{ display: "block", maxWidth: "100%", maxHeight: "110pt", width: "auto", height: "auto" }} />
+                  {mainArticle.photoCredit && (
+                    <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "1pt 0 0" }}>Photo credit — {mainArticle.photoCredit}</p>
+                  )}
+                </div>
               )}
-              <ArticleByline author={mainArticle.author} />
-              <div style={{ fontSize: "11pt", lineHeight: 1.6, textAlign: "justify" }}>
-                {mainArticle.photoUrl && (
-                  <div style={{ float: "left", marginRight: "10pt", marginBottom: "5pt", maxWidth: "45%" }}>
-                    <img src={mainArticle.photoUrl} alt={mainArticle.title} style={{ display: "block", maxWidth: "100%", maxHeight: "110pt", width: "auto", height: "auto" }} />
-                    {mainArticle.photoCredit && (
-                      <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "1pt 0 0" }}>Photo credit — {mainArticle.photoCredit}</p>
-                    )}
-                  </div>
-                )}
-                {mainArticle.content.split('\n\n').map((para, i) => (
-                  <p key={i} style={{ margin: i === 0 ? "0" : "7pt 0 0", breakInside: "avoid" }}>{para}</p>
-                ))}
-                <div style={{ clear: "both" }} />
-              </div>
-            </>
-          ) : (
-            <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", color: INK_MUTED }}>No featured story this week.</p>
-          )}
-        </div>
+              {mainArticle.content.split('\n\n').map((para, i) => (
+                <p key={i} style={{ margin: i === 0 ? "0" : "7pt 0 0", breakInside: "avoid" }}>{para}</p>
+              ))}
+              {/* Student Spotlight floated to bottom-left after article content */}
+              {spotlight && (
+                <div style={{ float: "left", clear: "left", marginRight: "14pt", marginTop: "10pt", width: "130pt", borderTop: RULE_DOUBLE, paddingTop: "6pt" }}>
+                  <SectionLabel>Student Spotlight</SectionLabel>
+                  <PhotoBox url={spotlight.photoUrl} alt={spotlight.name} credit={spotlight.photoCredit} />
+                  <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "12pt", lineHeight: 1.1, margin: "0 0 1.5pt" }}>{spotlight.name}</p>
+                  <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 3pt" }}>
+                    {spotlight.school} &bull; {spotlight.grade}
+                  </p>
+                  <p style={{ fontSize: "9pt", lineHeight: 1.45, margin: 0, color: "#333" }}>{spotlight.description}</p>
+                </div>
+              )}
+              <div style={{ clear: "both" }} />
+            </div>
+          </>
+        ) : (
+          <p style={{ fontFamily: FONT_SERIF, fontStyle: "italic", color: INK_MUTED }}>No featured story this week.</p>
+        )}
       </div>
 
       {/* ══ Continuation ══ */}
@@ -537,23 +527,23 @@ export function PrintView() {
 
         {/* Month grid */}
         <div style={{ marginBottom: "10pt" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "1pt", marginBottom: "4pt" }}>
-            {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d => (
-              <div key={d} style={{ fontFamily: FONT_MONO, fontSize: "7pt", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "center", borderBottom: RULE, paddingBottom: "2pt", color: INK_MUTED }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2pt", marginBottom: "4pt" }}>
+            {["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"].map(d => (
+              <div key={d} style={{ fontFamily: FONT_MONO, fontSize: "7pt", textTransform: "uppercase", letterSpacing: "0.06em", textAlign: "center", borderBottom: RULE, paddingBottom: "3pt", color: INK_MUTED }}>
                 {d}
               </div>
             ))}
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "1pt" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "2pt" }}>
             {calCells.map((day, idx) => {
               const events = day ? (eventMap.get(day) ?? []) : [];
               return (
-                <div key={idx} style={{ border: RULE_LIGHT, padding: "2pt", minHeight: "36pt", verticalAlign: "top", background: day ? "#fff" : "#f5f0e8" }}>
+                <div key={idx} style={{ border: RULE_LIGHT, padding: "3pt", minHeight: "52pt", verticalAlign: "top", background: day ? "#fff" : "#f5f0e8" }}>
                   {day && (
                     <>
-                      <div style={{ fontFamily: FONT_MONO, fontSize: "7pt", fontWeight: "bold", marginBottom: "1.5pt", color: INK }}>{day}</div>
+                      <div style={{ fontFamily: FONT_MONO, fontSize: "9pt", fontWeight: "bold", marginBottom: "2pt", color: INK }}>{day}</div>
                       {events.map(ev => (
-                        <div key={ev.id} style={{ fontSize: "5.5pt", lineHeight: 1.25, color: "#222", marginBottom: "1pt" }}>
+                        <div key={ev.id} style={{ fontSize: "6.5pt", lineHeight: 1.3, color: "#222", marginBottom: "1.5pt" }}>
                           <span style={{ fontWeight: "bold" }}>{ev.eventTime ? formatTime(ev.eventTime) : ""}</span>
                           {ev.eventTime ? " " : ""}{ev.title}
                         </div>
