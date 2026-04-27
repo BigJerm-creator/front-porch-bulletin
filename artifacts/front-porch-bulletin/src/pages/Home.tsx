@@ -81,20 +81,9 @@ export default function Home() {
                       <span>{mainArticle.category}</span>
                     </div>
                     <div className="font-serif text-lg leading-relaxed text-foreground/90">
-                      {mainArticle.photoUrl && (
-                        <div className="float-left mr-4 mb-2 max-w-[45%]">
-                          <img src={mainArticle.photoUrl} alt={mainArticle.title} className="block max-w-full h-auto" />
-                          {mainArticle.photoCredit && (
-                            <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {mainArticle.photoCredit}</p>
-                          )}
-                        </div>
-                      )}
-                      {mainArticle.content.split('\n\n').map((para, i) => (
-                        <p key={i} className={i === 0 ? "first-letter-drop" : "mt-4"}>{para}</p>
-                      ))}
-                      {/* Student Spotlight floated to bottom-left — text wraps around it */}
+                      {/* Spotlight floated right — article text wraps alongside it from the top */}
                       {spotlight && (
-                        <div className="float-left clear-left mr-6 mt-4 w-[220px] border-t-2 border-foreground pt-3">
+                        <div className="float-right ml-6 mb-2 w-[220px] border-t-2 border-foreground pt-3">
                           <div className="font-mono text-[10px] uppercase tracking-widest border-b border-foreground pb-1 mb-2">Student Spotlight</div>
                           {spotlight.photoUrl && (
                             <div className="w-full aspect-[4/3] overflow-hidden border border-foreground mb-2 bg-muted">
@@ -106,6 +95,17 @@ export default function Home() {
                           <p className="text-sm leading-snug text-foreground/80">{spotlight.description}</p>
                         </div>
                       )}
+                      {mainArticle.photoUrl && (
+                        <div className="float-left mr-4 mb-2 max-w-[40%]">
+                          <img src={mainArticle.photoUrl} alt={mainArticle.title} className="block max-w-full h-auto" />
+                          {mainArticle.photoCredit && (
+                            <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {mainArticle.photoCredit}</p>
+                          )}
+                        </div>
+                      )}
+                      {mainArticle.content.split('\n\n').map((para, i) => (
+                        <p key={i} className={i === 0 ? "first-letter-drop" : "mt-4"}>{para}</p>
+                      ))}
                       <div className="clear-both" />
                     </div>
                   </article>

@@ -243,20 +243,9 @@ export function PrintView() {
             )}
             <ArticleByline author={mainArticle.author} />
             <div style={{ fontSize: "11pt", lineHeight: 1.6, textAlign: "justify" }}>
-              {mainArticle.photoUrl && (
-                <div style={{ float: "left", marginRight: "10pt", marginBottom: "5pt", maxWidth: "45%" }}>
-                  <img src={mainArticle.photoUrl} alt={mainArticle.title} style={{ display: "block", maxWidth: "100%", maxHeight: "110pt", width: "auto", height: "auto" }} />
-                  {mainArticle.photoCredit && (
-                    <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "1pt 0 0" }}>Photo credit — {mainArticle.photoCredit}</p>
-                  )}
-                </div>
-              )}
-              {mainArticle.content.split('\n\n').map((para, i) => (
-                <p key={i} style={{ margin: i === 0 ? "0" : "7pt 0 0", breakInside: "avoid" }}>{para}</p>
-              ))}
-              {/* Student Spotlight floated to bottom-left after article content */}
+              {/* Spotlight floated right — article text wraps alongside it from the top */}
               {spotlight && (
-                <div style={{ float: "left", clear: "left", marginRight: "14pt", marginTop: "10pt", width: "130pt", borderTop: RULE_DOUBLE, paddingTop: "6pt" }}>
+                <div style={{ float: "right", marginLeft: "14pt", marginBottom: "5pt", width: "130pt", borderTop: RULE_DOUBLE, paddingTop: "6pt" }}>
                   <SectionLabel>Student Spotlight</SectionLabel>
                   <PhotoBox url={spotlight.photoUrl} alt={spotlight.name} credit={spotlight.photoCredit} />
                   <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "12pt", lineHeight: 1.1, margin: "0 0 1.5pt" }}>{spotlight.name}</p>
@@ -266,6 +255,17 @@ export function PrintView() {
                   <p style={{ fontSize: "9pt", lineHeight: 1.45, margin: 0, color: "#333" }}>{spotlight.description}</p>
                 </div>
               )}
+              {mainArticle.photoUrl && (
+                <div style={{ float: "left", marginRight: "10pt", marginBottom: "5pt", maxWidth: "40%" }}>
+                  <img src={mainArticle.photoUrl} alt={mainArticle.title} style={{ display: "block", maxWidth: "100%", maxHeight: "110pt", width: "auto", height: "auto" }} />
+                  {mainArticle.photoCredit && (
+                    <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "1pt 0 0" }}>Photo credit — {mainArticle.photoCredit}</p>
+                  )}
+                </div>
+              )}
+              {mainArticle.content.split('\n\n').map((para, i) => (
+                <p key={i} style={{ margin: i === 0 ? "0" : "7pt 0 0", breakInside: "avoid" }}>{para}</p>
+              ))}
               <div style={{ clear: "both" }} />
             </div>
           </>
