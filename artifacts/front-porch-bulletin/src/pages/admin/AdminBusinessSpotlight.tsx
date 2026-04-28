@@ -147,7 +147,17 @@ export default function AdminBusinessSpotlight() {
               <p className="text-xs font-mono uppercase tracking-widest text-foreground/60 mb-1 text-center">Business of the Week</p>
               <p className="font-headline font-bold text-base leading-tight mb-0.5">{form.name || "Business Name"}</p>
               <p className="text-xs font-mono uppercase tracking-wider text-foreground/70 mb-1">{form.businessType || "Business Type"}</p>
-              <p className="font-serif text-xs leading-relaxed text-foreground/80">{form.description || "Description will appear here."}</p>
+              <div className="font-serif text-xs leading-relaxed text-foreground/80">
+                {form.description
+                  ? form.description.split('\n\n').map((para, i) => (
+                      <p key={i} className={i > 0 ? "mt-2" : ""}>
+                        {para.split('\n').map((line, j) => (
+                          j === 0 ? line : <>{'\n'}<br />{line}</>
+                        ))}
+                      </p>
+                    ))
+                  : "Description will appear here."}
+              </div>
             </div>
           </div>
         </div>
