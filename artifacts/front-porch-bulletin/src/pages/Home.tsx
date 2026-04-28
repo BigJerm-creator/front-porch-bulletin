@@ -129,7 +129,15 @@ export default function Home() {
                       {businessSpotlight.businessType && (
                         <p className="font-mono text-[10px] uppercase tracking-wide text-foreground/60 mb-2">{businessSpotlight.businessType}</p>
                       )}
-                      <p className="font-serif text-base leading-relaxed text-foreground/80">{businessSpotlight.description}</p>
+                      <div className="font-serif text-base leading-relaxed text-foreground/80">
+                        {businessSpotlight.description.split('\n\n').map((para, i) => (
+                          <p key={i} className={i > 0 ? "mt-3" : ""}>
+                            {para.split('\n').map((line, j) => (
+                              j === 0 ? line : <>{'\n'}<br />{line}</>
+                            ))}
+                          </p>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>

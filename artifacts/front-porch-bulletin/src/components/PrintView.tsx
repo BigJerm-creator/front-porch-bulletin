@@ -294,7 +294,15 @@ export function PrintView() {
                   {businessSpotlight.businessType}
                 </p>
               )}
-              <p style={{ fontSize: "9.5pt", lineHeight: 1.5, textAlign: "justify", margin: 0 }}>{businessSpotlight.description}</p>
+              <div style={{ fontSize: "9.5pt", lineHeight: 1.5, textAlign: "justify" }}>
+                {businessSpotlight.description.split('\n\n').map((para, i) => (
+                  <p key={i} style={{ margin: i > 0 ? "5pt 0 0" : "0" }}>
+                    {para.split('\n').map((line, j) => (
+                      j === 0 ? line : <>{'\n'}<br />{line}</>
+                    ))}
+                  </p>
+                ))}
+              </div>
             </div>
           </div>
         </div>
