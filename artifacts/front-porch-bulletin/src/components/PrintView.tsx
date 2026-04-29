@@ -281,38 +281,28 @@ export function PrintView() {
       {businessSpotlight && (
         <div style={{ marginBottom: "18pt", paddingBottom: "14pt", borderBottom: RULE_DOUBLE }}>
           <SectionLabel>Business Spotlight</SectionLabel>
-          {businessSpotlight.photoUrl ? (
-            <div style={{ display: "grid", gridTemplateColumns: "160pt 1fr", gap: "12pt", alignItems: "flex-start", marginBottom: "7pt" }}>
-              <div style={{ flexShrink: 0 }}>
+          <div>
+            {businessSpotlight.photoUrl && (
+              <div style={{ float: "left", marginRight: "12pt", marginBottom: "5pt", width: "160pt" }}>
                 <PhotoBox url={businessSpotlight.photoUrl} alt={businessSpotlight.name} credit={businessSpotlight.photoCredit} aspect="4/3" />
               </div>
-              <div>
-                <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 2pt" }}>{businessSpotlight.name}</p>
-                {businessSpotlight.businessType && (
-                  <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: 0 }}>
-                    {businessSpotlight.businessType}
-                  </p>
-                )}
-              </div>
-            </div>
-          ) : (
-            <div style={{ marginBottom: "7pt" }}>
-              <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 2pt" }}>{businessSpotlight.name}</p>
-              {businessSpotlight.businessType && (
-                <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: 0 }}>
-                  {businessSpotlight.businessType}
-                </p>
-              )}
-            </div>
-          )}
-          <div style={{ fontSize: "9.5pt", lineHeight: 1.5, textAlign: "justify" }}>
-            {businessSpotlight.description.split('\n\n').map((para, i) => (
-              <p key={i} style={{ margin: i > 0 ? "5pt 0 0" : "0" }}>
-                {para.split('\n').map((line, j) => (
-                  j === 0 ? line : <>{'\n'}<br />{line}</>
-                ))}
+            )}
+            <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 2pt" }}>{businessSpotlight.name}</p>
+            {businessSpotlight.businessType && (
+              <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 5pt" }}>
+                {businessSpotlight.businessType}
               </p>
-            ))}
+            )}
+            <div style={{ fontSize: "9.5pt", lineHeight: 1.5, textAlign: "justify" }}>
+              {businessSpotlight.description.split('\n\n').map((para, i) => (
+                <p key={i} style={{ margin: i > 0 ? "5pt 0 0" : "0" }}>
+                  {para.split('\n').map((line, j) => (
+                    j === 0 ? line : <>{'\n'}<br />{line}</>
+                  ))}
+                </p>
+              ))}
+            </div>
+            <div style={{ clear: "both" }} />
           </div>
         </div>
       )}
