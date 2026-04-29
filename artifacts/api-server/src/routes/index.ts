@@ -12,6 +12,7 @@ import newsletterRouter from "./newsletter";
 import calendarEventsRouter from "./calendarEvents";
 import aboutRouter from "./about";
 import issueSettingsRouter from "./issueSettings";
+import letterToEditorRouter from "./letterToEditor";
 
 const router: IRouter = Router();
 
@@ -28,5 +29,6 @@ router.use("/newsletter", newsletterRouter);
 router.use("/calendar-events", calendarEventsRouter);
 router.use("/about", aboutRouter);
 router.use("/issue-settings", issueSettingsRouter);
+router.use("/letter-to-editor", letterToEditorRouter);
 
 export default router;

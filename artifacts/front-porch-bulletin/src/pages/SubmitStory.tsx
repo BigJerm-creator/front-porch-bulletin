@@ -6,8 +6,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-
-const EDITOR_EMAIL = "thefrontpagebulletin@gmail.com";
+import { useState } from "react";
 
 const formSchema = z.object({
   name: z.string().min(2, "Your name is required"),
@@ -20,6 +19,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function SubmitStory() {
   const { toast } = useToast();
+  const [submitting, setSubmitting] = useState(false);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -31,24 +31,44 @@ export default function SubmitStory() {
     },
   });
 
-  function onSubmit(values: FormValues) {
-    const body = [
-      `From: ${values.name} <${values.email}>`,
-      "",
-      values.message,
-    ].join("\n");
+  async function onSubmit(values: FormValues) {
+    setSubmitting(true);
+    try {
+      const res = await fetch("/api/letter-to-editor", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(values),
+      });
 
-    const mailto = `mailto:${EDITOR_EMAIL}?subject=${encodeURIComponent(values.subject)}&body=${encodeURIComponent(body)}`;
+      const data = await res.json();
 
-    window.location.href = mailto;
+      if (!res.ok) {
+        toast({
+          title: "Submission failed",
+          description: data.error || "Something went wrong. Please try again.",
+          variant: "destructive",
+          className: "font-mono border-2 border-destructive",
+        });
+        return;
+      }
 
-    toast({
-      title: "Opening your email client…",
-      description: "A draft has been prepared. Send it from your email app to submit your letter.",
-      className: "font-mono border-2 border-foreground bg-background",
-    });
+      toast({
+        title: "Letter received!",
+        description: "Thank you for writing in. The editor will review your submission.",
+        className: "font-mono border-2 border-foreground bg-background",
+      });
 
-    form.reset();
+      form.reset();
+    } catch {
+      toast({
+        title: "Submission failed",
+        description: "Could not reach the server. Please try again.",
+        variant: "destructive",
+        className: "font-mono border-2 border-destructive",
+      });
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -148,15 +168,16 @@ export default function SubmitStory() {
               />
 
               <p className="font-mono text-[11px] text-foreground/50 text-center leading-relaxed">
-                Clicking Submit will open your email app with this letter pre-addressed to the editor.
-                <br />Simply send the email to complete your submission.
+                Your letter will be sent directly to the editor's inbox.
+                <br />We read every submission and may print it in an upcoming issue.
               </p>
 
               <button
                 type="submit"
-                className="w-full bg-foreground text-background font-mono uppercase tracking-widest py-4 mt-2 hover:bg-foreground/90 transition-colors"
+                disabled={submitting}
+                className="w-full bg-foreground text-background font-mono uppercase tracking-widest py-4 mt-2 hover:bg-foreground/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Submit to Editor
+                {submitting ? "Sending…" : "Submit to Editor"}
               </button>
             </form>
           </Form>
