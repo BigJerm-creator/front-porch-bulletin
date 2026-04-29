@@ -2,60 +2,53 @@ import { Layout } from "@/components/layout/Layout";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useCreateArticle, useListCategories, getListArticlesQueryKey } from "@workspace/api-client-react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { useQueryClient } from "@tanstack/react-query";
+
+const EDITOR_EMAIL = "thefrontpagebulletin@gmail.com";
 
 const formSchema = z.object({
-  title: z.string().min(5, "Title must be at least 5 characters"),
-  subtitle: z.string().optional(),
-  author: z.string().min(2, "Author name required"),
-  category: z.string().min(1, "Please select a category"),
-  content: z.string().min(20, "Story content is too short"),
+  name: z.string().min(2, "Your name is required"),
+  email: z.string().email("Please enter a valid email address"),
+  subject: z.string().min(3, "Please enter a subject"),
+  message: z.string().min(20, "Your letter is too short"),
 });
 
-export default function SubmitStory() {
-  const { data: categoriesData } = useListCategories();
-  const { mutate: createArticle, isPending } = useCreateArticle();
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
+type FormValues = z.infer<typeof formSchema>;
 
-  const form = useForm<z.infer<typeof formSchema>>({
+export default function SubmitStory() {
+  const { toast } = useToast();
+
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
-      subtitle: "",
-      author: "",
-      category: "",
-      content: "",
+      name: "",
+      email: "",
+      subject: "",
+      message: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    createArticle(
-      { data: values },
-      {
-        onSuccess: () => {
-          toast({
-            title: "Submission Received",
-            description: "Your story has been filed with the editor.",
-            className: "font-mono border-2 border-foreground bg-background",
-          });
-          form.reset();
-          queryClient.invalidateQueries({ queryKey: getListArticlesQueryKey() });
-        },
-        onError: () => {
-          toast({
-            title: "Error",
-            description: "Could not submit your story. The press might be jammed.",
-            variant: "destructive",
-          });
-        }
-      }
-    );
+  function onSubmit(values: FormValues) {
+    const body = [
+      `From: ${values.name} <${values.email}>`,
+      "",
+      values.message,
+    ].join("\n");
+
+    const mailto = `mailto:${EDITOR_EMAIL}?subject=${encodeURIComponent(values.subject)}&body=${encodeURIComponent(body)}`;
+
+    window.location.href = mailto;
+
+    toast({
+      title: "Opening your email client…",
+      description: "A draft has been prepared. Send it from your email app to submit your letter.",
+      className: "font-mono border-2 border-foreground bg-background",
+    });
+
+    form.reset();
   }
 
   return (
@@ -66,12 +59,11 @@ export default function SubmitStory() {
             Letter to the Editor
           </h1>
           <p className="font-serif italic text-lg text-foreground/80">
-            Have a story for the community? A recipe to share? A classified ad? Submit it below for review by our editorial team.
+            Have something to say? Write in — we read every letter. Submissions may be printed in an upcoming issue.
           </p>
         </header>
 
         <div className="bg-foreground/[0.02] border border-foreground p-6 md:p-10 shadow-sm relative">
-          {/* Decorative corner pieces */}
           <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-foreground"></div>
           <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-foreground"></div>
           <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-foreground"></div>
@@ -79,43 +71,20 @@ export default function SubmitStory() {
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 font-serif">
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-headline font-bold uppercase tracking-widest text-sm">Headline</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Local Pie Contest Winners Announced" className="font-serif rounded-none border-foreground/30 focus-visible:ring-foreground focus-visible:ring-offset-0" {...field} />
-                    </FormControl>
-                    <FormMessage className="font-mono text-xs text-destructive" />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="subtitle"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-headline font-bold uppercase tracking-widest text-sm">Sub-headline (Optional)</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Mrs. Higgins takes first prize again" className="font-serif italic rounded-none border-foreground/30 focus-visible:ring-foreground focus-visible:ring-offset-0" {...field} />
-                    </FormControl>
-                    <FormMessage className="font-mono text-xs text-destructive" />
-                  </FormItem>
-                )}
-              />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
-                  name="author"
+                  name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-headline font-bold uppercase tracking-widest text-sm">Byline (Your Name)</FormLabel>
+                      <FormLabel className="font-headline font-bold uppercase tracking-widest text-sm">Your Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="John Doe" className="font-serif rounded-none border-foreground/30 focus-visible:ring-foreground focus-visible:ring-offset-0" {...field} />
+                        <Input
+                          placeholder="Jane Smith"
+                          className="font-serif rounded-none border-foreground/30 focus-visible:ring-foreground focus-visible:ring-offset-0"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage className="font-mono text-xs text-destructive" />
                     </FormItem>
@@ -124,20 +93,17 @@ export default function SubmitStory() {
 
                 <FormField
                   control={form.control}
-                  name="category"
+                  name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="font-headline font-bold uppercase tracking-widest text-sm">Section</FormLabel>
+                      <FormLabel className="font-headline font-bold uppercase tracking-widest text-sm">Your Email</FormLabel>
                       <FormControl>
-                        <select 
-                          className="flex h-10 w-full rounded-none border border-foreground/30 bg-background px-3 py-2 text-sm font-serif ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50"
+                        <Input
+                          type="email"
+                          placeholder="jane@example.com"
+                          className="font-serif rounded-none border-foreground/30 focus-visible:ring-foreground focus-visible:ring-offset-0"
                           {...field}
-                        >
-                          <option value="" disabled>Select a section...</option>
-                          {categoriesData?.categories.map((cat) => (
-                            <option key={cat.id} value={cat.slug}>{cat.name}</option>
-                          ))}
-                        </select>
+                        />
                       </FormControl>
                       <FormMessage className="font-mono text-xs text-destructive" />
                     </FormItem>
@@ -147,15 +113,15 @@ export default function SubmitStory() {
 
               <FormField
                 control={form.control}
-                name="content"
+                name="subject"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="font-headline font-bold uppercase tracking-widest text-sm">Story Content</FormLabel>
+                    <FormLabel className="font-headline font-bold uppercase tracking-widest text-sm">Subject</FormLabel>
                     <FormControl>
-                      <Textarea 
-                        placeholder="Write your story here..." 
-                        className="font-serif min-h-[250px] rounded-none border-foreground/30 focus-visible:ring-foreground focus-visible:ring-offset-0 leading-loose" 
-                        {...field} 
+                      <Input
+                        placeholder="Thoughts on the new park renovation"
+                        className="font-serif rounded-none border-foreground/30 focus-visible:ring-foreground focus-visible:ring-offset-0"
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage className="font-mono text-xs text-destructive" />
@@ -163,12 +129,34 @@ export default function SubmitStory() {
                 )}
               />
 
-              <button 
-                type="submit" 
-                disabled={isPending}
-                className="w-full bg-foreground text-background font-mono uppercase tracking-widest py-4 mt-8 hover:bg-foreground/90 transition-colors disabled:opacity-50"
+              <FormField
+                control={form.control}
+                name="message"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-headline font-bold uppercase tracking-widest text-sm">Your Letter</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Dear Editor,&#10;&#10;I wanted to share my thoughts on…"
+                        className="font-serif min-h-[280px] rounded-none border-foreground/30 focus-visible:ring-foreground focus-visible:ring-offset-0 leading-loose"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="font-mono text-xs text-destructive" />
+                  </FormItem>
+                )}
+              />
+
+              <p className="font-mono text-[11px] text-foreground/50 text-center leading-relaxed">
+                Clicking Submit will open your email app with this letter pre-addressed to the editor.
+                <br />Simply send the email to complete your submission.
+              </p>
+
+              <button
+                type="submit"
+                className="w-full bg-foreground text-background font-mono uppercase tracking-widest py-4 mt-2 hover:bg-foreground/90 transition-colors"
               >
-                {isPending ? "Filing Story..." : "Submit to Editor"}
+                Submit to Editor
               </button>
             </form>
           </Form>
