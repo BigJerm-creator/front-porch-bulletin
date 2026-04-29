@@ -118,27 +118,34 @@ export default function Home() {
               {businessSpotlight && (
                 <div className="mb-8 pb-8 border-b-2 border-foreground">
                   <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Business Spotlight</div>
-                  <div className={businessSpotlight.photoUrl ? "grid grid-cols-1 md:grid-cols-[280px_1fr] gap-6 items-start" : ""}>
-                    {businessSpotlight.photoUrl && (
+                  {businessSpotlight.photoUrl ? (
+                    <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-6 items-start mb-4">
                       <div className="w-full overflow-hidden border border-foreground/20 bg-muted">
                         <img src={businessSpotlight.photoUrl} alt={businessSpotlight.name} className="w-full object-contain" style={{ maxHeight: "280px", display: "block" }} />
                       </div>
-                    )}
-                    <div>
-                      <h3 className="font-headline font-bold text-2xl leading-tight mb-1">{businessSpotlight.name}</h3>
-                      {businessSpotlight.businessType && (
-                        <p className="font-mono text-[10px] uppercase tracking-wide text-foreground/60 mb-2">{businessSpotlight.businessType}</p>
-                      )}
-                      <div className="font-serif text-base leading-relaxed text-foreground/80">
-                        {businessSpotlight.description.split('\n\n').map((para, i) => (
-                          <p key={i} className={i > 0 ? "mt-3" : ""}>
-                            {para.split('\n').map((line, j) => (
-                              j === 0 ? line : <>{'\n'}<br />{line}</>
-                            ))}
-                          </p>
-                        ))}
+                      <div>
+                        <h3 className="font-headline font-bold text-2xl leading-tight mb-1">{businessSpotlight.name}</h3>
+                        {businessSpotlight.businessType && (
+                          <p className="font-mono text-[10px] uppercase tracking-wide text-foreground/60">{businessSpotlight.businessType}</p>
+                        )}
                       </div>
                     </div>
+                  ) : (
+                    <div className="mb-4">
+                      <h3 className="font-headline font-bold text-2xl leading-tight mb-1">{businessSpotlight.name}</h3>
+                      {businessSpotlight.businessType && (
+                        <p className="font-mono text-[10px] uppercase tracking-wide text-foreground/60">{businessSpotlight.businessType}</p>
+                      )}
+                    </div>
+                  )}
+                  <div className="font-serif text-base leading-relaxed text-foreground/80">
+                    {businessSpotlight.description.split('\n\n').map((para, i) => (
+                      <p key={i} className={i > 0 ? "mt-3" : ""}>
+                        {para.split('\n').map((line, j) => (
+                          j === 0 ? line : <>{'\n'}<br />{line}</>
+                        ))}
+                      </p>
+                    ))}
                   </div>
                 </div>
               )}
