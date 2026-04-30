@@ -245,9 +245,9 @@ export function PrintView() {
             <div style={{ fontSize: "11pt", lineHeight: 1.6, textAlign: "justify" }}>
               {/* Spotlight floated right — article text wraps alongside it from the top */}
               {spotlight && (
-                <div style={{ float: "right", marginLeft: "14pt", marginBottom: "5pt", width: "160pt", borderTop: RULE_DOUBLE, paddingTop: "6pt" }}>
+                <div style={{ float: "right", marginLeft: "14pt", marginBottom: "5pt", width: "200pt", borderTop: RULE_DOUBLE, paddingTop: "6pt" }}>
                   <SectionLabel>Student Spotlight</SectionLabel>
-                  <PhotoBox url={spotlight.photoUrl} alt={spotlight.name} credit={spotlight.photoCredit} />
+                  <PhotoBox url={spotlight.photoUrl} alt={spotlight.name} credit={spotlight.photoCredit} maxHeight="200pt" />
                   <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "12pt", lineHeight: 1.1, margin: "0 0 1.5pt" }}>{spotlight.name}</p>
                   <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 3pt" }}>
                     {spotlight.school} &bull; {spotlight.grade}
