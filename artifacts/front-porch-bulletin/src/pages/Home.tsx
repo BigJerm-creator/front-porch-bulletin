@@ -86,8 +86,8 @@ export default function Home() {
                         <div className="float-right ml-6 mb-2 w-[280px] border-t-2 border-foreground pt-3">
                           <div className="font-mono text-[10px] uppercase tracking-widest border-b border-foreground pb-1 mb-2">Student Spotlight</div>
                           {spotlight.photoUrl && (
-                            <div className="w-full aspect-[4/3] overflow-hidden border border-foreground mb-2 bg-muted">
-                              <img src={spotlight.photoUrl} alt={spotlight.name} className="w-full h-full object-contain" />
+                            <div className="w-full overflow-hidden border border-foreground mb-2 bg-muted">
+                              <img src={spotlight.photoUrl} alt={spotlight.name} className="w-full object-contain block" style={{ maxHeight: "280px" }} />
                             </div>
                           )}
                           <h3 className="font-headline font-bold text-base leading-tight mb-0.5">{spotlight.name}</h3>
