@@ -146,19 +146,26 @@ export default function Home() {
               {groupSpotlight && (
                 <div className="mb-8 pb-8 border-b-2 border-foreground">
                   <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Group Spotlight</div>
-                  <div className={groupSpotlight.photoUrl ? "grid grid-cols-1 md:grid-cols-[280px_1fr] gap-6 items-start" : ""}>
+                  <div>
                     {groupSpotlight.photoUrl && (
-                      <div className="w-full overflow-hidden border border-foreground/20 bg-muted">
+                      <div className="float-left mr-6 mb-3 overflow-hidden border border-foreground/20 bg-muted" style={{ width: "280px" }}>
                         <img src={groupSpotlight.photoUrl} alt={groupSpotlight.name} className="w-full object-contain" style={{ maxHeight: "280px", display: "block" }} />
                       </div>
                     )}
-                    <div>
-                      <h3 className="font-headline font-bold text-2xl leading-tight mb-1">{groupSpotlight.name}</h3>
-                      {groupSpotlight.groupType && (
-                        <p className="font-mono text-[10px] uppercase tracking-wide text-foreground/60 mb-2">{groupSpotlight.groupType}</p>
-                      )}
-                      <p className="font-serif text-base leading-relaxed text-foreground/80">{groupSpotlight.description}</p>
+                    <h3 className="font-headline font-bold text-2xl leading-tight mb-1">{groupSpotlight.name}</h3>
+                    {groupSpotlight.groupType && (
+                      <p className="font-mono text-[10px] uppercase tracking-wide text-foreground/60 mb-3">{groupSpotlight.groupType}</p>
+                    )}
+                    <div className="font-serif text-base leading-relaxed text-foreground/80">
+                      {groupSpotlight.description.split('\n\n').map((para, i) => (
+                        <p key={i} className={i > 0 ? "mt-3" : ""}>
+                          {para.split('\n').map((line, j) => (
+                            j === 0 ? line : <>{'\n'}<br />{line}</>
+                          ))}
+                        </p>
+                      ))}
                     </div>
+                    <div className="clear-both" />
                   </div>
                 </div>
               )}

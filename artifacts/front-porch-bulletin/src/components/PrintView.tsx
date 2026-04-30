@@ -311,21 +311,28 @@ export function PrintView() {
       {groupSpotlight && (
         <div style={{ marginBottom: "18pt", paddingBottom: "14pt", borderBottom: RULE_DOUBLE }}>
           <SectionLabel>Group Spotlight</SectionLabel>
-          <div style={{ display: "grid", gridTemplateColumns: groupSpotlight.photoUrl ? "160pt 1fr" : "1fr", gap: "12pt", alignItems: "flex-start" }}>
+          <div>
             {groupSpotlight.photoUrl && (
-              <div style={{ flexShrink: 0 }}>
+              <div style={{ float: "left", marginRight: "12pt", marginBottom: "5pt", width: "160pt" }}>
                 <PhotoBox url={groupSpotlight.photoUrl} alt={groupSpotlight.name} credit={groupSpotlight.photoCredit} aspect="4/3" />
               </div>
             )}
-            <div>
-              <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 2pt" }}>{groupSpotlight.name}</p>
-              {groupSpotlight.groupType && (
-                <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 5pt" }}>
-                  {groupSpotlight.groupType}
+            <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 2pt" }}>{groupSpotlight.name}</p>
+            {groupSpotlight.groupType && (
+              <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 5pt" }}>
+                {groupSpotlight.groupType}
+              </p>
+            )}
+            <div style={{ fontSize: "9.5pt", lineHeight: 1.5, textAlign: "justify" }}>
+              {groupSpotlight.description.split('\n\n').map((para, i) => (
+                <p key={i} style={{ margin: i > 0 ? "5pt 0 0" : "0" }}>
+                  {para.split('\n').map((line, j) => (
+                    j === 0 ? line : <>{'\n'}<br />{line}</>
+                  ))}
                 </p>
-              )}
-              <p style={{ fontSize: "9.5pt", lineHeight: 1.5, textAlign: "justify", margin: 0 }}>{groupSpotlight.description}</p>
+              ))}
             </div>
+            <div style={{ clear: "both" }} />
           </div>
         </div>
       )}
