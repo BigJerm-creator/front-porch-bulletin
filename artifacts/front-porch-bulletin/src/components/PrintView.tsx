@@ -179,18 +179,30 @@ export function PrintView() {
   const otherArticles  = allOtherArticles.filter(a => !isLetter(a));
 
   /* ── Photo helper ── */
-  function PhotoBox({ url, alt, credit, aspect = "4/3", objectFit = "contain", maxHeight }: { url?: string | null; alt: string; credit?: string | null; aspect?: string; objectFit?: "cover" | "contain"; maxHeight?: string }) {
+  function PhotoBox({ url, alt, credit, aspect = "4/3", objectFit = "contain", maxHeight, natural }: { url?: string | null; alt: string; credit?: string | null; aspect?: string; objectFit?: "cover" | "contain"; maxHeight?: string; natural?: boolean }) {
     return (
       <div style={{ marginBottom: "4pt" }}>
-        <div style={{ width: "100%", ...(maxHeight ? { height: maxHeight, maxHeight } : { aspectRatio: aspect }), overflow: "hidden", border: RULE, background: "#d6cfc4" }}>
-          {url ? (
-            <img src={url} alt={alt} style={{ width: "100%", height: "100%", objectFit: objectFit, display: "block" }} />
-          ) : (
-            <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", color: INK_MUTED, textTransform: "uppercase" }}>Photo</span>
-            </div>
-          )}
-        </div>
+        {natural ? (
+          <div style={{ width: "100%", overflow: "hidden", border: RULE }}>
+            {url ? (
+              <img src={url} alt={alt} style={{ width: "100%", height: "auto", display: "block" }} />
+            ) : (
+              <div style={{ width: "100%", padding: "20pt 0", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", color: INK_MUTED, textTransform: "uppercase" }}>Photo</span>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div style={{ width: "100%", ...(maxHeight ? { height: maxHeight, maxHeight } : { aspectRatio: aspect }), overflow: "hidden", border: RULE, background: "#d6cfc4" }}>
+            {url ? (
+              <img src={url} alt={alt} style={{ width: "100%", height: "100%", objectFit: objectFit, display: "block" }} />
+            ) : (
+              <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <span style={{ fontFamily: FONT_MONO, fontSize: "6pt", color: INK_MUTED, textTransform: "uppercase" }}>Photo</span>
+              </div>
+            )}
+          </div>
+        )}
         {credit && (
           <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "1pt 0 0" }}>
             Photo credit — {credit}
@@ -247,7 +259,7 @@ export function PrintView() {
               {spotlight && (
                 <div style={{ float: "right", marginLeft: "14pt", marginBottom: "5pt", width: "200pt", borderTop: RULE_DOUBLE, paddingTop: "6pt" }}>
                   <SectionLabel>Student Spotlight</SectionLabel>
-                  <PhotoBox url={spotlight.photoUrl} alt={spotlight.name} credit={spotlight.photoCredit} maxHeight="200pt" />
+                  <PhotoBox url={spotlight.photoUrl} alt={spotlight.name} credit={spotlight.photoCredit} natural />
                   <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "12pt", lineHeight: 1.1, margin: "0 0 1.5pt" }}>{spotlight.name}</p>
                   <p style={{ fontFamily: FONT_MONO, fontSize: "6.5pt", textTransform: "uppercase", letterSpacing: "0.1em", color: INK_MUTED, margin: "0 0 3pt" }}>
                     {spotlight.school} &bull; {spotlight.grade}
@@ -284,7 +296,7 @@ export function PrintView() {
           <div>
             {businessSpotlight.photoUrl && (
               <div style={{ float: "left", marginRight: "12pt", marginBottom: "5pt", width: "160pt" }}>
-                <PhotoBox url={businessSpotlight.photoUrl} alt={businessSpotlight.name} credit={businessSpotlight.photoCredit} aspect="4/3" />
+                <PhotoBox url={businessSpotlight.photoUrl} alt={businessSpotlight.name} credit={businessSpotlight.photoCredit} natural />
               </div>
             )}
             <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 2pt" }}>{businessSpotlight.name}</p>
@@ -314,7 +326,7 @@ export function PrintView() {
           <div>
             {groupSpotlight.photoUrl && (
               <div style={{ float: "left", marginRight: "12pt", marginBottom: "5pt", width: "160pt" }}>
-                <PhotoBox url={groupSpotlight.photoUrl} alt={groupSpotlight.name} credit={groupSpotlight.photoCredit} aspect="4/3" />
+                <PhotoBox url={groupSpotlight.photoUrl} alt={groupSpotlight.name} credit={groupSpotlight.photoCredit} natural />
               </div>
             )}
             <p style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 2pt" }}>{groupSpotlight.name}</p>

@@ -89,8 +89,8 @@ export default function Home() {
                         <div className="float-right ml-6 mb-2 w-[280px] border-t-2 border-foreground pt-3">
                           <div className="font-mono text-[10px] uppercase tracking-widest border-b border-foreground pb-1 mb-2">Student Spotlight</div>
                           {spotlight.photoUrl && (
-                            <div className="w-full overflow-hidden border border-foreground mb-2 bg-muted">
-                              <img src={spotlight.photoUrl} alt={spotlight.name} className="w-full object-contain block" style={{ maxHeight: "280px" }} />
+                            <div className="w-full overflow-hidden border border-foreground mb-2">
+                              <img src={spotlight.photoUrl} alt={spotlight.name} className="w-full block" />
                             </div>
                           )}
                           <h3 className="font-headline font-bold text-base leading-tight mb-0.5">{spotlight.name}</h3>
@@ -123,8 +123,8 @@ export default function Home() {
                   <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Business Spotlight</div>
                   <div>
                     {businessSpotlight.photoUrl && (
-                      <div className="float-left mr-6 mb-3 overflow-hidden border border-foreground/20 bg-muted" style={{ width: "280px" }}>
-                        <img src={businessSpotlight.photoUrl} alt={businessSpotlight.name} className="w-full object-contain" style={{ maxHeight: "280px", display: "block" }} />
+                      <div className="float-left mr-6 mb-3 overflow-hidden border border-foreground/20" style={{ width: "280px" }}>
+                        <img src={businessSpotlight.photoUrl} alt={businessSpotlight.name} className="w-full block" />
                       </div>
                     )}
                     <h3 className="font-headline font-bold text-2xl leading-tight mb-1">{businessSpotlight.name}</h3>
@@ -151,8 +151,8 @@ export default function Home() {
                   <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Group Spotlight</div>
                   <div>
                     {groupSpotlight.photoUrl && (
-                      <div className="float-left mr-6 mb-3 overflow-hidden border border-foreground/20 bg-muted" style={{ width: "280px" }}>
-                        <img src={groupSpotlight.photoUrl} alt={groupSpotlight.name} className="w-full object-contain" style={{ maxHeight: "280px", display: "block" }} />
+                      <div className="float-left mr-6 mb-3 overflow-hidden border border-foreground/20" style={{ width: "280px" }}>
+                        <img src={groupSpotlight.photoUrl} alt={groupSpotlight.name} className="w-full block" />
                       </div>
                     )}
                     <h3 className="font-headline font-bold text-2xl leading-tight mb-1">{groupSpotlight.name}</h3>
