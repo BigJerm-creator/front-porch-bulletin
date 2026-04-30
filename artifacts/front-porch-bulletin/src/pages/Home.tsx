@@ -18,22 +18,25 @@ const isLetter = (art: { category: string }) =>
   art.category?.toLowerCase() === "letters";
 
 export default function Home() {
-  const { data: featuredData, isLoading } = useGetFeaturedArticles();
-  const { data: spotlight }         = useGetSpotlight({ query: { queryKey: getGetSpotlightQueryKey(), retry: false } as any });
-  const { data: businessSpotlight } = useGetBusinessSpotlight({ query: { queryKey: getGetBusinessSpotlightQueryKey(), retry: false } as any });
-  const { data: groupSpotlight }    = useGetGroupSpotlight({ query: { queryKey: getGetGroupSpotlightQueryKey(), retry: false } as any });
+  const { data: featuredData, isLoading: isLoadingFeatured } = useGetFeaturedArticles();
+  const { data: spotlight,         isLoading: isLoadingSpotlight }         = useGetSpotlight({ query: { queryKey: getGetSpotlightQueryKey(), retry: false } as any });
+  const { data: businessSpotlight, isLoading: isLoadingBusiness }          = useGetBusinessSpotlight({ query: { queryKey: getGetBusinessSpotlightQueryKey(), retry: false } as any });
+  const { data: groupSpotlight,    isLoading: isLoadingGroup }             = useGetGroupSpotlight({ query: { queryKey: getGetGroupSpotlightQueryKey(), retry: false } as any });
+
+  const { data: libraryData,   isLoading: isLoadingLibrary }   = useListArticles({ category: "Library News", limit: 10 }, { query: { queryKey: getListArticlesQueryKey({ category: "Library News", limit: 10 }) } });
+  const { data: h4Data,        isLoading: isLoadingH4 }        = useListArticles({ category: "4H News",      limit: 10 }, { query: { queryKey: getListArticlesQueryKey({ category: "4H News",      limit: 10 }) } });
+  const { data: communityData, isLoading: isLoadingCommunity } = useListArticles({ category: "Community",    limit: 10 }, { query: { queryKey: getListArticlesQueryKey({ category: "Community",    limit: 10 }) } });
+
+  const isLoading = isLoadingFeatured || isLoadingSpotlight || isLoadingBusiness || isLoadingGroup || isLoadingLibrary || isLoadingH4 || isLoadingCommunity;
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get("print") === "1" && !isLoading) {
-      const timer = setTimeout(() => window.print(), 800);
+      // Extra delay for PrintView's bare fetch() calls: churches, calendar events, issue settings
+      const timer = setTimeout(() => window.print(), 2500);
       return () => clearTimeout(timer);
     }
   }, [isLoading]);
-
-  const { data: libraryData }   = useListArticles({ category: "Library News", limit: 10 }, { query: { queryKey: getListArticlesQueryKey({ category: "Library News", limit: 10 }) } });
-  const { data: h4Data }        = useListArticles({ category: "4H News",      limit: 10 }, { query: { queryKey: getListArticlesQueryKey({ category: "4H News",      limit: 10 }) } });
-  const { data: communityData } = useListArticles({ category: "Community",    limit: 10 }, { query: { queryKey: getListArticlesQueryKey({ category: "Community",    limit: 10 }) } });
 
   const libraryArticles   = libraryData?.articles   ?? [];
   const h4Articles        = h4Data?.articles        ?? [];
