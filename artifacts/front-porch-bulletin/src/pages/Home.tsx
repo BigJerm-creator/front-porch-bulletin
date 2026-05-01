@@ -32,7 +32,6 @@ export default function Home() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get("print") === "1" && !isLoading) {
-      // Extra delay for PrintView's bare fetch() calls: churches, calendar events, issue settings
       const timer = setTimeout(() => window.print(), 2500);
       return () => clearTimeout(timer);
     }
@@ -47,13 +46,30 @@ export default function Home() {
 
   const DEDICATED = new Set(["Library News", "4H News", "Community"]);
 
-  // Remaining featured/secondary articles — deduplicated against dedicated sections
   const allOtherArticles = [
     ...(featuredData?.frontPage?.slice(1) ?? []),
     ...(featuredData?.secondary ?? []),
   ].filter(a => a.id !== page2Article?.id && !DEDICATED.has(a.category));
   const letterArticles = allOtherArticles.filter(isLetter);
   const otherArticles  = allOtherArticles.filter(a => !isLetter(a));
+
+  /* ── Reusable spotlight card (used in both mobile standalone + desktop sidebar) ── */
+  function SpotlightCard({ full }: { full?: boolean }) {
+    if (!spotlight) return null;
+    return (
+      <div className={full ? "border-t-2 border-foreground pt-3" : "border-t-2 border-foreground pt-3"}>
+        <div className="font-mono text-[10px] uppercase tracking-widest border-b border-foreground pb-1 mb-2">Student Spotlight</div>
+        {spotlight.photoUrl && (
+          <div className="w-full overflow-hidden border border-foreground mb-2">
+            <img src={spotlight.photoUrl} alt={spotlight.name} className="w-full block" />
+          </div>
+        )}
+        <h3 className="font-headline font-bold text-base leading-tight mb-0.5">{spotlight.name}</h3>
+        <p className="font-mono text-[10px] uppercase tracking-wide text-foreground/60 mb-1">{spotlight.school} · {spotlight.grade}</p>
+        <p className="text-sm leading-snug text-foreground/80">{spotlight.description}</p>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -64,7 +80,7 @@ export default function Home() {
             <NewspaperSkeleton />
           ) : (
             <>
-              {/* ── Front page: full width with spotlight floated bottom-left ── */}
+              {/* ── Front Page News ── */}
               <div className="border-b-2 border-foreground mb-8 pb-8">
                 {mainArticle ? (
                   <article>
@@ -84,9 +100,9 @@ export default function Home() {
                       <span>{mainArticle.category}</span>
                     </div>
                     <div className="font-serif text-lg leading-relaxed text-foreground/90">
-                      {/* Spotlight floated right — article text wraps alongside it from the top */}
+                      {/* Desktop: spotlight floated right inside article */}
                       {spotlight && (
-                        <div className="float-right ml-6 mb-2 w-[280px] border-t-2 border-foreground pt-3">
+                        <div className="hidden md:block float-right ml-6 mb-2 w-[280px] border-t-2 border-foreground pt-3">
                           <div className="font-mono text-[10px] uppercase tracking-widest border-b border-foreground pb-1 mb-2">Student Spotlight</div>
                           {spotlight.photoUrl && (
                             <div className="w-full overflow-hidden border border-foreground mb-2">
@@ -98,13 +114,22 @@ export default function Home() {
                           <p className="text-sm leading-snug text-foreground/80">{spotlight.description}</p>
                         </div>
                       )}
+                      {/* Article photo: full-width on mobile, floated on desktop */}
                       {mainArticle.photoUrl && (
-                        <div className="float-left mr-4 mb-2 max-w-[40%]">
-                          <img src={mainArticle.photoUrl} alt={mainArticle.title} className="block max-w-full h-auto" />
-                          {mainArticle.photoCredit && (
-                            <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {mainArticle.photoCredit}</p>
-                          )}
-                        </div>
+                        <>
+                          <div className="block md:hidden w-full mb-3">
+                            <img src={mainArticle.photoUrl} alt={mainArticle.title} className="w-full block" />
+                            {mainArticle.photoCredit && (
+                              <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {mainArticle.photoCredit}</p>
+                            )}
+                          </div>
+                          <div className="hidden md:block float-left mr-4 mb-2 max-w-[40%]">
+                            <img src={mainArticle.photoUrl} alt={mainArticle.title} className="block max-w-full h-auto" />
+                            {mainArticle.photoCredit && (
+                              <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {mainArticle.photoCredit}</p>
+                            )}
+                          </div>
+                        </>
                       )}
                       {mainArticle.content.split('\n\n').map((para, i) => (
                         <p key={i} className={i === 0 ? "first-letter-drop" : "mt-4"}>{para}</p>
@@ -117,15 +142,29 @@ export default function Home() {
                 )}
               </div>
 
-              {/* ── Business Spotlight (full width) ── */}
+              {/* ── Student Spotlight (mobile only — desktop sees it inside the article above) ── */}
+              {spotlight && (
+                <div className="md:hidden mb-8 pb-8 border-b-2 border-foreground">
+                  <SpotlightCard full />
+                </div>
+              )}
+
+              {/* ── Business Spotlight ── */}
               {businessSpotlight && (
                 <div className="mb-8 pb-8 border-b-2 border-foreground">
                   <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Business Spotlight</div>
                   <div>
                     {businessSpotlight.photoUrl && (
-                      <div className="float-left mr-6 mb-3 overflow-hidden border border-foreground/20" style={{ width: "280px" }}>
-                        <img src={businessSpotlight.photoUrl} alt={businessSpotlight.name} className="w-full block" />
-                      </div>
+                      <>
+                        {/* Mobile: full-width photo above text */}
+                        <div className="block md:hidden w-full overflow-hidden border border-foreground/20 mb-3">
+                          <img src={businessSpotlight.photoUrl} alt={businessSpotlight.name} className="w-full block" />
+                        </div>
+                        {/* Desktop: floated left */}
+                        <div className="hidden md:block float-left mr-6 mb-3 overflow-hidden border border-foreground/20" style={{ width: "280px" }}>
+                          <img src={businessSpotlight.photoUrl} alt={businessSpotlight.name} className="w-full block" />
+                        </div>
+                      </>
                     )}
                     <h3 className="font-headline font-bold text-2xl leading-tight mb-1">{businessSpotlight.name}</h3>
                     {businessSpotlight.businessType && (
@@ -145,15 +184,22 @@ export default function Home() {
                 </div>
               )}
 
-              {/* ── Group Spotlight (full width) ── */}
+              {/* ── Group Spotlight ── */}
               {groupSpotlight && (
                 <div className="mb-8 pb-8 border-b-2 border-foreground">
                   <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Group Spotlight</div>
                   <div>
                     {groupSpotlight.photoUrl && (
-                      <div className="float-left mr-6 mb-3 overflow-hidden border border-foreground/20" style={{ width: "280px" }}>
-                        <img src={groupSpotlight.photoUrl} alt={groupSpotlight.name} className="w-full block" />
-                      </div>
+                      <>
+                        {/* Mobile: full-width photo above text */}
+                        <div className="block md:hidden w-full overflow-hidden border border-foreground/20 mb-3">
+                          <img src={groupSpotlight.photoUrl} alt={groupSpotlight.name} className="w-full block" />
+                        </div>
+                        {/* Desktop: floated left */}
+                        <div className="hidden md:block float-left mr-6 mb-3 overflow-hidden border border-foreground/20" style={{ width: "280px" }}>
+                          <img src={groupSpotlight.photoUrl} alt={groupSpotlight.name} className="w-full block" />
+                        </div>
+                      </>
                     )}
                     <h3 className="font-headline font-bold text-2xl leading-tight mb-1">{groupSpotlight.name}</h3>
                     {groupSpotlight.groupType && (
@@ -173,7 +219,7 @@ export default function Home() {
                 </div>
               )}
 
-              {/* ── Page 2 Top Story (full width) ── */}
+              {/* ── Page 2 Top Story ── */}
               {page2Article && (
                 <div className="mb-8 pb-8 border-b-2 border-foreground">
                   <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-6">Page 2 Feature</div>
@@ -193,12 +239,20 @@ export default function Home() {
                     </div>
                     <div className="font-serif text-base leading-relaxed text-foreground/90">
                       {page2Article.photoUrl && (
-                        <div className="float-left mr-4 mb-2 max-w-[45%]">
-                          <img src={page2Article.photoUrl} alt={page2Article.title} className="block max-w-full h-auto" />
-                          {page2Article.photoCredit && (
-                            <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {page2Article.photoCredit}</p>
-                          )}
-                        </div>
+                        <>
+                          <div className="block md:hidden w-full mb-3">
+                            <img src={page2Article.photoUrl} alt={page2Article.title} className="w-full block" />
+                            {page2Article.photoCredit && (
+                              <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {page2Article.photoCredit}</p>
+                            )}
+                          </div>
+                          <div className="hidden md:block float-left mr-4 mb-2 max-w-[45%]">
+                            <img src={page2Article.photoUrl} alt={page2Article.title} className="block max-w-full h-auto" />
+                            {page2Article.photoCredit && (
+                              <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {page2Article.photoCredit}</p>
+                            )}
+                          </div>
+                        </>
                       )}
                       {page2Article.content.split('\n\n').map((para: string, i: number) => (
                         <p key={i} className={i > 0 ? "mt-4" : ""}>{para}</p>
@@ -209,74 +263,69 @@ export default function Home() {
                 </div>
               )}
 
-              {/* ── 4H News (left) | Community (right) — two columns ── */}
+              {/* ── 4H News ── */}
               <div className="mb-8 pb-8 border-b-2 border-foreground">
-                <div className="grid grid-cols-2 gap-0 divide-x-2 divide-foreground">
-                  {/* 4H News — left */}
-                  <div className="pr-6">
-                    <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">4H News</div>
-                    {h4Articles.length > 0 ? (
-                      <div className="flex flex-col gap-6">
-                        {h4Articles.map(art => (
-                          <article key={art.id}>
-                            {art.photoUrl && (
-                              <div className="mb-2 max-w-[50%]">
-                                <img src={art.photoUrl} alt={art.title} className="block max-w-full h-auto" />
-                                {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
-                              </div>
-                            )}
-                            <Link href={`/articles/${art.id}`}>
-                              <h3 className="font-headline font-bold text-2xl leading-tight mb-1 hover:underline underline-offset-4 decoration-1">{art.title}</h3>
-                            </Link>
-                            {art.subtitle && <p className="font-headline italic text-base text-foreground/70 mb-1">{art.subtitle}</p>}
-                            <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wide text-foreground/50 border-t border-b border-foreground/20 py-1 mb-2">
-                              <span>By <span className="italic">{art.author}</span></span>
-                            </div>
-                            <div className="font-serif text-sm leading-relaxed text-foreground/80 space-y-2">
-                              {art.content.split('\n\n').map((para, i) => (
-                                <p key={i}>{para}</p>
-                              ))}
-                            </div>
-                          </article>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="font-serif italic text-sm text-foreground/40">No 4H news this issue.</p>
-                    )}
+                <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">4H News</div>
+                {h4Articles.length > 0 ? (
+                  <div className="flex flex-col gap-6">
+                    {h4Articles.map(art => (
+                      <article key={art.id}>
+                        {art.photoUrl && (
+                          <div className="mb-2 w-full md:max-w-[50%]">
+                            <img src={art.photoUrl} alt={art.title} className="w-full md:w-auto block max-w-full h-auto" />
+                            {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
+                          </div>
+                        )}
+                        <Link href={`/articles/${art.id}`}>
+                          <h3 className="font-headline font-bold text-2xl leading-tight mb-1 hover:underline underline-offset-4 decoration-1">{art.title}</h3>
+                        </Link>
+                        {art.subtitle && <p className="font-headline italic text-base text-foreground/70 mb-1">{art.subtitle}</p>}
+                        <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wide text-foreground/50 border-t border-b border-foreground/20 py-1 mb-2">
+                          <span>By <span className="italic">{art.author}</span></span>
+                        </div>
+                        <div className="font-serif text-sm leading-relaxed text-foreground/80 space-y-2">
+                          {art.content.split('\n\n').map((para, i) => (
+                            <p key={i}>{para}</p>
+                          ))}
+                        </div>
+                      </article>
+                    ))}
                   </div>
-
-                  {/* Community — right */}
-                  <div className="pl-6">
-                    <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Community</div>
-                    {communityArticles.length > 0 ? (
-                      <div className="flex flex-col gap-6">
-                        {communityArticles.map(art => (
-                          <article key={art.id}>
-                            {art.photoUrl && (
-                              <div className="mb-2 max-w-[50%]">
-                                <img src={art.photoUrl} alt={art.title} className="block max-w-full h-auto" />
-                                {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
-                              </div>
-                            )}
-                            <Link href={`/articles/${art.id}`}>
-                              <h3 className="font-headline font-bold text-2xl leading-tight mb-1 hover:underline underline-offset-4 decoration-1">{art.title}</h3>
-                            </Link>
-                            {art.subtitle && <p className="font-headline italic text-base text-foreground/70 mb-1">{art.subtitle}</p>}
-                            <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wide text-foreground/50 border-t border-b border-foreground/20 py-1 mb-2">
-                              <span>By <span className="italic">{art.author}</span></span>
-                            </div>
-                            <p className="font-serif text-sm leading-relaxed text-foreground/80 line-clamp-4">{art.content.split('\n\n')[0]}</p>
-                          </article>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="font-serif italic text-sm text-foreground/40">No community news this issue.</p>
-                    )}
-                  </div>
-                </div>
+                ) : (
+                  <p className="font-serif italic text-sm text-foreground/40">No 4H news this issue.</p>
+                )}
               </div>
 
-              {/* ── Library News — full width ── */}
+              {/* ── Community ── */}
+              <div className="mb-8 pb-8 border-b-2 border-foreground">
+                <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Community</div>
+                {communityArticles.length > 0 ? (
+                  <div className="flex flex-col gap-6">
+                    {communityArticles.map(art => (
+                      <article key={art.id}>
+                        {art.photoUrl && (
+                          <div className="mb-2 w-full md:max-w-[50%]">
+                            <img src={art.photoUrl} alt={art.title} className="w-full md:w-auto block max-w-full h-auto" />
+                            {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
+                          </div>
+                        )}
+                        <Link href={`/articles/${art.id}`}>
+                          <h3 className="font-headline font-bold text-2xl leading-tight mb-1 hover:underline underline-offset-4 decoration-1">{art.title}</h3>
+                        </Link>
+                        {art.subtitle && <p className="font-headline italic text-base text-foreground/70 mb-1">{art.subtitle}</p>}
+                        <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wide text-foreground/50 border-t border-b border-foreground/20 py-1 mb-2">
+                          <span>By <span className="italic">{art.author}</span></span>
+                        </div>
+                        <p className="font-serif text-sm leading-relaxed text-foreground/80 line-clamp-4">{art.content.split('\n\n')[0]}</p>
+                      </article>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="font-serif italic text-sm text-foreground/40">No community news this issue.</p>
+                )}
+              </div>
+
+              {/* ── Library News ── */}
               <div className="mb-8 pb-8 border-b-2 border-foreground">
                 <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Library News</div>
                 {libraryArticles.length > 0 ? (
@@ -292,10 +341,16 @@ export default function Home() {
                         </div>
                         <div className="font-serif text-sm leading-relaxed text-foreground/80">
                           {art.photoUrl && (
-                            <div className="float-left mr-3 mb-1 max-w-[40%]">
-                              <img src={art.photoUrl} alt={art.title} className="block max-w-full h-auto" />
-                              {art.photoCredit && <p className="font-mono text-[7px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
-                            </div>
+                            <>
+                              <div className="block md:hidden w-full mb-2">
+                                <img src={art.photoUrl} alt={art.title} className="w-full block" />
+                                {art.photoCredit && <p className="font-mono text-[7px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
+                              </div>
+                              <div className="hidden md:block float-left mr-3 mb-1 max-w-[40%]">
+                                <img src={art.photoUrl} alt={art.title} className="block max-w-full h-auto" />
+                                {art.photoCredit && <p className="font-mono text-[7px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
+                              </div>
+                            </>
                           )}
                           <p>{art.content.split('\n\n')[0]}</p>
                           <div className="clear-both" />
@@ -308,7 +363,7 @@ export default function Home() {
                 )}
               </div>
 
-              {/* ── Letters from / to the Editor (full width) ── */}
+              {/* ── Letters ── */}
               {letterArticles.length > 0 && (
                 <div className="mb-8 pb-8 border-b-2 border-foreground">
                   <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-6">Letters</div>
@@ -328,10 +383,16 @@ export default function Home() {
                         </div>
                         <div className="font-serif text-base leading-relaxed text-foreground/90">
                           {art.photoUrl && (
-                            <div className="float-left mr-4 mb-2 max-w-[45%]">
-                              <img src={art.photoUrl} alt={art.title} className="block max-w-full h-auto" />
-                              {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
-                            </div>
+                            <>
+                              <div className="block md:hidden w-full mb-3">
+                                <img src={art.photoUrl} alt={art.title} className="w-full block" />
+                                {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
+                              </div>
+                              <div className="hidden md:block float-left mr-4 mb-2 max-w-[45%]">
+                                <img src={art.photoUrl} alt={art.title} className="block max-w-full h-auto" />
+                                {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
+                              </div>
+                            </>
                           )}
                           {art.content.split('\n\n').map((para, i) => (
                             <p key={i} className={i > 0 ? "mt-4" : ""}>{para}</p>
