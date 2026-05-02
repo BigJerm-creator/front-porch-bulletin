@@ -13,6 +13,7 @@ import calendarEventsRouter from "./calendarEvents";
 import aboutRouter from "./about";
 import issueSettingsRouter from "./issueSettings";
 import letterToEditorRouter from "./letterToEditor";
+import donateRouter from "./donate";
 
 const router: IRouter = Router();
 
@@ -30,5 +31,6 @@ router.use("/calendar-events", calendarEventsRouter);
 router.use("/about", aboutRouter);
 router.use("/issue-settings", issueSettingsRouter);
 router.use("/letter-to-editor", letterToEditorRouter);
+router.use("/donate", donateRouter);
 
 export default router;

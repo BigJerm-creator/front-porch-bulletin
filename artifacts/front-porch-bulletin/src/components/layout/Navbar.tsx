@@ -24,12 +24,20 @@ export function Navbar() {
         >
           Letter to the Editor
         </Link>
-        <Link
-          href="/newsletter"
-          className={`sm:ml-auto transition-colors text-center ${location === "/newsletter" ? "bg-foreground text-background" : "bg-primary text-background"} px-3 py-1`}
-        >
-          Sign Up
-        </Link>
+        <div className="sm:ml-auto flex gap-2">
+          <Link
+            href="/newsletter"
+            className={`transition-colors text-center ${location === "/newsletter" ? "bg-foreground text-background" : "bg-primary text-background"} px-3 py-1`}
+          >
+            Sign Up
+          </Link>
+          <Link
+            href="/donate"
+            className={`transition-colors text-center border-2 ${location === "/donate" ? "bg-foreground text-background border-foreground" : "border-foreground text-foreground hover:bg-foreground hover:text-background"} px-3 py-1`}
+          >
+            Donate
+          </Link>
+        </div>
       </div>
     </nav>
   );
