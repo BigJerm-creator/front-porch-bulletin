@@ -1,15 +1,60 @@
 import { Link, useLocation } from "wouter";
 import { useClerk, useUser } from "@clerk/react";
 import { useGetMyRole, getGetMyRoleQueryKey } from "@workspace/api-client-react";
-import { FileText, Users, LogOut, LayoutDashboard, Star, Church, Printer, CalendarDays, Building2, Info } from "lucide-react";
+import { FileText, Users, LogOut, LayoutDashboard, Star, Church, Printer, CalendarDays, Building2, Info, Send } from "lucide-react";
 import logoSrc from "@assets/The_(1)_1775854639167.png";
 import { BulkEmailDialog } from "@/components/admin/BulkEmailDialog";
+import { useState, useEffect, useCallback } from "react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const { signOut } = useClerk();
   const { user } = useUser();
   const { data: roleData } = useGetMyRole({ query: { queryKey: getGetMyRoleQueryKey() } });
+  const { toast } = useToast();
+
+  const [draftCount, setDraftCount] = useState<number>(0);
+  const [publishing, setPublishing] = useState(false);
+
+  const fetchDraftCount = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/draft-count", { credentials: "include" });
+      if (res.ok) {
+        const data = await res.json();
+        setDraftCount(data.count ?? 0);
+      }
+    } catch {
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchDraftCount();
+    const interval = setInterval(fetchDraftCount, 30000);
+    return () => clearInterval(interval);
+  }, [fetchDraftCount]);
+
+  const handlePublish = async () => {
+    setPublishing(true);
+    try {
+      const res = await fetch("/api/admin/publish-edition", {
+        method: "POST",
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to publish");
+      const data = await res.json();
+      toast({
+        title: "Edition Published",
+        description: `${data.published} article${data.published !== 1 ? "s" : ""} are now live to the public.`,
+      });
+      setDraftCount(0);
+    } catch {
+      toast({ variant: "destructive", title: "Error", description: "Failed to publish edition. Try again." });
+    } finally {
+      setPublishing(false);
+    }
+  };
 
   const navItems = [
     { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
@@ -59,9 +104,53 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             );
           })}
 
-          {/* Press actions — above the dividing line */}
+          {/* Press actions */}
           <div className="pt-3 space-y-1.5">
             <p className="text-xs uppercase tracking-widest text-foreground/30 font-bold px-2 pb-1">Press</p>
+
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <button
+                  disabled={draftCount === 0 || publishing}
+                  className={`w-full flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-widest border-2 transition-colors ${
+                    draftCount > 0
+                      ? "border-primary bg-primary text-primary-foreground hover:bg-primary/90 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]"
+                      : "border-foreground/20 bg-foreground/5 text-foreground/30 cursor-not-allowed"
+                  }`}
+                >
+                  <Send className="h-3.5 w-3.5 shrink-0" />
+                  <span className="flex-1 text-left">Publish</span>
+                  {draftCount > 0 && (
+                    <span className="ml-auto bg-primary-foreground text-primary text-[10px] font-black px-1.5 min-w-[18px] text-center leading-[18px] rounded-sm">
+                      {draftCount}
+                    </span>
+                  )}
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent className="rounded-none border-4 border-foreground font-serif bg-[#f5f0e8] shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
+                <AlertDialogHeader>
+                  <AlertDialogTitle className="font-headline text-3xl uppercase tracking-widest border-b-2 border-foreground pb-4">
+                    Go to Press?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription className="text-lg text-foreground/80 italic pt-4">
+                    This will publish <strong>{draftCount} draft article{draftCount !== 1 ? "s" : ""}</strong> to the public front page. Once published, readers will see the new edition immediately.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter className="mt-6 pt-4 border-t-2 border-foreground/20">
+                  <AlertDialogCancel className="rounded-none border-2 border-foreground uppercase tracking-widest font-bold">
+                    Hold the Presses
+                  </AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handlePublish}
+                    disabled={publishing}
+                    className="rounded-none border-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/90 uppercase tracking-widest font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
+                  >
+                    {publishing ? "Publishing…" : "Publish Edition"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+
             <button
               onClick={() => window.open('/?print=1', '_blank')}
               className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-widest border-2 border-foreground bg-[#f5f0e8] hover:bg-foreground hover:text-background transition-colors"

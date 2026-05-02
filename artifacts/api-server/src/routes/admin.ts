@@ -1,8 +1,8 @@
 import { Router } from "express";
 import { getAuth } from "@clerk/express";
-import { db, userRolesTable } from "@workspace/db";
-import { eq } from "drizzle-orm";
-import { requireAuth, requireAdmin } from "../middlewares/auth";
+import { db, userRolesTable, articlesTable } from "@workspace/db";
+import { eq, sql } from "drizzle-orm";
+import { requireAuth, requireAdmin, requireApproved } from "../middlewares/auth";
 import { SetUserRoleBody, SetUserRoleParams, RevokeUserRoleParams } from "@workspace/api-zod";
 
 const router = Router();
@@ -79,6 +79,25 @@ router.delete("/users/:clerkUserId/role", requireAdmin, async (req, res) => {
     .where(eq(userRolesTable.clerkUserId, paramParse.data.clerkUserId));
 
   res.status(204).send();
+});
+
+router.get("/draft-count", requireApproved, async (_req, res) => {
+  const [result] = await db
+    .select({ count: sql<number>`count(*)::int` })
+    .from(articlesTable)
+    .where(eq(articlesTable.status, "draft"));
+
+  res.json({ count: result?.count ?? 0 });
+});
+
+router.post("/publish-edition", requireApproved, async (_req, res) => {
+  const result = await db
+    .update(articlesTable)
+    .set({ status: "published", updatedAt: new Date() })
+    .where(eq(articlesTable.status, "draft"))
+    .returning({ id: articlesTable.id });
+
+  res.json({ published: result.length });
 });
 
 export default router;

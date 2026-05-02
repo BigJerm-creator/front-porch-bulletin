@@ -25,7 +25,10 @@ router.get("/", async (req, res) => {
   const { category, featured, limit = 20, offset = 0, includeArchived = false } = parse.data;
 
   const conditions = [];
-  if (!includeArchived) conditions.push(eq(articlesTable.archived, false));
+  if (!includeArchived) {
+    conditions.push(eq(articlesTable.archived, false));
+    conditions.push(eq(articlesTable.status, "published"));
+  }
   if (category) conditions.push(eq(articlesTable.category, category));
   if (featured !== undefined) conditions.push(eq(articlesTable.featured, featured));
 
@@ -58,6 +61,7 @@ router.post("/", requireApproved, async (req, res) => {
     .insert(articlesTable)
     .values({
       ...rest,
+      status: "draft",
       publishedAt: publishedAt ? new Date(publishedAt) : new Date(),
     })
     .returning();
@@ -69,7 +73,7 @@ router.get("/featured", async (_req, res) => {
   const articles = await db
     .select()
     .from(articlesTable)
-    .where(eq(articlesTable.archived, false))
+    .where(and(eq(articlesTable.archived, false), eq(articlesTable.status, "published")))
     .orderBy(desc(articlesTable.publishedAt))
     .limit(20);
 

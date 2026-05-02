@@ -92,6 +92,9 @@ export default function AdminArticles() {
                       {article.archived && (
                         <span className="text-xs font-mono uppercase tracking-widest border border-foreground/40 px-1 text-foreground/50 shrink-0">Archived</span>
                       )}
+                      {!article.archived && article.status === "draft" && (
+                        <span className="text-xs font-mono uppercase tracking-widest border border-primary/60 bg-primary/10 text-primary px-1 shrink-0">Draft</span>
+                      )}
                       <div className="truncate font-headline font-bold text-lg leading-tight group-hover:text-primary transition-colors">{article.title}</div>
                     </div>
                   </TableCell>
