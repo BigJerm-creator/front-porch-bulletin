@@ -12,7 +12,7 @@ import {
   ArchiveArticleParams,
   ArchiveArticleBody,
 } from "@workspace/api-zod";
-import { requireApproved } from "../middlewares/auth";
+import { requireApproved, checkIsApprovedStaff } from "../middlewares/auth";
 
 const router = Router();
 
@@ -23,11 +23,12 @@ router.get("/", async (req, res) => {
     return;
   }
   const { category, featured, limit = 20, offset = 0, includeArchived = false } = parse.data;
+  const isStaff = await checkIsApprovedStaff(req);
 
   const conditions = [];
   if (!includeArchived) {
     conditions.push(eq(articlesTable.archived, false));
-    conditions.push(eq(articlesTable.status, "published"));
+    if (!isStaff) conditions.push(eq(articlesTable.status, "published"));
   }
   if (category) conditions.push(eq(articlesTable.category, category));
   if (featured !== undefined) conditions.push(eq(articlesTable.featured, featured));
@@ -69,11 +70,16 @@ router.post("/", requireApproved, async (req, res) => {
   res.status(201).json(article);
 });
 
-router.get("/featured", async (_req, res) => {
+router.get("/featured", async (req, res) => {
+  const isStaff = await checkIsApprovedStaff(req);
+  const featuredWhere = isStaff
+    ? eq(articlesTable.archived, false)
+    : and(eq(articlesTable.archived, false), eq(articlesTable.status, "published"));
+
   const articles = await db
     .select()
     .from(articlesTable)
-    .where(and(eq(articlesTable.archived, false), eq(articlesTable.status, "published")))
+    .where(featuredWhere)
     .orderBy(desc(articlesTable.publishedAt))
     .limit(20);
 

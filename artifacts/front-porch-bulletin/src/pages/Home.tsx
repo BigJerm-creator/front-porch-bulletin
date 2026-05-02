@@ -13,11 +13,23 @@ import { ChurchDirectory } from "@/components/ChurchDirectory";
 import { CalendarEvents } from "@/components/CalendarEvents";
 import { PrintView } from "@/components/PrintView";
 import { Link } from "wouter";
+import { useUser } from "@clerk/react";
 
 const isLetter = (art: { category: string }) =>
   art.category?.toLowerCase() === "letters";
 
+function DraftBadge() {
+  return (
+    <span className="inline-block text-[9px] font-mono uppercase tracking-widest border border-amber-600 bg-amber-50 text-amber-700 px-1.5 py-0.5 align-middle mr-2 leading-none">
+      Draft
+    </span>
+  );
+}
+
 export default function Home() {
+  const { user } = useUser();
+  const isStaff = !!user;
+
   const { data: featuredData, isLoading: isLoadingFeatured } = useGetFeaturedArticles();
   const { data: spotlight,         isLoading: isLoadingSpotlight }         = useGetSpotlight({ query: { queryKey: getGetSpotlightQueryKey(), retry: false } as any });
   const { data: businessSpotlight, isLoading: isLoadingBusiness }          = useGetBusinessSpotlight({ query: { queryKey: getGetBusinessSpotlightQueryKey(), retry: false } as any });
@@ -75,6 +87,12 @@ export default function Home() {
     <>
       {/* ── Screen layout ── */}
       <div className="screen-layout">
+        {isStaff && (
+          <div className="no-print bg-amber-100 border-b-2 border-amber-600 py-2 px-5 flex items-center justify-between text-[11px] font-mono uppercase tracking-widest text-amber-800">
+            <span>Staff Preview — draft articles are visible</span>
+            <Link href="/admin" className="font-bold underline underline-offset-2 hover:no-underline">Editorial Desk →</Link>
+          </div>
+        )}
         <Layout>
           {isLoading ? (
             <NewspaperSkeleton />
@@ -86,7 +104,7 @@ export default function Home() {
                   <article>
                     <Link href={`/articles/${mainArticle.id}`}>
                       <h1 className="font-headline font-bold text-4xl md:text-5xl lg:text-6xl leading-tight mb-3 hover:underline underline-offset-4 decoration-1">
-                        {mainArticle.title}
+                        {isStaff && mainArticle.status === 'draft' && <DraftBadge />}{mainArticle.title}
                       </h1>
                     </Link>
                     {mainArticle.subtitle && (
@@ -226,7 +244,7 @@ export default function Home() {
                   <article>
                     <Link href={`/articles/${page2Article.id}`}>
                       <h2 className="font-headline font-bold text-3xl md:text-4xl lg:text-5xl leading-tight mb-3 hover:underline underline-offset-4 decoration-1">
-                        {page2Article.title}
+                        {isStaff && page2Article.status === 'draft' && <DraftBadge />}{page2Article.title}
                       </h2>
                     </Link>
                     {page2Article.subtitle && (
@@ -277,7 +295,7 @@ export default function Home() {
                           </div>
                         )}
                         <Link href={`/articles/${art.id}`}>
-                          <h3 className="font-headline font-bold text-2xl leading-tight mb-1 hover:underline underline-offset-4 decoration-1">{art.title}</h3>
+                          <h3 className="font-headline font-bold text-2xl leading-tight mb-1 hover:underline underline-offset-4 decoration-1">{isStaff && art.status === 'draft' && <DraftBadge />}{art.title}</h3>
                         </Link>
                         {art.subtitle && <p className="font-headline italic text-base text-foreground/70 mb-1">{art.subtitle}</p>}
                         <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wide text-foreground/50 border-t border-b border-foreground/20 py-1 mb-2">
@@ -310,7 +328,7 @@ export default function Home() {
                           </div>
                         )}
                         <Link href={`/articles/${art.id}`}>
-                          <h3 className="font-headline font-bold text-2xl leading-tight mb-1 hover:underline underline-offset-4 decoration-1">{art.title}</h3>
+                          <h3 className="font-headline font-bold text-2xl leading-tight mb-1 hover:underline underline-offset-4 decoration-1">{isStaff && art.status === 'draft' && <DraftBadge />}{art.title}</h3>
                         </Link>
                         {art.subtitle && <p className="font-headline italic text-base text-foreground/70 mb-1">{art.subtitle}</p>}
                         <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wide text-foreground/50 border-t border-b border-foreground/20 py-1 mb-2">
@@ -337,7 +355,7 @@ export default function Home() {
                     {libraryArticles.map((art, i) => (
                       <article key={art.id} className={i > 0 ? "pt-6" : ""}>
                         <Link href={`/articles/${art.id}`}>
-                          <h3 className="font-headline font-bold text-2xl leading-tight mb-1 hover:underline underline-offset-4 decoration-1">{art.title}</h3>
+                          <h3 className="font-headline font-bold text-2xl leading-tight mb-1 hover:underline underline-offset-4 decoration-1">{isStaff && art.status === 'draft' && <DraftBadge />}{art.title}</h3>
                         </Link>
                         {art.subtitle && <p className="font-headline italic text-base text-foreground/70 mb-1">{art.subtitle}</p>}
                         <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wide text-foreground/50 border-t border-b border-foreground/20 py-1 mb-2">
@@ -378,7 +396,7 @@ export default function Home() {
                       <article key={art.id}>
                         <Link href={`/articles/${art.id}`}>
                           <h2 className="font-headline font-bold text-3xl md:text-4xl leading-tight mb-2 hover:underline underline-offset-4 decoration-1">
-                            {art.title}
+                            {isStaff && art.status === 'draft' && <DraftBadge />}{art.title}
                           </h2>
                         </Link>
                         {art.subtitle && (
@@ -418,6 +436,9 @@ export default function Home() {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 divide-y md:divide-y-0 md:divide-x divide-foreground/30">
                     {otherArticles.map((art, i) => (
                       <div key={art.id} className={i > 0 ? "md:pl-6 pt-6 md:pt-0" : ""}>
+                        {isStaff && art.status === 'draft' && (
+                          <span className="inline-block text-[9px] font-mono uppercase tracking-widest border border-amber-600 bg-amber-50 text-amber-700 px-1.5 py-0.5 leading-none mb-1">Draft</span>
+                        )}
                         <ArticleTeaser article={art} size="standard" />
                       </div>
                     ))}
