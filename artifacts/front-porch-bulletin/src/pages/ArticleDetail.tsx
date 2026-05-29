@@ -4,27 +4,57 @@ import { NewspaperSkeleton } from "@/components/ui/newspaper-skeleton";
 import { Link, useParams } from "wouter";
 import { formatDate, formatDateline } from "@/lib/format";
 import { ArticleTeaser } from "@/components/ArticleTeaser";
+import type { ReactNode } from "react";
+
+interface Photo {
+  url: string;
+  credit: string;
+}
+
+function renderWithPhotos(text: string, photos: Photo[]): ReactNode[] {
+  const parts = text.split(/(\[photo-\d+\])/);
+  return parts.map((part, i) => {
+    const match = part.match(/^\[photo-(\d+)\]$/);
+    if (match) {
+      const idx = parseInt(match[1], 10) - 1;
+      const photo = photos[idx];
+      if (photo) {
+        return (
+          <figure key={i} className="my-6 mx-auto not-prose">
+            <img
+              src={photo.url}
+              alt=""
+              className="w-full border border-foreground/20 object-contain"
+            />
+            {photo.credit && (
+              <figcaption className="font-mono text-xs text-foreground/50 italic text-right mt-1">
+                {photo.credit}
+              </figcaption>
+            )}
+          </figure>
+        );
+      }
+      return null;
+    }
+    return part ? <span key={i}>{part}</span> : null;
+  });
+}
 
 export default function ArticleDetail() {
   const { id } = useParams<{ id: string }>();
   const articleId = parseInt(id || "0", 10);
-  
+
   const { data: article, isLoading } = useGetArticle(articleId, {
-    query: {
-      enabled: !!articleId
-    }
+    query: { enabled: !!articleId }
   });
 
   const { data: relatedData } = useListArticles(
     article?.category ? { category: article.category, limit: 3 } : {},
-    {
-      query: {
-        enabled: !!article?.category
-      }
-    }
+    { query: { enabled: !!article?.category } }
   );
 
   const relatedArticles = relatedData?.articles.filter(a => a.id !== articleId) || [];
+  const photos = ((article as any)?.photos as Photo[] | null) ?? [];
 
   if (isLoading) {
     return (
@@ -50,22 +80,22 @@ export default function ArticleDetail() {
   return (
     <Layout>
       <div className="max-w-3xl mx-auto bg-foreground/[0.01] p-4 sm:p-8 md:p-12 border border-foreground/10 shadow-sm">
-        
+
         <header className="mb-8 text-center border-b-2 border-foreground pb-6">
           <div className="inline-block bg-foreground text-background font-mono text-xs uppercase tracking-widest px-3 py-1 mb-6">
             {article.category}
           </div>
-          
+
           <h1 className="font-headline text-5xl md:text-6xl font-bold leading-tight mb-4">
             {article.title}
           </h1>
-          
+
           {article.subtitle && (
             <h2 className="font-headline italic text-2xl md:text-3xl text-foreground/80 mb-6">
               {article.subtitle}
             </h2>
           )}
-          
+
           <div className="font-mono text-sm uppercase tracking-widest mt-6 border-t border-foreground/20 pt-4 flex flex-col sm:flex-row justify-center items-center gap-2 sm:gap-6">
             <span>By <span className="font-bold">{article.author}</span></span>
             <span className="hidden sm:inline">•</span>
@@ -76,9 +106,9 @@ export default function ArticleDetail() {
         {article.photoUrl && (
           <figure className="mb-8">
             <img src={article.photoUrl} alt={article.title} className="w-full object-contain border border-foreground/20" />
-            {article.photoCredit && (
+            {(article as any).photoCredit && (
               <figcaption className="font-mono text-xs text-foreground/50 italic text-right mt-1">
-                Picture Credit — {article.photoCredit}
+                Picture Credit — {(article as any).photoCredit}
               </figcaption>
             )}
           </figure>
@@ -89,11 +119,12 @@ export default function ArticleDetail() {
             <span className="font-bold text-xs uppercase tracking-wider font-mono mr-2">
               {formatDateline(article.publishedAt)}—
             </span>
-            {article.content.split('\n\n').map((paragraph, index) => (
-              <span key={index}>
-                {index > 0 ? <p className="mt-4 indent-8">{paragraph}</p> : paragraph}
-              </span>
-            ))}
+            {article.content.split('\n\n').map((paragraph, index) => {
+              const rendered = renderWithPhotos(paragraph, photos);
+              return index > 0
+                ? <p key={index} className="mt-4 indent-8">{rendered}</p>
+                : <span key={index}>{rendered}</span>;
+            })}
           </p>
         </article>
 

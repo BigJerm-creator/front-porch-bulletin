@@ -61,11 +61,17 @@ router.post("/", requireApproved, async (req, res) => {
     return;
   }
 
-  const { publishedAt, ...rest } = parse.data;
+  const { publishedAt, photos, photoUrl, photoCredit, ...rest } = parse.data as any;
+  const syncedPhotoUrl = photos && photos.length > 0 ? photos[0].url : (photoUrl ?? null);
+  const syncedPhotoCredit = photos && photos.length > 0 ? (photos[0].credit || null) : (photoCredit ?? null);
+
   const [article] = await db
     .insert(articlesTable)
     .values({
       ...rest,
+      photos: photos ?? null,
+      photoUrl: syncedPhotoUrl,
+      photoCredit: syncedPhotoCredit,
       status: "draft",
       publishedAt: publishedAt ? new Date(publishedAt) : new Date(),
     })
@@ -87,15 +93,11 @@ router.get("/featured", async (req, res) => {
     .orderBy(desc(articlesTable.publishedAt))
     .limit(20);
 
-  // All articles with the featured checkbox checked go to the front page
   const frontPage = articles
     .filter((a) => a.featured)
     .sort((a, b) => (b.publishedAt > a.publishedAt ? 1 : -1));
 
-  // Backward-compat: headline is the first featured article
   const headline = frontPage[0] ?? articles[0] ?? null;
-
-  // Page 2 top story: first article with page2Featured flag
   const page2 = articles.find((a) => a.page2Featured) ?? null;
 
   const eventCategories = await db
@@ -104,7 +106,6 @@ router.get("/featured", async (req, res) => {
     .where(eq(categoriesTable.showInEvents, true));
 
   const eventCategoryNames = new Set(eventCategories.map((c) => c.name));
-
   const frontPageIds = new Set(frontPage.map((a) => a.id));
   const page2Id = page2?.id;
   const secondary = articles
@@ -118,18 +119,13 @@ router.get("/summary", async (_req, res) => {
   const [totalResult, categoryResult, recentResult] = await Promise.all([
     db.select({ count: sql<number>`count(*)::int` }).from(articlesTable),
     db
-      .select({
-        category: articlesTable.category,
-        count: sql<number>`count(*)::int`,
-      })
+      .select({ category: articlesTable.category, count: sql<number>`count(*)::int` })
       .from(articlesTable)
       .groupBy(articlesTable.category),
     db
       .select({ count: sql<number>`count(*)::int` })
       .from(articlesTable)
-      .where(
-        sql`published_at > now() - interval '7 days'`
-      ),
+      .where(sql`published_at > now() - interval '7 days'`),
   ]);
 
   res.json({
@@ -173,8 +169,21 @@ router.put("/:id", requireApproved, async (req, res) => {
     return;
   }
 
-  const { publishedAt, ...rest } = bodyParse.data;
-  const updateData: Record<string, unknown> = { ...rest, updatedAt: new Date() };
+  const { publishedAt, photos, photoUrl, photoCredit, ...rest } = bodyParse.data as any;
+  const syncedPhotoUrl = photos !== undefined
+    ? (photos && photos.length > 0 ? photos[0].url : null)
+    : photoUrl;
+  const syncedPhotoCredit = photos !== undefined
+    ? (photos && photos.length > 0 ? (photos[0].credit || null) : null)
+    : photoCredit;
+
+  const updateData: Record<string, unknown> = {
+    ...rest,
+    photoUrl: syncedPhotoUrl,
+    photoCredit: syncedPhotoCredit,
+    updatedAt: new Date(),
+  };
+  if (photos !== undefined) updateData.photos = photos;
   if (publishedAt) updateData.publishedAt = new Date(publishedAt);
 
   const [article] = await db

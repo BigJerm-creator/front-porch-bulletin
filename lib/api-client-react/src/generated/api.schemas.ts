@@ -9,6 +9,11 @@ export interface HealthStatus {
   status: string;
 }
 
+export interface Photo {
+  url: string;
+  credit: string;
+}
+
 export interface Article {
   id: number;
   title: string;
@@ -19,6 +24,7 @@ export interface Article {
   featured: boolean;
   archived: boolean;
   photoUrl?: string | null;
+  photos?: Photo[] | null;
   publishedAt: string;
   createdAt: string;
   updatedAt: string;
@@ -32,6 +38,7 @@ export interface CreateArticleBody {
   category: string;
   featured?: boolean;
   photoUrl?: string | null;
+  photos?: Photo[] | null;
   publishedAt?: string;
 }
 
@@ -43,6 +50,7 @@ export interface UpdateArticleBody {
   category?: string;
   featured?: boolean;
   photoUrl?: string | null;
+  photos?: Photo[] | null;
   publishedAt?: string;
 }
 
@@ -104,6 +112,29 @@ export interface UploadUrlResponse {
   objectPath: string;
 }
 
+export interface Obituary {
+  id: number;
+  name: string;
+  birthDate?: string | null;
+  deathDate?: string | null;
+  hometown?: string | null;
+  content: string;
+  photoUrl?: string | null;
+  photos?: Photo[] | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ObituaryBody {
+  name: string;
+  birthDate?: string | null;
+  deathDate?: string | null;
+  hometown?: string | null;
+  content: string;
+  photoUrl?: string | null;
+  photos?: Photo[] | null;
+}
+
 export interface Spotlight {
   id: number;
   name: string;
@@ -111,6 +142,7 @@ export interface Spotlight {
   grade: string;
   description: string;
   photoUrl?: string | null;
+  photos?: Photo[] | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -121,6 +153,7 @@ export interface SpotlightBody {
   grade: string;
   description: string;
   photoUrl?: string | null;
+  photos?: Photo[] | null;
 }
 
 export interface BusinessSpotlight {
@@ -129,7 +162,8 @@ export interface BusinessSpotlight {
   businessType: string;
   description: string;
   photoUrl?: string | null;
-  photoCredit?: string | null;
+  photos?: Photo[] | null;
+  status: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -139,7 +173,7 @@ export interface BusinessSpotlightBody {
   businessType: string;
   description: string;
   photoUrl?: string | null;
-  photoCredit?: string | null;
+  photos?: Photo[] | null;
 }
 
 export interface GroupSpotlight {
@@ -148,7 +182,8 @@ export interface GroupSpotlight {
   groupType: string;
   description: string;
   photoUrl?: string | null;
-  photoCredit?: string | null;
+  photos?: Photo[] | null;
+  status: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -158,7 +193,7 @@ export interface GroupSpotlightBody {
   groupType: string;
   description: string;
   photoUrl?: string | null;
-  photoCredit?: string | null;
+  photos?: Photo[] | null;
 }
 
 export interface Church {
@@ -170,6 +205,7 @@ export interface Church {
   phone: string;
   sortOrder: number;
   photoUrl?: string | null;
+  photos?: Photo[] | null;
   createdAt: string;
 }
 
@@ -181,6 +217,7 @@ export interface ChurchBody {
   phone: string;
   sortOrder?: number;
   photoUrl?: string | null;
+  photos?: Photo[] | null;
 }
 
 export type ListArticlesParams = {
@@ -203,6 +240,10 @@ export type GetFeaturedArticles200 = {
 
 export type ArchiveArticleBody = {
   archived: boolean;
+};
+
+export type ListObituaries200 = {
+  obituaries: Obituary[];
 };
 
 export type ListChurches200 = {

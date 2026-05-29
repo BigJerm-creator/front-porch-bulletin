@@ -43,6 +43,14 @@ export const ListArticlesResponse = zod.object({
       featured: zod.boolean(),
       archived: zod.boolean(),
       photoUrl: zod.string().nullish(),
+      photos: zod
+        .array(
+          zod.object({
+            url: zod.string(),
+            credit: zod.string(),
+          }),
+        )
+        .nullish(),
       publishedAt: zod.coerce.date(),
       createdAt: zod.coerce.date(),
       updatedAt: zod.coerce.date(),
@@ -63,8 +71,15 @@ export const CreateArticleBody = zod.object({
   author: zod.string(),
   category: zod.string(),
   featured: zod.boolean().default(createArticleBodyFeaturedDefault),
-  page2Featured: zod.boolean().default(false),
   photoUrl: zod.string().nullish(),
+  photos: zod
+    .array(
+      zod.object({
+        url: zod.string(),
+        credit: zod.string(),
+      }),
+    )
+    .nullish(),
   publishedAt: zod.coerce.date().optional(),
 });
 
@@ -83,6 +98,14 @@ export const GetFeaturedArticlesResponse = zod.object({
       featured: zod.boolean(),
       archived: zod.boolean(),
       photoUrl: zod.string().nullish(),
+      photos: zod
+        .array(
+          zod.object({
+            url: zod.string(),
+            credit: zod.string(),
+          }),
+        )
+        .nullish(),
       publishedAt: zod.coerce.date(),
       createdAt: zod.coerce.date(),
       updatedAt: zod.coerce.date(),
@@ -97,32 +120,21 @@ export const GetFeaturedArticlesResponse = zod.object({
       author: zod.string(),
       category: zod.string(),
       featured: zod.boolean(),
-      page2Featured: zod.boolean(),
       archived: zod.boolean(),
       photoUrl: zod.string().nullish(),
+      photos: zod
+        .array(
+          zod.object({
+            url: zod.string(),
+            credit: zod.string(),
+          }),
+        )
+        .nullish(),
       publishedAt: zod.coerce.date(),
       createdAt: zod.coerce.date(),
       updatedAt: zod.coerce.date(),
     }),
   ),
-  page2: zod
-    .object({
-      id: zod.number(),
-      title: zod.string(),
-      subtitle: zod.string().nullish(),
-      content: zod.string(),
-      author: zod.string(),
-      category: zod.string(),
-      featured: zod.boolean(),
-      page2Featured: zod.boolean(),
-      archived: zod.boolean(),
-      photoUrl: zod.string().nullish(),
-      publishedAt: zod.coerce.date(),
-      createdAt: zod.coerce.date(),
-      updatedAt: zod.coerce.date(),
-    })
-    .nullable()
-    .optional(),
 });
 
 /**
@@ -157,6 +169,14 @@ export const GetArticleResponse = zod.object({
   featured: zod.boolean(),
   archived: zod.boolean(),
   photoUrl: zod.string().nullish(),
+  photos: zod
+    .array(
+      zod.object({
+        url: zod.string(),
+        credit: zod.string(),
+      }),
+    )
+    .nullish(),
   publishedAt: zod.coerce.date(),
   createdAt: zod.coerce.date(),
   updatedAt: zod.coerce.date(),
@@ -176,8 +196,15 @@ export const UpdateArticleBody = zod.object({
   author: zod.string().optional(),
   category: zod.string().optional(),
   featured: zod.boolean().optional(),
-  page2Featured: zod.boolean().optional(),
   photoUrl: zod.string().nullish(),
+  photos: zod
+    .array(
+      zod.object({
+        url: zod.string(),
+        credit: zod.string(),
+      }),
+    )
+    .nullish(),
   publishedAt: zod.coerce.date().optional(),
 });
 
@@ -191,6 +218,14 @@ export const UpdateArticleResponse = zod.object({
   featured: zod.boolean(),
   archived: zod.boolean(),
   photoUrl: zod.string().nullish(),
+  photos: zod
+    .array(
+      zod.object({
+        url: zod.string(),
+        credit: zod.string(),
+      }),
+    )
+    .nullish(),
   publishedAt: zod.coerce.date(),
   createdAt: zod.coerce.date(),
   updatedAt: zod.coerce.date(),
@@ -224,6 +259,14 @@ export const ArchiveArticleResponse = zod.object({
   featured: zod.boolean(),
   archived: zod.boolean(),
   photoUrl: zod.string().nullish(),
+  photos: zod
+    .array(
+      zod.object({
+        url: zod.string(),
+        credit: zod.string(),
+      }),
+    )
+    .nullish(),
   publishedAt: zod.coerce.date(),
   createdAt: zod.coerce.date(),
   updatedAt: zod.coerce.date(),
@@ -251,6 +294,222 @@ export const GetStorageObjectParams = zod.object({
 });
 
 /**
+ * @summary List all obituaries
+ */
+export const ListObituariesResponse = zod.object({
+  obituaries: zod.array(
+    zod.object({
+      id: zod.number(),
+      name: zod.string(),
+      birthDate: zod.string().nullish(),
+      deathDate: zod.string().nullish(),
+      hometown: zod.string().nullish(),
+      content: zod.string(),
+      photoUrl: zod.string().nullish(),
+      photos: zod
+        .array(
+          zod.object({
+            url: zod.string(),
+            credit: zod.string(),
+          }),
+        )
+        .nullish(),
+      createdAt: zod.coerce.date(),
+      updatedAt: zod.coerce.date(),
+    }),
+  ),
+});
+
+/**
+ * @summary Create an obituary (requires auth)
+ */
+export const CreateObituaryBody = zod.object({
+  name: zod.string(),
+  birthDate: zod.string().nullish(),
+  deathDate: zod.string().nullish(),
+  hometown: zod.string().nullish(),
+  content: zod.string(),
+  photoUrl: zod.string().nullish(),
+  photos: zod
+    .array(
+      zod.object({
+        url: zod.string(),
+        credit: zod.string(),
+      }),
+    )
+    .nullish(),
+});
+
+/**
+ * @summary Update an obituary (requires auth)
+ */
+export const UpdateObituaryParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const UpdateObituaryBody = zod.object({
+  name: zod.string(),
+  birthDate: zod.string().nullish(),
+  deathDate: zod.string().nullish(),
+  hometown: zod.string().nullish(),
+  content: zod.string(),
+  photoUrl: zod.string().nullish(),
+  photos: zod
+    .array(
+      zod.object({
+        url: zod.string(),
+        credit: zod.string(),
+      }),
+    )
+    .nullish(),
+});
+
+export const UpdateObituaryResponse = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  birthDate: zod.string().nullish(),
+  deathDate: zod.string().nullish(),
+  hometown: zod.string().nullish(),
+  content: zod.string(),
+  photoUrl: zod.string().nullish(),
+  photos: zod
+    .array(
+      zod.object({
+        url: zod.string(),
+        credit: zod.string(),
+      }),
+    )
+    .nullish(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Delete an obituary (requires auth)
+ */
+export const DeleteObituaryParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+/**
+ * @summary Get the current business spotlight
+ */
+export const GetBusinessSpotlightResponse = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  businessType: zod.string(),
+  description: zod.string(),
+  photoUrl: zod.string().nullish(),
+  photos: zod
+    .array(
+      zod.object({
+        url: zod.string(),
+        credit: zod.string(),
+      }),
+    )
+    .nullish(),
+  status: zod.string(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Replace the business spotlight (requires auth)
+ */
+export const UpdateBusinessSpotlightBody = zod.object({
+  name: zod.string(),
+  businessType: zod.string(),
+  description: zod.string(),
+  photoUrl: zod.string().nullish(),
+  photos: zod
+    .array(
+      zod.object({
+        url: zod.string(),
+        credit: zod.string(),
+      }),
+    )
+    .nullish(),
+});
+
+export const UpdateBusinessSpotlightResponse = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  businessType: zod.string(),
+  description: zod.string(),
+  photoUrl: zod.string().nullish(),
+  photos: zod
+    .array(
+      zod.object({
+        url: zod.string(),
+        credit: zod.string(),
+      }),
+    )
+    .nullish(),
+  status: zod.string(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Get the current group spotlight
+ */
+export const GetGroupSpotlightResponse = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  groupType: zod.string(),
+  description: zod.string(),
+  photoUrl: zod.string().nullish(),
+  photos: zod
+    .array(
+      zod.object({
+        url: zod.string(),
+        credit: zod.string(),
+      }),
+    )
+    .nullish(),
+  status: zod.string(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Replace the group spotlight (requires auth)
+ */
+export const UpdateGroupSpotlightBody = zod.object({
+  name: zod.string(),
+  groupType: zod.string(),
+  description: zod.string(),
+  photoUrl: zod.string().nullish(),
+  photos: zod
+    .array(
+      zod.object({
+        url: zod.string(),
+        credit: zod.string(),
+      }),
+    )
+    .nullish(),
+});
+
+export const UpdateGroupSpotlightResponse = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  groupType: zod.string(),
+  description: zod.string(),
+  photoUrl: zod.string().nullish(),
+  photos: zod
+    .array(
+      zod.object({
+        url: zod.string(),
+        credit: zod.string(),
+      }),
+    )
+    .nullish(),
+  status: zod.string(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+
+/**
  * @summary Get the current student spotlight
  */
 export const GetSpotlightResponse = zod.object({
@@ -260,6 +519,14 @@ export const GetSpotlightResponse = zod.object({
   grade: zod.string(),
   description: zod.string(),
   photoUrl: zod.string().nullish(),
+  photos: zod
+    .array(
+      zod.object({
+        url: zod.string(),
+        credit: zod.string(),
+      }),
+    )
+    .nullish(),
   createdAt: zod.coerce.date(),
   updatedAt: zod.coerce.date(),
 });
@@ -273,6 +540,14 @@ export const UpdateSpotlightBody = zod.object({
   grade: zod.string(),
   description: zod.string(),
   photoUrl: zod.string().nullish(),
+  photos: zod
+    .array(
+      zod.object({
+        url: zod.string(),
+        credit: zod.string(),
+      }),
+    )
+    .nullish(),
 });
 
 export const UpdateSpotlightResponse = zod.object({
@@ -282,6 +557,14 @@ export const UpdateSpotlightResponse = zod.object({
   grade: zod.string(),
   description: zod.string(),
   photoUrl: zod.string().nullish(),
+  photos: zod
+    .array(
+      zod.object({
+        url: zod.string(),
+        credit: zod.string(),
+      }),
+    )
+    .nullish(),
   createdAt: zod.coerce.date(),
   updatedAt: zod.coerce.date(),
 });
@@ -300,6 +583,14 @@ export const ListChurchesResponse = zod.object({
       phone: zod.string(),
       sortOrder: zod.number(),
       photoUrl: zod.string().nullish(),
+      photos: zod
+        .array(
+          zod.object({
+            url: zod.string(),
+            credit: zod.string(),
+          }),
+        )
+        .nullish(),
       createdAt: zod.coerce.date(),
     }),
   ),
@@ -316,6 +607,14 @@ export const CreateChurchBody = zod.object({
   phone: zod.string(),
   sortOrder: zod.number().optional(),
   photoUrl: zod.string().nullish(),
+  photos: zod
+    .array(
+      zod.object({
+        url: zod.string(),
+        credit: zod.string(),
+      }),
+    )
+    .nullish(),
 });
 
 /**
@@ -333,6 +632,14 @@ export const UpdateChurchBody = zod.object({
   phone: zod.string(),
   sortOrder: zod.number().optional(),
   photoUrl: zod.string().nullish(),
+  photos: zod
+    .array(
+      zod.object({
+        url: zod.string(),
+        credit: zod.string(),
+      }),
+    )
+    .nullish(),
 });
 
 export const UpdateChurchResponse = zod.object({
@@ -344,6 +651,14 @@ export const UpdateChurchResponse = zod.object({
   phone: zod.string(),
   sortOrder: zod.number(),
   photoUrl: zod.string().nullish(),
+  photos: zod
+    .array(
+      zod.object({
+        url: zod.string(),
+        credit: zod.string(),
+      }),
+    )
+    .nullish(),
   createdAt: zod.coerce.date(),
 });
 

@@ -7,15 +7,15 @@
  */
 import type { Photo } from "./photo";
 
-export interface Church {
+export interface Obituary {
   id: number;
   name: string;
-  address: string;
-  pastor: string;
-  serviceTimes: string;
-  phone: string;
-  sortOrder: number;
+  birthDate?: string | null;
+  deathDate?: string | null;
+  hometown?: string | null;
+  content: string;
   photoUrl?: string | null;
   photos?: Photo[] | null;
   createdAt: Date;
+  updatedAt: Date;
 }

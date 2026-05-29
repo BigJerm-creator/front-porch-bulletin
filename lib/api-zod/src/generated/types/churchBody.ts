@@ -5,6 +5,7 @@
  * API specification for The Front Porch Bulletin
  * OpenAPI spec version: 0.1.0
  */
+import type { Photo } from "./photo";
 
 export interface ChurchBody {
   name: string;
@@ -14,5 +15,5 @@ export interface ChurchBody {
   phone: string;
   sortOrder?: number;
   photoUrl?: string | null;
-  photoCredit?: string | null;
+  photos?: Photo[] | null;
 }

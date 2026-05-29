@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { Save, User } from "lucide-react";
-import { ImageUpload } from "@/components/admin/ImageUpload";
+import { MultiImageUpload, type Photo } from "@/components/admin/MultiImageUpload";
 
 export default function AdminSpotlight() {
   const { data, isLoading } = useGetSpotlight({ query: { queryKey: getGetSpotlightQueryKey() } });
@@ -19,9 +19,8 @@ export default function AdminSpotlight() {
     school: "",
     grade: "",
     description: "",
-    photoUrl: "",
-    photoCredit: "",
   });
+  const [photos, setPhotos] = useState<Photo[]>([]);
 
   useEffect(() => {
     if (data) {
@@ -30,9 +29,15 @@ export default function AdminSpotlight() {
         school: data.school,
         grade: data.grade,
         description: data.description,
-        photoUrl: data.photoUrl ?? "",
-        photoCredit: data.photoCredit ?? "",
       });
+      const rawPhotos = (data as any).photos as Photo[] | null;
+      if (rawPhotos && rawPhotos.length > 0) {
+        setPhotos(rawPhotos);
+      } else if (data.photoUrl) {
+        setPhotos([{ url: data.photoUrl, credit: (data as any).photoCredit ?? "" }]);
+      } else {
+        setPhotos([]);
+      }
     }
   }, [data]);
 
@@ -44,9 +49,9 @@ export default function AdminSpotlight() {
           school: form.school,
           grade: form.grade,
           description: form.description,
-          photoUrl: form.photoUrl || null,
-          photoCredit: form.photoCredit.trim() || null,
-        },
+          photoUrl: photos[0]?.url ?? null,
+          photos: photos as any,
+        } as any,
       });
       queryClient.invalidateQueries({ queryKey: getGetSpotlightQueryKey() });
       toast({ title: "Spotlight updated", description: "The student spotlight has been saved." });
@@ -118,22 +123,11 @@ export default function AdminSpotlight() {
                 placeholder="Write a brief description of the student's achievement..."
               />
             </div>
-            <ImageUpload
-              value={form.photoUrl || null}
-              onChange={(url) => setForm({ ...form, photoUrl: url ?? "" })}
-              label="Photo (optional)"
+            <MultiImageUpload
+              value={photos}
+              onChange={setPhotos}
+              label="Photos (optional)"
             />
-            {form.photoUrl && (
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-widest mb-1">Photo Credit</label>
-                <Input
-                  className="rounded-none border-2 border-foreground font-serif text-sm"
-                  value={form.photoCredit}
-                  onChange={(e) => setForm({ ...form, photoCredit: e.target.value })}
-                  placeholder="e.g. Photo by Jane Smith"
-                />
-              </div>
-            )}
           </div>
 
           <div className="space-y-4">
@@ -144,8 +138,8 @@ export default function AdminSpotlight() {
                 className="w-full mb-2 border border-foreground flex flex-col items-center justify-end overflow-hidden bg-foreground/10"
                 style={{ aspectRatio: "4/3" }}
               >
-                {form.photoUrl ? (
-                  <img src={form.photoUrl} alt={form.name} className="w-full h-full object-cover" />
+                {photos[0]?.url ? (
+                  <img src={photos[0].url} alt={form.name} className="w-full h-full object-cover" />
                 ) : (
                   <div className="flex-1 flex items-center justify-center">
                     <User className="h-12 w-12 text-foreground/20" />
@@ -157,6 +151,9 @@ export default function AdminSpotlight() {
               <p className="font-headline font-bold text-base leading-tight mb-0.5">{form.name || "Student Name"}</p>
               <p className="text-xs font-mono uppercase tracking-wider text-foreground/70 mb-1">{form.school || "School"} &bull; {form.grade || "Grade"}</p>
               <p className="font-serif text-xs leading-relaxed text-foreground/80">{form.description || "Description will appear here."}</p>
+              {photos.length > 1 && (
+                <p className="text-xs font-mono text-foreground/40 mt-2">+{photos.length - 1} more photo{photos.length > 2 ? "s" : ""}</p>
+              )}
             </div>
           </div>
         </div>

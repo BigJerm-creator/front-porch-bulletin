@@ -5,6 +5,7 @@
  * API specification for The Front Porch Bulletin
  * OpenAPI spec version: 0.1.0
  */
+import type { Photo } from "./photo";
 
 export interface SpotlightBody {
   name: string;
@@ -12,5 +13,5 @@ export interface SpotlightBody {
   grade: string;
   description: string;
   photoUrl?: string | null;
-  photoCredit?: string | null;
+  photos?: Photo[] | null;
 }

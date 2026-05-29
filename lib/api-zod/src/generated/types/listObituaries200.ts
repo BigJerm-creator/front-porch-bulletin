@@ -5,9 +5,8 @@
  * API specification for The Front Porch Bulletin
  * OpenAPI spec version: 0.1.0
  */
-import type { Article } from "./article";
+import type { Obituary } from "./obituary";
 
-export type GetFeaturedArticles200 = {
-  headline?: Article;
-  secondary: Article[];
+export type ListObituaries200 = {
+  obituaries: Obituary[];
 };

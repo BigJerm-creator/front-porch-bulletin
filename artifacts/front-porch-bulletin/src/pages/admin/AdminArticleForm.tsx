@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Save } from "lucide-react";
 import { Link } from "wouter";
-import { ImageUpload } from "@/components/admin/ImageUpload";
+import { MultiImageUpload, type Photo } from "@/components/admin/MultiImageUpload";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -27,7 +27,6 @@ const formSchema = z.object({
   publishedAt: z.string().min(1, "Publish date is required"),
 });
 
-
 type FormValues = z.infer<typeof formSchema>;
 
 export default function AdminArticleForm() {
@@ -35,9 +34,8 @@ export default function AdminArticleForm() {
   const params = useParams();
   const isEditing = !!params?.id;
   const articleId = isEditing ? parseInt(params.id!) : 0;
-  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
-  const [photoCredit, setPhotoCredit] = useState<string>("");
-  
+  const [photos, setPhotos] = useState<Photo[]>([]);
+
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -75,8 +73,15 @@ export default function AdminArticleForm() {
         page2Featured: (article as any).page2Featured ?? false,
         publishedAt: article.publishedAt.split('T')[0],
       });
-      setPhotoUrl(article.photoUrl ?? null);
-      setPhotoCredit(article.photoCredit ?? "");
+
+      const rawPhotos = (article as any).photos as Photo[] | null;
+      if (rawPhotos && rawPhotos.length > 0) {
+        setPhotos(rawPhotos);
+      } else if (article.photoUrl) {
+        setPhotos([{ url: article.photoUrl, credit: (article as any).photoCredit ?? "" }]);
+      } else {
+        setPhotos([]);
+      }
     }
   }, [isEditing, article, form]);
 
@@ -84,20 +89,21 @@ export default function AdminArticleForm() {
     try {
       const formattedValues = {
         ...values,
-        photoUrl,
-        photoCredit: photoCredit.trim() || null,
+        photos,
+        photoUrl: photos[0]?.url ?? null,
+        photoCredit: photos[0]?.credit || null,
         publishedAt: new Date(values.publishedAt).toISOString(),
       };
 
       if (isEditing) {
-        await updateArticle.mutateAsync({ id: articleId, data: formattedValues });
+        await updateArticle.mutateAsync({ id: articleId, data: formattedValues as any });
         toast({ title: "Edits saved successfully" });
         queryClient.invalidateQueries({ queryKey: getGetArticleQueryKey(articleId) });
       } else {
-        await createArticle.mutateAsync({ data: formattedValues });
+        await createArticle.mutateAsync({ data: formattedValues as any });
         toast({ title: "Article sent to print" });
       }
-      
+
       queryClient.invalidateQueries({ queryKey: getListArticlesQueryKey({ limit: 100 }) });
       queryClient.invalidateQueries({ queryKey: getGetArticlesSummaryQueryKey() });
       setLocation("/admin/articles");
@@ -132,7 +138,7 @@ export default function AdminArticleForm() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <div className="bg-white p-6 md:p-10 border-4 border-foreground space-y-8 shadow-[12px_12px_0px_0px_rgba(0,0,0,1)]">
-            
+
             <div className="space-y-6 border-b-2 border-dashed border-foreground/30 pb-8">
               <FormField
                 control={form.control}
@@ -266,23 +272,12 @@ export default function AdminArticleForm() {
               />
             </div>
 
-            <div className="border-2 border-foreground/20 p-4 bg-[#f5f0e8] space-y-3">
-              <ImageUpload
-                value={photoUrl}
-                onChange={setPhotoUrl}
-                label="Lead Photo (optional)"
+            <div className="border-2 border-foreground/20 p-4 bg-[#f5f0e8]">
+              <MultiImageUpload
+                value={photos}
+                onChange={setPhotos}
+                label="Photos (optional) — use [photo-1], [photo-2]… tags in the body to place inline"
               />
-              {photoUrl && (
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-widest mb-1">Photo Credit</label>
-                  <Input
-                    value={photoCredit}
-                    onChange={(e) => setPhotoCredit(e.target.value)}
-                    className="rounded-none border-2 border-foreground font-serif text-sm"
-                    placeholder="e.g. Photo by Jane Smith"
-                  />
-                </div>
-              )}
             </div>
 
             <FormField
@@ -296,10 +291,10 @@ export default function AdminArticleForm() {
                     <div className="h-0.5 bg-foreground flex-1"></div>
                   </div>
                   <FormControl>
-                    <Textarea 
-                      {...field} 
-                      className="min-h-[500px] rounded-none border-2 border-foreground focus-visible:ring-0 focus-visible:border-primary font-serif leading-relaxed text-lg resize-y p-6 shadow-inner" 
-                      placeholder="Start typing the story..."
+                    <Textarea
+                      {...field}
+                      className="min-h-[500px] rounded-none border-2 border-foreground focus-visible:ring-0 focus-visible:border-primary font-serif leading-relaxed text-lg resize-y p-6 shadow-inner"
+                      placeholder="Start typing the story... Use [photo-1] to place the first photo inline."
                     />
                   </FormControl>
                   <FormMessage />

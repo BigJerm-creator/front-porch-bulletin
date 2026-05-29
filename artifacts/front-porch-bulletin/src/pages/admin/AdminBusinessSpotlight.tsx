@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { Save, Building2 } from "lucide-react";
-import { ImageUpload } from "@/components/admin/ImageUpload";
+import { MultiImageUpload, type Photo } from "@/components/admin/MultiImageUpload";
 
 export default function AdminBusinessSpotlight() {
   const { data, isLoading } = useGetBusinessSpotlight({
@@ -24,9 +24,8 @@ export default function AdminBusinessSpotlight() {
     name: "",
     businessType: "",
     description: "",
-    photoUrl: "",
-    photoCredit: "",
   });
+  const [photos, setPhotos] = useState<Photo[]>([]);
 
   useEffect(() => {
     if (data) {
@@ -34,9 +33,15 @@ export default function AdminBusinessSpotlight() {
         name: data.name,
         businessType: data.businessType,
         description: data.description,
-        photoUrl: data.photoUrl ?? "",
-        photoCredit: data.photoCredit ?? "",
       });
+      const rawPhotos = (data as any).photos as Photo[] | null;
+      if (rawPhotos && rawPhotos.length > 0) {
+        setPhotos(rawPhotos);
+      } else if (data.photoUrl) {
+        setPhotos([{ url: data.photoUrl, credit: (data as any).photoCredit ?? "" }]);
+      } else {
+        setPhotos([]);
+      }
     }
   }, [data]);
 
@@ -47,9 +52,9 @@ export default function AdminBusinessSpotlight() {
           name: form.name,
           businessType: form.businessType,
           description: form.description,
-          photoUrl: form.photoUrl || null,
-          photoCredit: form.photoCredit.trim() || null,
-        },
+          photoUrl: photos[0]?.url ?? null,
+          photos: photos as any,
+        } as any,
       });
       queryClient.invalidateQueries({ queryKey: getGetBusinessSpotlightQueryKey() });
       toast({ title: "Business Spotlight updated", description: "The business spotlight has been saved." });
@@ -110,22 +115,11 @@ export default function AdminBusinessSpotlight() {
                 placeholder="Write a brief description of the business..."
               />
             </div>
-            <ImageUpload
-              value={form.photoUrl || null}
-              onChange={(url) => setForm({ ...form, photoUrl: url ?? "" })}
-              label="Photo (optional)"
+            <MultiImageUpload
+              value={photos}
+              onChange={setPhotos}
+              label="Photos (optional)"
             />
-            {form.photoUrl && (
-              <div>
-                <label className="block text-xs font-bold uppercase tracking-widest mb-1">Photo Credit</label>
-                <Input
-                  className="rounded-none border-2 border-foreground font-serif text-sm"
-                  value={form.photoCredit}
-                  onChange={(e) => setForm({ ...form, photoCredit: e.target.value })}
-                  placeholder="e.g. Photo by Jane Smith"
-                />
-              </div>
-            )}
           </div>
 
           <div className="space-y-4">
@@ -136,8 +130,8 @@ export default function AdminBusinessSpotlight() {
                 className="w-full mb-2 border border-foreground flex flex-col items-center justify-end overflow-hidden bg-foreground/10"
                 style={{ aspectRatio: "4/3" }}
               >
-                {form.photoUrl ? (
-                  <img src={form.photoUrl} alt={form.name} className="w-full h-full object-cover" />
+                {photos[0]?.url ? (
+                  <img src={photos[0].url} alt={form.name} className="w-full h-full object-cover" />
                 ) : (
                   <div className="flex-1 flex items-center justify-center">
                     <Building2 className="h-12 w-12 text-foreground/20" />
@@ -150,14 +144,13 @@ export default function AdminBusinessSpotlight() {
               <div className="font-serif text-xs leading-relaxed text-foreground/80">
                 {form.description
                   ? form.description.split('\n\n').map((para, i) => (
-                      <p key={i} className={i > 0 ? "mt-2" : ""}>
-                        {para.split('\n').map((line, j) => (
-                          j === 0 ? line : <>{'\n'}<br />{line}</>
-                        ))}
-                      </p>
+                      <p key={i} className={i > 0 ? "mt-2" : ""}>{para}</p>
                     ))
                   : "Description will appear here."}
               </div>
+              {photos.length > 1 && (
+                <p className="text-xs font-mono text-foreground/40 mt-2">+{photos.length - 1} more photo{photos.length > 2 ? "s" : ""}</p>
+              )}
             </div>
           </div>
         </div>

@@ -5,6 +5,7 @@
  * API specification for The Front Porch Bulletin
  * OpenAPI spec version: 0.1.0
  */
+import type { Photo } from "./photo";
 
 export interface CreateArticleBody {
   title: string;
@@ -13,8 +14,7 @@ export interface CreateArticleBody {
   author: string;
   category: string;
   featured?: boolean;
-  page2Featured?: boolean;
   photoUrl?: string | null;
-  photoCredit?: string | null;
+  photos?: Photo[] | null;
   publishedAt?: Date;
 }

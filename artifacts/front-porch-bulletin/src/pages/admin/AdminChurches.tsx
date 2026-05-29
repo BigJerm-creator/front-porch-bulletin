@@ -8,28 +8,32 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { Trash2, Edit, PlusCircle, X, Save } from "lucide-react";
 import type { Church } from "@workspace/api-client-react";
-import { ImageUpload } from "@/components/admin/ImageUpload";
+import { MultiImageUpload, type Photo } from "@/components/admin/MultiImageUpload";
 
-const emptyForm = {
+const emptyFormBase = {
   name: "",
   address: "",
   pastor: "",
   serviceTimes: "",
   phone: "",
   sortOrder: 0,
-  photoUrl: null as string | null,
-  photoCredit: null as string | null,
 };
+
+type FormBase = typeof emptyFormBase;
 
 function FormCard({
   form,
   setForm,
+  photos,
+  setPhotos,
   onSave,
   onCancel,
   saving,
 }: {
-  form: typeof emptyForm;
-  setForm: (f: typeof emptyForm) => void;
+  form: FormBase;
+  setForm: (f: FormBase) => void;
+  photos: Photo[];
+  setPhotos: (p: Photo[]) => void;
   onSave: () => void;
   onCancel: () => void;
   saving: boolean;
@@ -62,22 +66,11 @@ function FormCard({
           <Input type="number" className="rounded-none border-2 border-foreground font-mono text-sm" value={form.sortOrder} onChange={(e) => setForm({ ...form, sortOrder: parseInt(e.target.value) || 0 })} />
         </div>
         <div className="sm:col-span-2">
-          <ImageUpload
-            value={form.photoUrl}
-            onChange={(url) => setForm({ ...form, photoUrl: url })}
-            label="Photo (optional)"
+          <MultiImageUpload
+            value={photos}
+            onChange={setPhotos}
+            label="Photos (optional)"
           />
-          {form.photoUrl && (
-            <div className="mt-3">
-              <label className="block text-xs font-bold uppercase tracking-widest mb-1">Photo Credit</label>
-              <Input
-                className="rounded-none border-2 border-foreground font-serif text-sm"
-                value={form.photoCredit ?? ""}
-                onChange={(e) => setForm({ ...form, photoCredit: e.target.value || null })}
-                placeholder="e.g. Photo by Jane Smith"
-              />
-            </div>
-          )}
         </div>
       </div>
       <div className="flex gap-3 pt-2 border-t-2 border-foreground/20">
@@ -102,7 +95,8 @@ export default function AdminChurches() {
 
   const [editingId, setEditingId] = useState<number | null>(null);
   const [showNew, setShowNew] = useState(false);
-  const [form, setForm] = useState(emptyForm);
+  const [form, setForm] = useState(emptyFormBase);
+  const [photos, setPhotos] = useState<Photo[]>([]);
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: getListChurchesQueryKey() });
 
@@ -116,24 +110,37 @@ export default function AdminChurches() {
       serviceTimes: church.serviceTimes,
       phone: church.phone,
       sortOrder: church.sortOrder,
-      photoUrl: church.photoUrl ?? null,
-      photoCredit: church.photoCredit ?? null,
     });
+    const rawPhotos = (church as any).photos as Photo[] | null;
+    if (rawPhotos && rawPhotos.length > 0) {
+      setPhotos(rawPhotos);
+    } else if (church.photoUrl) {
+      setPhotos([{ url: church.photoUrl, credit: (church as any).photoCredit ?? "" }]);
+    } else {
+      setPhotos([]);
+    }
   };
 
   const cancelEdit = () => {
     setEditingId(null);
     setShowNew(false);
-    setForm(emptyForm);
+    setForm(emptyFormBase);
+    setPhotos([]);
   };
 
   const handleSave = async () => {
     try {
+      const payload = {
+        ...form,
+        photoUrl: photos[0]?.url ?? null,
+        photoCredit: photos[0]?.credit || null,
+        photos: photos as any,
+      };
       if (editingId !== null) {
-        await updateChurch.mutateAsync({ id: editingId, data: form });
+        await updateChurch.mutateAsync({ id: editingId, data: payload as any });
         toast({ title: "Church updated" });
       } else {
-        await createChurch.mutateAsync({ data: form });
+        await createChurch.mutateAsync({ data: payload as any });
         toast({ title: "Church added" });
       }
       invalidate();
@@ -161,7 +168,7 @@ export default function AdminChurches() {
           <p className="text-xl text-muted-foreground italic font-serif">Manage the church listings on the front page.</p>
         </div>
         <Button
-          onClick={() => { setShowNew(true); setEditingId(null); setForm(emptyForm); }}
+          onClick={() => { setShowNew(true); setEditingId(null); setForm(emptyFormBase); setPhotos([]); }}
           className="rounded-none border-2 border-transparent bg-primary text-primary-foreground hover:bg-primary/90 uppercase tracking-widest font-bold h-12 px-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all shrink-0"
         >
           <PlusCircle className="mr-2 h-5 w-5" /> Add Church
@@ -171,7 +178,7 @@ export default function AdminChurches() {
       {showNew && (
         <div className="mb-6">
           <p className="text-xs font-bold uppercase tracking-widest text-foreground/50 mb-3">New Church</p>
-          <FormCard form={form} setForm={setForm} onSave={handleSave} onCancel={cancelEdit} saving={createChurch.isPending} />
+          <FormCard form={form} setForm={setForm} photos={photos} setPhotos={setPhotos} onSave={handleSave} onCancel={cancelEdit} saving={createChurch.isPending} />
         </div>
       )}
 
@@ -192,7 +199,7 @@ export default function AdminChurches() {
               {editingId === church.id ? (
                 <div>
                   <p className="text-xs font-bold uppercase tracking-widest text-foreground/50 mb-3">Editing: {church.name}</p>
-                  <FormCard form={form} setForm={setForm} onSave={handleSave} onCancel={cancelEdit} saving={updateChurch.isPending} />
+                  <FormCard form={form} setForm={setForm} photos={photos} setPhotos={setPhotos} onSave={handleSave} onCancel={cancelEdit} saving={updateChurch.isPending} />
                 </div>
               ) : (
                 <div className="border-4 border-foreground bg-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] overflow-hidden">

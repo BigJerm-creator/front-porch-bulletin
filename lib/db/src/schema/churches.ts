@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, timestamp, json } from "drizzle-orm/pg-core";
 
 export const churchesTable = pgTable("churches", {
   id: serial("id").primaryKey(),
@@ -10,6 +10,7 @@ export const churchesTable = pgTable("churches", {
   sortOrder: integer("sort_order").notNull().default(0),
   photoUrl: text("photo_url"),
   photoCredit: text("photo_credit"),
+  photos: json("photos").$type<Array<{ url: string; credit: string }>>(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

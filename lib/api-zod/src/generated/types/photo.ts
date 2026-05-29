@@ -5,9 +5,8 @@
  * API specification for The Front Porch Bulletin
  * OpenAPI spec version: 0.1.0
  */
-import type { Article } from "./article";
 
-export type GetFeaturedArticles200 = {
-  headline?: Article;
-  secondary: Article[];
-};
+export interface Photo {
+  url: string;
+  credit: string;
+}

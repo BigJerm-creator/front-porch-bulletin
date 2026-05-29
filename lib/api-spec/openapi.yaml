@@ -357,6 +357,74 @@ paths:
         "401":
           description: Unauthorized
 
+  /business-spotlight:
+    get:
+      operationId: getBusinessSpotlight
+      tags: [spotlight]
+      summary: Get the current business spotlight
+      responses:
+        "200":
+          description: Current business spotlight
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessSpotlight"
+        "404":
+          description: No business spotlight set
+    put:
+      operationId: updateBusinessSpotlight
+      tags: [spotlight]
+      summary: Replace the business spotlight (requires auth)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BusinessSpotlightBody"
+      responses:
+        "200":
+          description: Updated business spotlight
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessSpotlight"
+        "401":
+          description: Unauthorized
+
+  /group-spotlight:
+    get:
+      operationId: getGroupSpotlight
+      tags: [spotlight]
+      summary: Get the current group spotlight
+      responses:
+        "200":
+          description: Current group spotlight
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GroupSpotlight"
+        "404":
+          description: No group spotlight set
+    put:
+      operationId: updateGroupSpotlight
+      tags: [spotlight]
+      summary: Replace the group spotlight (requires auth)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GroupSpotlightBody"
+      responses:
+        "200":
+          description: Updated group spotlight
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GroupSpotlight"
+        "401":
+          description: Unauthorized
+
   /spotlight:
     get:
       operationId: getSpotlight
@@ -587,6 +655,17 @@ components:
       required:
         - status
 
+    Photo:
+      type: object
+      properties:
+        url:
+          type: string
+        credit:
+          type: string
+      required:
+        - url
+        - credit
+
     Article:
       type: object
       properties:
@@ -610,6 +689,11 @@ components:
         photoUrl:
           type: string
           nullable: true
+        photos:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/Photo"
         publishedAt:
           type: string
           format: date-time
@@ -651,6 +735,11 @@ components:
         photoUrl:
           type: string
           nullable: true
+        photos:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/Photo"
         publishedAt:
           type: string
           format: date-time
@@ -679,6 +768,11 @@ components:
         photoUrl:
           type: string
           nullable: true
+        photos:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/Photo"
         publishedAt:
           type: string
           format: date-time
@@ -818,6 +912,11 @@ components:
         photoUrl:
           type: string
           nullable: true
+        photos:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/Photo"
         createdAt:
           type: string
           format: date-time
@@ -850,6 +949,11 @@ components:
         photoUrl:
           type: string
           nullable: true
+        photos:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/Photo"
       required:
         - name
         - content
@@ -870,6 +974,11 @@ components:
         photoUrl:
           type: string
           nullable: true
+        photos:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/Photo"
         createdAt:
           type: string
           format: date-time
@@ -899,10 +1008,131 @@ components:
         photoUrl:
           type: string
           nullable: true
+        photos:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/Photo"
       required:
         - name
         - school
         - grade
+        - description
+
+    BusinessSpotlight:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        businessType:
+          type: string
+        description:
+          type: string
+        photoUrl:
+          type: string
+          nullable: true
+        photos:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/Photo"
+        status:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - businessType
+        - description
+        - status
+        - createdAt
+        - updatedAt
+
+    BusinessSpotlightBody:
+      type: object
+      properties:
+        name:
+          type: string
+        businessType:
+          type: string
+        description:
+          type: string
+        photoUrl:
+          type: string
+          nullable: true
+        photos:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/Photo"
+      required:
+        - name
+        - businessType
+        - description
+
+    GroupSpotlight:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        groupType:
+          type: string
+        description:
+          type: string
+        photoUrl:
+          type: string
+          nullable: true
+        photos:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/Photo"
+        status:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - groupType
+        - description
+        - status
+        - createdAt
+        - updatedAt
+
+    GroupSpotlightBody:
+      type: object
+      properties:
+        name:
+          type: string
+        groupType:
+          type: string
+        description:
+          type: string
+        photoUrl:
+          type: string
+          nullable: true
+        photos:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/Photo"
+      required:
+        - name
+        - groupType
         - description
 
     Church:
@@ -925,6 +1155,11 @@ components:
         photoUrl:
           type: string
           nullable: true
+        photos:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/Photo"
         createdAt:
           type: string
           format: date-time
@@ -956,6 +1191,11 @@ components:
         photoUrl:
           type: string
           nullable: true
+        photos:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/Photo"
       required:
         - name
         - address
