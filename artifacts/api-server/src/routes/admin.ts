@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { getAuth } from "@clerk/express";
-import { db, userRolesTable, articlesTable } from "@workspace/db";
+import { db, userRolesTable, articlesTable, spotlightTable, businessSpotlightTable, groupSpotlightTable } from "@workspace/db";
 import { eq, sql } from "drizzle-orm";
 import { requireAuth, requireAdmin, requireApproved } from "../middlewares/auth";
 import { SetUserRoleBody, SetUserRoleParams, RevokeUserRoleParams } from "@workspace/api-zod";
@@ -91,13 +91,39 @@ router.get("/draft-count", requireApproved, async (_req, res) => {
 });
 
 router.post("/publish-edition", requireApproved, async (_req, res) => {
-  const result = await db
+  const publishedArticles = await db
     .update(articlesTable)
     .set({ status: "published", updatedAt: new Date() })
     .where(eq(articlesTable.status, "draft"))
     .returning({ id: articlesTable.id });
 
-  res.json({ published: result.length });
+  async function publishSpotlight<T extends { id: number; status: string }>(
+    table: Parameters<typeof db.select>[0] extends never ? any : any,
+    getFields: (row: T) => Record<string, unknown>,
+  ) {
+    const [draft] = await db.select().from(table).where(eq((table as any).status, "draft")).limit(1);
+    if (!draft) return;
+    const [published] = await db.select().from(table).where(eq((table as any).status, "published")).limit(1);
+    if (published) {
+      await db.update(table).set({ ...getFields(draft as T), updatedAt: new Date() }).where(eq((table as any).id, published.id));
+    } else {
+      await db.update(table).set({ status: "published" }).where(eq((table as any).id, draft.id));
+    }
+  }
+
+  await Promise.all([
+    publishSpotlight(spotlightTable, (d: typeof spotlightTable.$inferSelect) => ({
+      name: d.name, school: d.school, grade: d.grade, description: d.description, photoUrl: d.photoUrl, photoCredit: d.photoCredit,
+    })),
+    publishSpotlight(businessSpotlightTable, (d: typeof businessSpotlightTable.$inferSelect) => ({
+      name: d.name, businessType: d.businessType, description: d.description, photoUrl: d.photoUrl, photoCredit: d.photoCredit,
+    })),
+    publishSpotlight(groupSpotlightTable, (d: typeof groupSpotlightTable.$inferSelect) => ({
+      name: d.name, groupType: d.groupType, description: d.description, photoUrl: d.photoUrl, photoCredit: d.photoCredit,
+    })),
+  ]);
+
+  res.json({ published: publishedArticles.length });
 });
 
 export default router;

@@ -7,6 +7,7 @@ export const businessSpotlightTable = pgTable("business_spotlight", {
   description: text("description").notNull(),
   photoUrl: text("photo_url"),
   photoCredit: text("photo_credit"),
+  status: text("status").notNull().default("published"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

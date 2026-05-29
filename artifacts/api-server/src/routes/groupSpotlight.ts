@@ -1,23 +1,40 @@
 import { Router } from "express";
 import { db, groupSpotlightTable } from "@workspace/db";
-import { desc } from "drizzle-orm";
-import { requireApproved } from "../middlewares/auth";
+import { desc, eq } from "drizzle-orm";
+import { requireApproved, checkIsApprovedStaff } from "../middlewares/auth";
 
 const router = Router();
 
-router.get("/", async (_req, res) => {
-  const [spotlight] = await db
+router.get("/", async (req, res) => {
+  const isStaff = await checkIsApprovedStaff(req);
+
+  if (isStaff) {
+    const [draft] = await db
+      .select()
+      .from(groupSpotlightTable)
+      .where(eq(groupSpotlightTable.status, "draft"))
+      .orderBy(desc(groupSpotlightTable.updatedAt))
+      .limit(1);
+
+    if (draft) {
+      res.json(draft);
+      return;
+    }
+  }
+
+  const [published] = await db
     .select()
     .from(groupSpotlightTable)
+    .where(eq(groupSpotlightTable.status, "published"))
     .orderBy(desc(groupSpotlightTable.updatedAt))
     .limit(1);
 
-  if (!spotlight) {
+  if (!published) {
     res.status(404).json({ error: "No group spotlight set" });
     return;
   }
 
-  res.json(spotlight);
+  res.json(published);
 });
 
 router.put("/", requireApproved, async (req, res) => {
@@ -27,18 +44,24 @@ router.put("/", requireApproved, async (req, res) => {
     return;
   }
 
-  const existing = await db.select().from(groupSpotlightTable).orderBy(desc(groupSpotlightTable.updatedAt)).limit(1);
+  const [existingDraft] = await db
+    .select()
+    .from(groupSpotlightTable)
+    .where(eq(groupSpotlightTable.status, "draft"))
+    .orderBy(desc(groupSpotlightTable.updatedAt))
+    .limit(1);
 
-  if (existing.length > 0) {
+  if (existingDraft) {
     const [updated] = await db
       .update(groupSpotlightTable)
       .set({ name, groupType, description, photoUrl: photoUrl ?? null, photoCredit: photoCredit ?? null, updatedAt: new Date() })
+      .where(eq(groupSpotlightTable.id, existingDraft.id))
       .returning();
     res.json(updated);
   } else {
     const [created] = await db
       .insert(groupSpotlightTable)
-      .values({ name, groupType, description, photoUrl: photoUrl ?? null, photoCredit: photoCredit ?? null })
+      .values({ name, groupType, description, photoUrl: photoUrl ?? null, photoCredit: photoCredit ?? null, status: "draft" })
       .returning();
     res.json(created);
   }

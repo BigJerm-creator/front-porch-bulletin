@@ -1,23 +1,40 @@
 import { Router } from "express";
 import { db, businessSpotlightTable } from "@workspace/db";
-import { desc } from "drizzle-orm";
-import { requireApproved } from "../middlewares/auth";
+import { desc, eq } from "drizzle-orm";
+import { requireApproved, checkIsApprovedStaff } from "../middlewares/auth";
 
 const router = Router();
 
-router.get("/", async (_req, res) => {
-  const [spotlight] = await db
+router.get("/", async (req, res) => {
+  const isStaff = await checkIsApprovedStaff(req);
+
+  if (isStaff) {
+    const [draft] = await db
+      .select()
+      .from(businessSpotlightTable)
+      .where(eq(businessSpotlightTable.status, "draft"))
+      .orderBy(desc(businessSpotlightTable.updatedAt))
+      .limit(1);
+
+    if (draft) {
+      res.json(draft);
+      return;
+    }
+  }
+
+  const [published] = await db
     .select()
     .from(businessSpotlightTable)
+    .where(eq(businessSpotlightTable.status, "published"))
     .orderBy(desc(businessSpotlightTable.updatedAt))
     .limit(1);
 
-  if (!spotlight) {
+  if (!published) {
     res.status(404).json({ error: "No business spotlight set" });
     return;
   }
 
-  res.json(spotlight);
+  res.json(published);
 });
 
 router.put("/", requireApproved, async (req, res) => {
@@ -27,18 +44,24 @@ router.put("/", requireApproved, async (req, res) => {
     return;
   }
 
-  const existing = await db.select().from(businessSpotlightTable).orderBy(desc(businessSpotlightTable.updatedAt)).limit(1);
+  const [existingDraft] = await db
+    .select()
+    .from(businessSpotlightTable)
+    .where(eq(businessSpotlightTable.status, "draft"))
+    .orderBy(desc(businessSpotlightTable.updatedAt))
+    .limit(1);
 
-  if (existing.length > 0) {
+  if (existingDraft) {
     const [updated] = await db
       .update(businessSpotlightTable)
       .set({ name, businessType, description, photoUrl: photoUrl ?? null, photoCredit: photoCredit ?? null, updatedAt: new Date() })
+      .where(eq(businessSpotlightTable.id, existingDraft.id))
       .returning();
     res.json(updated);
   } else {
     const [created] = await db
       .insert(businessSpotlightTable)
-      .values({ name, businessType, description, photoUrl: photoUrl ?? null, photoCredit: photoCredit ?? null })
+      .values({ name, businessType, description, photoUrl: photoUrl ?? null, photoCredit: photoCredit ?? null, status: "draft" })
       .returning();
     res.json(created);
   }
