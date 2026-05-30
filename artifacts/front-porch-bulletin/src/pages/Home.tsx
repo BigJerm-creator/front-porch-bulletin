@@ -287,7 +287,7 @@ export default function Home() {
                   <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">4H News</div>
                   <div className="flex flex-col gap-6">
                     {h4Articles.map(art => (
-                      <article key={art.id}>
+                      <article key={art.id} className="overflow-hidden">
                         <Link href={`/articles/${art.id}`}>
                           <h3 className="font-headline font-bold text-2xl leading-tight mb-1 hover:underline underline-offset-4 decoration-1">{isStaff && art.status === 'draft' && <DraftBadge />}{art.title}</h3>
                         </Link>
@@ -327,7 +327,7 @@ export default function Home() {
                   <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Community</div>
                   <div className="flex flex-col gap-6">
                     {communityArticles.map(art => (
-                      <article key={art.id}>
+                      <article key={art.id} className="overflow-hidden">
                         <Link href={`/articles/${art.id}`}>
                           <h3 className="font-headline font-bold text-2xl leading-tight mb-1 hover:underline underline-offset-4 decoration-1">{isStaff && art.status === 'draft' && <DraftBadge />}{art.title}</h3>
                         </Link>
@@ -367,7 +367,7 @@ export default function Home() {
                   <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Library News</div>
                   <div className="flex flex-col gap-8 divide-y divide-foreground/30">
                     {libraryArticles.map((art, i) => (
-                      <article key={art.id} className={i > 0 ? "pt-6" : ""}>
+                      <article key={art.id} className={`overflow-hidden${i > 0 ? " pt-6" : ""}`}>
                         <Link href={`/articles/${art.id}`}>
                           <h3 className="font-headline font-bold text-2xl leading-tight mb-1 hover:underline underline-offset-4 decoration-1">{isStaff && art.status === 'draft' && <DraftBadge />}{art.title}</h3>
                         </Link>

@@ -42,9 +42,9 @@ export function ArticleTeaser({ article, featured = false, size, photoFit = "con
   const floatWidth = resolvedSize === "feature" ? "40%" : "38%";
 
   return (
-    <article className="group break-inside-avoid">
+    <article className="group break-inside-avoid overflow-hidden">
       <Link href={`/articles/${article.id}`} className="block">
-        <div className="hover:bg-foreground/[0.02] transition-colors cursor-pointer overflow-hidden">
+        <div className="hover:bg-foreground/[0.02] transition-colors cursor-pointer">
 
           {/* Hero: full-width photo above text */}
           {resolvedSize === "hero" && article.photoUrl && (
