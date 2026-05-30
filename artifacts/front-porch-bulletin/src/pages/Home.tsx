@@ -282,9 +282,9 @@ export default function Home() {
               )}
 
               {/* ── 4H News ── */}
-              <div className="mb-8 pb-8 border-b-2 border-foreground">
-                <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">4H News</div>
-                {h4Articles.length > 0 ? (
+              {h4Articles.length > 0 && (
+                <div className="mb-8 pb-8 border-b-2 border-foreground">
+                  <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">4H News</div>
                   <div className="flex flex-col gap-6">
                     {h4Articles.map(art => (
                       <article key={art.id}>
@@ -318,15 +318,13 @@ export default function Home() {
                       </article>
                     ))}
                   </div>
-                ) : (
-                  <p className="font-serif italic text-sm text-foreground/40">No 4H news this issue.</p>
-                )}
-              </div>
+                </div>
+              )}
 
               {/* ── Community ── */}
-              <div className="mb-8 pb-8 border-b-2 border-foreground">
-                <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Community</div>
-                {communityArticles.length > 0 ? (
+              {communityArticles.length > 0 && (
+                <div className="mb-8 pb-8 border-b-2 border-foreground">
+                  <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Community</div>
                   <div className="flex flex-col gap-6">
                     {communityArticles.map(art => (
                       <article key={art.id}>
@@ -360,15 +358,13 @@ export default function Home() {
                       </article>
                     ))}
                   </div>
-                ) : (
-                  <p className="font-serif italic text-sm text-foreground/40">No community news this issue.</p>
-                )}
-              </div>
+                </div>
+              )}
 
               {/* ── Library News ── */}
-              <div className="mb-8 pb-8 border-b-2 border-foreground">
-                <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Library News</div>
-                {libraryArticles.length > 0 ? (
+              {libraryArticles.length > 0 && (
+                <div className="mb-8 pb-8 border-b-2 border-foreground">
+                  <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Library News</div>
                   <div className="flex flex-col gap-8 divide-y divide-foreground/30">
                     {libraryArticles.map((art, i) => (
                       <article key={art.id} className={i > 0 ? "pt-6" : ""}>
@@ -400,10 +396,8 @@ export default function Home() {
                       </article>
                     ))}
                   </div>
-                ) : (
-                  <p className="font-serif italic text-sm text-foreground/40">No library news this issue.</p>
-                )}
-              </div>
+                </div>
+              )}
 
               {/* ── Letters ── */}
               {letterArticles.length > 0 && (
