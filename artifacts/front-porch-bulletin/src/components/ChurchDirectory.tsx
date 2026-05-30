@@ -35,11 +35,20 @@ export function ChurchDirectory() {
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
         {churches.map((church) => (
-          <div key={church.id} className="border-l-2 border-foreground/30 pl-3">
+          <div key={church.id} className="border-l-2 border-foreground/30 pl-3 overflow-hidden">
+            {church.photoUrl && (
+              <img
+                src={church.photoUrl}
+                alt={church.name}
+                className="float-left mr-2 mb-1 border border-foreground/30 object-cover"
+                style={{ width: 48, height: 48 }}
+              />
+            )}
             <p className="font-headline font-bold text-sm leading-tight mb-0.5">{church.name}</p>
             <p className="font-mono text-xs text-foreground/70 uppercase tracking-wide mb-0.5">{church.pastor}</p>
             <p className="font-serif text-xs text-foreground/80 leading-snug">{church.serviceTimes}</p>
             <p className="font-mono text-xs text-foreground/60 mt-0.5">{church.phone}</p>
+            <div className="clear-both" />
           </div>
         ))}
       </div>
