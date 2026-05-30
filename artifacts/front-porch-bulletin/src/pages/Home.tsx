@@ -288,12 +288,6 @@ export default function Home() {
                   <div className="flex flex-col gap-6">
                     {h4Articles.map(art => (
                       <article key={art.id}>
-                        {art.photoUrl && (
-                          <div className="mb-2 w-full md:max-w-[50%]">
-                            <img src={art.photoUrl} alt={art.title} className="w-full md:w-auto block max-w-full h-auto" />
-                            {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
-                          </div>
-                        )}
                         <Link href={`/articles/${art.id}`}>
                           <h3 className="font-headline font-bold text-2xl leading-tight mb-1 hover:underline underline-offset-4 decoration-1">{isStaff && art.status === 'draft' && <DraftBadge />}{art.title}</h3>
                         </Link>
@@ -301,10 +295,25 @@ export default function Home() {
                         <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wide text-foreground/50 border-t border-b border-foreground/20 py-1 mb-2">
                           <span>By <span className="italic">{art.author}</span></span>
                         </div>
-                        <div className="font-serif text-sm leading-relaxed text-foreground/80 space-y-2">
-                          {art.content.split('\n\n').map((para, i) => (
-                            <p key={i}>{para}</p>
-                          ))}
+                        <div className="font-serif text-sm leading-relaxed text-foreground/80">
+                          {art.photoUrl && (
+                            <>
+                              <div className="block md:hidden w-full mb-2">
+                                <img src={art.photoUrl} alt={art.title} className="w-full block" />
+                                {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
+                              </div>
+                              <div className="hidden md:block float-left mr-3 mb-1 max-w-[42%]">
+                                <img src={art.photoUrl} alt={art.title} className="block max-w-full h-auto" />
+                                {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
+                              </div>
+                            </>
+                          )}
+                          <div className="space-y-2">
+                            {art.content.split('\n\n').map((para, i) => (
+                              <p key={i}>{para}</p>
+                            ))}
+                          </div>
+                          <div className="clear-both" />
                         </div>
                       </article>
                     ))}
@@ -321,12 +330,6 @@ export default function Home() {
                   <div className="flex flex-col gap-6">
                     {communityArticles.map(art => (
                       <article key={art.id}>
-                        {art.photoUrl && (
-                          <div className="mb-2 w-full md:max-w-[50%]">
-                            <img src={art.photoUrl} alt={art.title} className="w-full md:w-auto block max-w-full h-auto" />
-                            {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
-                          </div>
-                        )}
                         <Link href={`/articles/${art.id}`}>
                           <h3 className="font-headline font-bold text-2xl leading-tight mb-1 hover:underline underline-offset-4 decoration-1">{isStaff && art.status === 'draft' && <DraftBadge />}{art.title}</h3>
                         </Link>
@@ -334,10 +337,25 @@ export default function Home() {
                         <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wide text-foreground/50 border-t border-b border-foreground/20 py-1 mb-2">
                           <span>By <span className="italic">{art.author}</span></span>
                         </div>
-                        <div className="font-serif text-sm leading-relaxed text-foreground/80 space-y-2">
-                          {art.content.split('\n\n').map((para, i) => (
-                            <p key={i}>{para}</p>
-                          ))}
+                        <div className="font-serif text-sm leading-relaxed text-foreground/80">
+                          {art.photoUrl && (
+                            <>
+                              <div className="block md:hidden w-full mb-2">
+                                <img src={art.photoUrl} alt={art.title} className="w-full block" />
+                                {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
+                              </div>
+                              <div className="hidden md:block float-left mr-3 mb-1 max-w-[42%]">
+                                <img src={art.photoUrl} alt={art.title} className="block max-w-full h-auto" />
+                                {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
+                              </div>
+                            </>
+                          )}
+                          <div className="space-y-2">
+                            {art.content.split('\n\n').map((para, i) => (
+                              <p key={i}>{para}</p>
+                            ))}
+                          </div>
+                          <div className="clear-both" />
                         </div>
                       </article>
                     ))}

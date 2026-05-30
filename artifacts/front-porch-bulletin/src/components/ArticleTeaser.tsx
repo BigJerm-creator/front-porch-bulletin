@@ -34,15 +34,20 @@ export function ArticleTeaser({ article, featured = false, size, photoFit = "con
 
   const photoMaxH = {
     hero:     "320px",
-    feature:  "240px",
-    standard: "200px",
+    feature:  "220px",
+    standard: "180px",
   }[resolvedSize];
+
+  const floatPhoto = resolvedSize === "standard" || resolvedSize === "feature";
+  const floatWidth = resolvedSize === "feature" ? "40%" : "38%";
 
   return (
     <article className="group break-inside-avoid">
       <Link href={`/articles/${article.id}`} className="block">
-        <div className="hover:bg-foreground/[0.02] transition-colors cursor-pointer">
-          {article.photoUrl && (
+        <div className="hover:bg-foreground/[0.02] transition-colors cursor-pointer overflow-hidden">
+
+          {/* Hero: full-width photo above text */}
+          {resolvedSize === "hero" && article.photoUrl && (
             <div className="w-full overflow-hidden border border-foreground/20 mb-3 bg-muted">
               <img
                 src={article.photoUrl}
@@ -58,6 +63,16 @@ export function ArticleTeaser({ article, featured = false, size, photoFit = "con
             </div>
           )}
 
+          {/* Standard / Feature: photo floats left, text wraps */}
+          {floatPhoto && article.photoUrl && (
+            <img
+              src={article.photoUrl}
+              alt={article.title}
+              className="float-left border border-foreground/20 mr-3 mb-1 object-cover"
+              style={{ width: floatWidth, maxHeight: photoMaxH, objectFit: photoFit }}
+            />
+          )}
+
           <div className="p-2 -m-2">
             <h3 className={`font-headline font-bold leading-tight text-foreground group-hover:underline underline-offset-4 decoration-1 ${headingClass}`}>
               {article.title}
@@ -69,7 +84,7 @@ export function ArticleTeaser({ article, featured = false, size, photoFit = "con
               </p>
             )}
 
-            <div className="flex items-center gap-2 text-xs font-mono mb-3 text-foreground/70 uppercase tracking-wide">
+            <div className="flex items-center gap-2 text-xs font-mono mb-3 text-foreground/70 uppercase tracking-wide flex-wrap">
               <span>By <span className="italic">{article.author}</span></span>
               <span>•</span>
               <span className="bg-foreground/5 px-1">{article.category}</span>
@@ -87,7 +102,15 @@ export function ArticleTeaser({ article, featured = false, size, photoFit = "con
                 article.content.split('\n')[0]
               )}
             </p>
+
+            {floatPhoto && article.photoCredit && (
+              <p className="font-mono text-[8px] text-foreground/40 italic mt-1">
+                Photo: {article.photoCredit}
+              </p>
+            )}
           </div>
+
+          {floatPhoto && <div className="clear-both" />}
         </div>
       </Link>
     </article>
