@@ -467,33 +467,61 @@ export function PrintView() {
         </div>
       ) : null}
 
-      {/* Library News — full width */}
-      {libraryArticles.length > 0 && (
-      <div style={{ marginBottom: "18pt", paddingBottom: "14pt", borderBottom: RULE_DOUBLE }}>
-        <SectionLabel>Library News</SectionLabel>
-        <div>
-            {libraryArticles.map((art, i) => (
-              <div key={art.id} style={{ marginBottom: "14pt", paddingBottom: "12pt", borderBottom: i < libraryArticles.length - 1 ? RULE_LIGHT : "none" }}>
-                <h3 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 3pt" }}>{art.title}</h3>
-                {art.subtitle && <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "10pt", margin: "0 0 2pt", color: "#333" }}>{art.subtitle}</p>}
-                <ArticleByline author={art.author} />
-                <div style={{ fontSize: "9.5pt", lineHeight: 1.5, textAlign: "justify" }}>
-                  {art.photoUrl && (
-                    <div style={{ float: "left", marginRight: "10pt", marginBottom: "4pt", maxWidth: "45%" }}>
-                      <img src={art.photoUrl} alt={art.title} style={{ display: "block", maxWidth: "100%", height: "auto" }} />
-                      {art.photoCredit && <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "1pt 0 0" }}>Photo credit — {art.photoCredit}</p>}
-                    </div>
-                  )}
-                  {art.content.split('\n\n').map((para, j) => (
-                    <p key={j} style={{ margin: j === 0 ? "0" : "6pt 0 0", breakInside: "avoid" }}>{para}</p>
-                  ))}
-                  <div style={{ clear: "both" }} />
+      {/* Library News — full width, photo-left | articles | photo-right */}
+      {libraryArticles.length > 0 && (() => {
+        type PhotoEntry = { url: string; credit?: string };
+        const multiPhotoArt = libraryArticles.find(a => {
+          const p = (a as any).photos as PhotoEntry[] | null;
+          return p && p.length >= 2;
+        });
+        let leftPhoto: PhotoEntry | null = null;
+        let rightPhoto: PhotoEntry | null = null;
+        if (multiPhotoArt) {
+          const p = (multiPhotoArt as any).photos as PhotoEntry[];
+          leftPhoto = p[0];
+          rightPhoto = p[1];
+        } else {
+          const withPhotos = libraryArticles.filter(a => a.photoUrl);
+          if (withPhotos[0]) leftPhoto = { url: withPhotos[0].photoUrl!, credit: (withPhotos[0] as any).photoCredit ?? undefined };
+          if (withPhotos[1]) rightPhoto = { url: withPhotos[1].photoUrl!, credit: (withPhotos[1] as any).photoCredit ?? undefined };
+        }
+        return (
+          <div style={{ marginBottom: "18pt", paddingBottom: "14pt", borderBottom: RULE_DOUBLE }}>
+            <SectionLabel>Library News</SectionLabel>
+            <div style={{ display: "flex", gap: "12pt", alignItems: "flex-start" }}>
+              {/* Left photo */}
+              {leftPhoto && (
+                <div style={{ width: "28%", flexShrink: 0 }}>
+                  <img src={leftPhoto.url} alt="Library photo" style={{ display: "block", width: "100%", height: "auto" }} />
+                  {leftPhoto.credit && <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "1pt 0 0" }}>Photo credit — {leftPhoto.credit}</p>}
                 </div>
+              )}
+              {/* Center: articles */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                {libraryArticles.map((art, i) => (
+                  <div key={art.id} style={{ marginBottom: "14pt", paddingBottom: "12pt", borderBottom: i < libraryArticles.length - 1 ? RULE_LIGHT : "none" }}>
+                    <h3 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 3pt" }}>{art.title}</h3>
+                    {art.subtitle && <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "10pt", margin: "0 0 2pt", color: "#333" }}>{art.subtitle}</p>}
+                    <ArticleByline author={art.author} />
+                    <div style={{ fontSize: "9.5pt", lineHeight: 1.5, textAlign: "justify" }}>
+                      {art.content.split('\n\n').map((para, j) => (
+                        <p key={j} style={{ margin: j === 0 ? "0" : "6pt 0 0", breakInside: "avoid" }}>{para}</p>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
-        </div>
-      </div>
-      )}
+              {/* Right photo */}
+              {rightPhoto && (
+                <div style={{ width: "28%", flexShrink: 0 }}>
+                  <img src={rightPhoto.url} alt="Library photo" style={{ display: "block", width: "100%", height: "auto" }} />
+                  {rightPhoto.credit && <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "1pt 0 0" }}>Photo credit — {rightPhoto.credit}</p>}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Letters from / to the Editor — full-width */}
       {letterArticles.length > 0 && (
