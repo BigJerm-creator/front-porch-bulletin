@@ -531,7 +531,7 @@ export function PrintView() {
       {otherArticles.length > 0 && (
         <div>
           {otherArticles.map((art, i) => (
-            <div key={art.id} style={{ marginBottom: "22pt", paddingBottom: "18pt", borderBottom: i < otherArticles.length - 1 ? RULE_LIGHT : "none" }}>
+            <div key={art.id} style={{ marginBottom: "22pt", paddingBottom: "18pt", borderBottom: i < otherArticles.length - 1 ? RULE_LIGHT : "none", breakInside: "avoid" }}>
               <SectionLabel>{art.category}</SectionLabel>
               <h2 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "28pt", lineHeight: 1.05, margin: "0 0 4pt", letterSpacing: "-0.01em" }}>
                 {art.title}
