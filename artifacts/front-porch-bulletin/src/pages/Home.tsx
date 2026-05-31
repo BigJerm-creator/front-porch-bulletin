@@ -467,7 +467,7 @@ export default function Home() {
                   <img
                     src={comic.imageUrl}
                     alt="Comic strip"
-                    className="w-full block"
+                    className="block w-1/2 mx-auto"
                   />
                   {comic.caption && (
                     <p className="font-mono text-[10px] text-foreground/50 italic text-center mt-2">{comic.caption}</p>
