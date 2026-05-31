@@ -28,7 +28,9 @@ router.get("/", async (req, res) => {
   const conditions = [];
   if (!includeArchived) {
     conditions.push(eq(articlesTable.archived, false));
-    if (!isStaff) {
+    if (isStaff) {
+      conditions.push(eq(articlesTable.status, "draft"));
+    } else {
       conditions.push(eq(articlesTable.status, "published"));
     }
   }

@@ -383,7 +383,7 @@ export default function Home() {
                         </div>
                         {art.photoUrl && (
                           <div className="w-full mb-2">
-                            <img src={art.photoUrl} alt={art.title} className="w-full block h-[600px] object-cover" />
+                            <img src={art.photoUrl} alt={art.title} className="w-full block h-[400px] object-cover" />
                             {art.photoCredit && <p className="font-mono text-[7px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
                           </div>
                         )}
@@ -406,7 +406,7 @@ export default function Home() {
                         {/* Left photo — first article that has a photo */}
                         {leftArt && (
                           <div className="w-[30%] shrink-0">
-                            <img src={leftArt.photoUrl!} alt={leftArt.title} className="block w-full h-[600px] object-cover" />
+                            <img src={leftArt.photoUrl!} alt={leftArt.title} className="block w-full h-[400px] object-cover" />
                             {leftArt.photoCredit && <p className="font-mono text-[7px] text-right text-foreground/40 italic mt-0.5">Photo: {leftArt.photoCredit}</p>}
                           </div>
                         )}
@@ -434,7 +434,7 @@ export default function Home() {
                         {/* Right photo — second article that has a photo */}
                         {rightArt && (
                           <div className="w-[30%] shrink-0">
-                            <img src={rightArt.photoUrl!} alt={rightArt.title} className="block w-full h-[600px] object-cover" />
+                            <img src={rightArt.photoUrl!} alt={rightArt.title} className="block w-full h-[400px] object-cover" />
                             {rightArt.photoCredit && <p className="font-mono text-[7px] text-right text-foreground/40 italic mt-0.5">Photo: {rightArt.photoCredit}</p>}
                           </div>
                         )}
