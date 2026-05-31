@@ -13,6 +13,7 @@ import AdminGroupSpotlight from "./AdminGroupSpotlight";
 import AdminChurches from "./AdminChurches";
 import AdminCalendar from "./AdminCalendar";
 import AdminIssueSettings from "./AdminIssueSettings";
+import AdminComic from "./AdminComic";
 import { Newspaper } from "lucide-react";
 
 export default function AdminRoute() {
@@ -61,6 +62,7 @@ export default function AdminRoute() {
               <Route path="/admin/churches" component={AdminChurches} />
               <Route path="/admin/calendar" component={AdminCalendar} />
               <Route path="/admin/issue-settings" component={AdminIssueSettings} />
+              <Route path="/admin/comic" component={AdminComic} />
               <Route path="/admin/users" component={AdminUsers} />
             </Switch>
           </AdminLayout>

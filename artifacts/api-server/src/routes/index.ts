@@ -14,6 +14,7 @@ import aboutRouter from "./about";
 import issueSettingsRouter from "./issueSettings";
 import letterToEditorRouter from "./letterToEditor";
 import donateRouter from "./donate";
+import comicRouter from "./comic";
 
 const router: IRouter = Router();
 
@@ -32,5 +33,6 @@ router.use("/about", aboutRouter);
 router.use("/issue-settings", issueSettingsRouter);
 router.use("/letter-to-editor", letterToEditorRouter);
 router.use("/donate", donateRouter);
+router.use("/comic", comicRouter);
 
 export default router;

@@ -9,3 +9,4 @@ export * from "./newsletterSubscribers";
 export * from "./calendarEvents";
 export * from "./about";
 export * from "./issueSettings";
+export * from "./comics";

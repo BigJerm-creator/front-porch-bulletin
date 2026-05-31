@@ -25,6 +25,8 @@ import type {
   BusinessSpotlightBody,
   Church,
   ChurchBody,
+  Comic,
+  ComicBody,
   CreateArticleBody,
   GetFeaturedArticles200,
   GroupSpotlight,
@@ -1795,6 +1797,157 @@ export const useUpdateSpotlight = <
   TContext
 > => {
   return useMutation(getUpdateSpotlightMutationOptions(options));
+};
+
+/**
+ * @summary Get the current comic
+ */
+export const getGetComicUrl = () => {
+  return `/api/comic`;
+};
+
+export const getComic = async (options?: RequestInit): Promise<Comic> => {
+  return customFetch<Comic>(getGetComicUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetComicQueryKey = () => {
+  return [`/api/comic`] as const;
+};
+
+export const getGetComicQueryOptions = <
+  TData = Awaited<ReturnType<typeof getComic>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<Awaited<ReturnType<typeof getComic>>, TError, TData>;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetComicQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getComic>>> = ({
+    signal,
+  }) => getComic({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getComic>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetComicQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getComic>>
+>;
+export type GetComicQueryError = ErrorType<void>;
+
+/**
+ * @summary Get the current comic
+ */
+
+export function useGetComic<
+  TData = Awaited<ReturnType<typeof getComic>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<Awaited<ReturnType<typeof getComic>>, TError, TData>;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetComicQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Replace the comic (requires auth)
+ */
+export const getUpdateComicUrl = () => {
+  return `/api/comic`;
+};
+
+export const updateComic = async (
+  comicBody: ComicBody,
+  options?: RequestInit,
+): Promise<Comic> => {
+  return customFetch<Comic>(getUpdateComicUrl(), {
+    ...options,
+    method: "PUT",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(comicBody),
+  });
+};
+
+export const getUpdateComicMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateComic>>,
+    TError,
+    { data: BodyType<ComicBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateComic>>,
+  TError,
+  { data: BodyType<ComicBody> },
+  TContext
+> => {
+  const mutationKey = ["updateComic"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateComic>>,
+    { data: BodyType<ComicBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return updateComic(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateComicMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateComic>>
+>;
+export type UpdateComicMutationBody = BodyType<ComicBody>;
+export type UpdateComicMutationError = ErrorType<void>;
+
+/**
+ * @summary Replace the comic (requires auth)
+ */
+export const useUpdateComic = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateComic>>,
+    TError,
+    { data: BodyType<ComicBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateComic>>,
+  TError,
+  { data: BodyType<ComicBody> },
+  TContext
+> => {
+  return useMutation(getUpdateComicMutationOptions(options));
 };
 
 /**

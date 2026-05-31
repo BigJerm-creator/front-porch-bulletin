@@ -459,6 +459,40 @@ paths:
         "401":
           description: Unauthorized
 
+  /comic:
+    get:
+      operationId: getComic
+      tags: [comic]
+      summary: Get the current comic
+      responses:
+        "200":
+          description: Current comic
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comic"
+        "404":
+          description: No comic set
+    put:
+      operationId: updateComic
+      tags: [comic]
+      summary: Replace the comic (requires auth)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComicBody"
+      responses:
+        "200":
+          description: Updated comic
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comic"
+        "401":
+          description: Unauthorized
+
   /churches:
     get:
       operationId: listChurches
@@ -1202,3 +1236,38 @@ components:
         - pastor
         - serviceTimes
         - phone
+
+    Comic:
+      type: object
+      properties:
+        id:
+          type: integer
+        imageUrl:
+          type: string
+          nullable: true
+        caption:
+          type: string
+          nullable: true
+        status:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - status
+        - createdAt
+        - updatedAt
+
+    ComicBody:
+      type: object
+      properties:
+        imageUrl:
+          type: string
+          nullable: true
+        caption:
+          type: string
+          nullable: true

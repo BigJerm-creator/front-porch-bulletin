@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import logoSrc from "@assets/The_(1)_1775854639167.png";
-import comicSrc from "@assets/Comic_1780247384752.jpg";
 import {
   useGetFeaturedArticles,
   useGetSpotlight, getGetSpotlightQueryKey,
   useGetBusinessSpotlight, getGetBusinessSpotlightQueryKey,
   useGetGroupSpotlight, getGetGroupSpotlightQueryKey,
+  useGetComic, getGetComicQueryKey,
   useListChurches, getListChurchesQueryKey,
   useListArticles, getListArticlesQueryKey,
 } from "@workspace/api-client-react";
@@ -130,6 +130,7 @@ export function PrintView() {
   const { data: spotlight }         = useGetSpotlight({ query: { queryKey: getGetSpotlightQueryKey(), retry: false } as any });
   const { data: businessSpotlight } = useGetBusinessSpotlight({ query: { queryKey: getGetBusinessSpotlightQueryKey(), retry: false } as any });
   const { data: groupSpotlight }    = useGetGroupSpotlight({ query: { queryKey: getGetGroupSpotlightQueryKey(), retry: false } as any });
+  const { data: comic }             = useGetComic({ query: { queryKey: getGetComicQueryKey(), retry: false } as any });
   const { data: churchData }        = useListChurches({ query: { queryKey: getListChurchesQueryKey() } });
   const [calEvents, setCalEvents]   = useState<CalendarEvent[]>([]);
   const [issueSettings, setIssueSettings] = useState({ issueNumber: "01", issueYear: 2026, issueMonth: 5 });
@@ -563,14 +564,19 @@ export function PrintView() {
       )}
 
       {/* ══ Comics ══ */}
-      <div style={{ breakBefore: "page", pageBreakBefore: "always", marginBottom: "18pt" }}>
-        <SectionLabel>Comics</SectionLabel>
-        <img
-          src={comicSrc}
-          alt="Bob + Marley comic strip"
-          style={{ display: "block", width: "100%", height: "auto" }}
-        />
-      </div>
+      {comic?.imageUrl && (
+        <div style={{ breakBefore: "page", pageBreakBefore: "always", marginBottom: "18pt" }}>
+          <SectionLabel>Comics</SectionLabel>
+          <img
+            src={comic.imageUrl}
+            alt="Comic strip"
+            style={{ display: "block", width: "100%", height: "auto" }}
+          />
+          {comic.caption && (
+            <p style={{ fontFamily: FONT_MONO, fontSize: "7pt", color: INK_MUTED, textAlign: "center", marginTop: "4pt", fontStyle: "italic" }}>{comic.caption}</p>
+          )}
+        </div>
+      )}
 
       {/* ══ Church & Calendar — always own page ══ */}
       <div style={{ breakBefore: "page", pageBreakBefore: "always" }}>

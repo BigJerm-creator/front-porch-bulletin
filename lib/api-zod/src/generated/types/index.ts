@@ -16,6 +16,8 @@ export * from "./businessSpotlightBody";
 export * from "./category";
 export * from "./church";
 export * from "./churchBody";
+export * from "./comic";
+export * from "./comicBody";
 export * from "./createArticleBody";
 export * from "./getFeaturedArticles200";
 export * from "./groupSpotlight";

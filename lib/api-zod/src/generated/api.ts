@@ -570,6 +570,35 @@ export const UpdateSpotlightResponse = zod.object({
 });
 
 /**
+ * @summary Get the current comic
+ */
+export const GetComicResponse = zod.object({
+  id: zod.number(),
+  imageUrl: zod.string().nullish(),
+  caption: zod.string().nullish(),
+  status: zod.string(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Replace the comic (requires auth)
+ */
+export const UpdateComicBody = zod.object({
+  imageUrl: zod.string().nullish(),
+  caption: zod.string().nullish(),
+});
+
+export const UpdateComicResponse = zod.object({
+  id: zod.number(),
+  imageUrl: zod.string().nullish(),
+  caption: zod.string().nullish(),
+  status: zod.string(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+
+/**
  * @summary List all churches
  */
 export const ListChurchesResponse = zod.object({

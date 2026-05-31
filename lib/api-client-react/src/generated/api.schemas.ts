@@ -220,6 +220,20 @@ export interface ChurchBody {
   photos?: Photo[] | null;
 }
 
+export interface Comic {
+  id: number;
+  imageUrl?: string | null;
+  caption?: string | null;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ComicBody {
+  imageUrl?: string | null;
+  caption?: string | null;
+}
+
 export type ListArticlesParams = {
   category?: string;
   featured?: boolean;
