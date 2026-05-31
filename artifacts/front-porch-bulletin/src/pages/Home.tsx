@@ -121,7 +121,7 @@ export default function Home() {
                     </div>
                     <div className="font-serif text-lg leading-relaxed text-foreground/90">
                       {/* Desktop: spotlight floated right inside article */}
-                      {spotlight && (
+                      {spotlight && spotlight.status !== "disabled" && (
                         <div className="hidden md:block float-right ml-6 mb-2 w-[280px] border-t-2 border-foreground pt-3">
                           <div className="font-mono text-[10px] uppercase tracking-widest border-b border-foreground pb-1 mb-2">Student Spotlight</div>
                           {spotlight.photoUrl && (
@@ -163,14 +163,14 @@ export default function Home() {
               </div>
 
               {/* ── Student Spotlight (mobile only — desktop sees it inside the article above) ── */}
-              {spotlight && (
+              {spotlight && spotlight.status !== "disabled" && (
                 <div className="md:hidden mb-8 pb-8 border-b-2 border-foreground">
                   <SpotlightCard full />
                 </div>
               )}
 
               {/* ── Business Spotlight ── */}
-              {businessSpotlight && (
+              {businessSpotlight && businessSpotlight.status !== "disabled" && (
                 <div className="mb-8 pb-8 border-b-2 border-foreground">
                   <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Business Spotlight</div>
                   <div>
@@ -205,7 +205,7 @@ export default function Home() {
               )}
 
               {/* ── Group Spotlight ── */}
-              {groupSpotlight && (
+              {groupSpotlight && groupSpotlight.status !== "disabled" && (
                 <div className="mb-8 pb-8 border-b-2 border-foreground">
                   <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Group Spotlight</div>
                   <div>
