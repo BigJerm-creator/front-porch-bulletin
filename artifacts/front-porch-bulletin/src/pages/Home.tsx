@@ -5,6 +5,7 @@ import {
   useGetBusinessSpotlight, getGetBusinessSpotlightQueryKey,
   useGetGroupSpotlight, getGetGroupSpotlightQueryKey,
   useListArticles, getListArticlesQueryKey,
+  useGetComic, getGetComicQueryKey,
 } from "@workspace/api-client-react";
 import { Layout } from "@/components/layout/Layout";
 import { ArticleTeaser } from "@/components/ArticleTeaser";
@@ -38,6 +39,7 @@ export default function Home() {
   const { data: libraryData,   isLoading: isLoadingLibrary }   = useListArticles({ category: "Library News", limit: 10 }, { query: { queryKey: getListArticlesQueryKey({ category: "Library News", limit: 10 }) } });
   const { data: h4Data,        isLoading: isLoadingH4 }        = useListArticles({ category: "4H News",      limit: 10 }, { query: { queryKey: getListArticlesQueryKey({ category: "4H News",      limit: 10 }) } });
   const { data: communityData, isLoading: isLoadingCommunity } = useListArticles({ category: "Community",    limit: 10 }, { query: { queryKey: getListArticlesQueryKey({ category: "Community",    limit: 10 }) } });
+  const { data: comic }        = useGetComic({ query: { queryKey: getGetComicQueryKey(), retry: false } as any });
 
   const isLoading = isLoadingFeatured || isLoadingSpotlight || isLoadingBusiness || isLoadingGroup || isLoadingLibrary || isLoadingH4 || isLoadingCommunity;
 
@@ -455,6 +457,21 @@ export default function Home() {
                       </div>
                     ))}
                   </div>
+                </div>
+              )}
+
+              {/* ── Comics ── */}
+              {comic?.imageUrl && (
+                <div className="mb-8 pb-8 border-b-2 border-foreground">
+                  <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Comics</div>
+                  <img
+                    src={comic.imageUrl}
+                    alt="Comic strip"
+                    className="w-full block"
+                  />
+                  {comic.caption && (
+                    <p className="font-mono text-[10px] text-foreground/50 italic text-center mt-2">{comic.caption}</p>
+                  )}
                 </div>
               )}
 
