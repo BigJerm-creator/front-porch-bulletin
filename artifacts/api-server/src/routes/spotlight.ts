@@ -1,14 +1,14 @@
 import { Router } from "express";
 import { db, spotlightTable } from "@workspace/db";
 import { desc, eq, ne } from "drizzle-orm";
-import { requireApproved, checkIsApprovedStaff } from "../middlewares/auth";
+import { requireApproved, checkIsAdmin } from "../middlewares/auth";
 
 const router = Router();
 
 router.get("/", async (req, res) => {
-  const isStaff = await checkIsApprovedStaff(req);
+  const isAdmin = await checkIsAdmin(req);
 
-  if (isStaff) {
+  if (isAdmin) {
     const [latest] = await db
       .select()
       .from(spotlightTable)

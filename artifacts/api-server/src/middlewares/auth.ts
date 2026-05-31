@@ -49,6 +49,14 @@ export const checkIsApprovedStaff = async (req: Request): Promise<boolean> => {
   return !!roleRow;
 };
 
+export const checkIsAdmin = async (req: Request): Promise<boolean> => {
+  const auth = getAuth(req);
+  const userId = auth?.userId;
+  if (!userId) return false;
+  const [roleRow] = await db.select().from(userRolesTable).where(eq(userRolesTable.clerkUserId, userId));
+  return roleRow?.role === "admin";
+};
+
 export const requireAdmin = async (req: AuthedRequest, res: Response, next: NextFunction) => {
   const auth = getAuth(req);
   const userId = auth?.userId;
