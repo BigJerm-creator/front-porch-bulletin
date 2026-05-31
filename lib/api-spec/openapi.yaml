@@ -555,6 +555,40 @@ paths:
         "404":
           description: No spotlight found
 
+  /puzzles:
+    get:
+      operationId: getPuzzles
+      tags: [puzzles]
+      summary: Get the current puzzles
+      responses:
+        "200":
+          description: Current puzzles
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Puzzles"
+        "404":
+          description: No puzzles set
+    put:
+      operationId: updatePuzzles
+      tags: [puzzles]
+      summary: Replace the puzzles (requires auth)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PuzzlesBody"
+      responses:
+        "200":
+          description: Updated puzzles
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Puzzles"
+        "401":
+          description: Unauthorized
+
   /comic:
     get:
       operationId: getComic
@@ -1368,5 +1402,40 @@ components:
           type: string
           nullable: true
         caption:
+          type: string
+          nullable: true
+
+    Puzzles:
+      type: object
+      properties:
+        id:
+          type: integer
+        crosswordUrl:
+          type: string
+          nullable: true
+        wordSearchUrl:
+          type: string
+          nullable: true
+        status:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - status
+        - createdAt
+        - updatedAt
+
+    PuzzlesBody:
+      type: object
+      properties:
+        crosswordUrl:
+          type: string
+          nullable: true
+        wordSearchUrl:
           type: string
           nullable: true

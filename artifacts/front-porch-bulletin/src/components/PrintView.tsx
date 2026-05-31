@@ -6,6 +6,7 @@ import {
   useGetBusinessSpotlight, getGetBusinessSpotlightQueryKey,
   useGetGroupSpotlight, getGetGroupSpotlightQueryKey,
   useGetComic, getGetComicQueryKey,
+  useGetPuzzles, getGetPuzzlesQueryKey,
   useListChurches, getListChurchesQueryKey,
   useListArticles, getListArticlesQueryKey,
 } from "@workspace/api-client-react";
@@ -131,6 +132,7 @@ export function PrintView() {
   const { data: businessSpotlight } = useGetBusinessSpotlight({ query: { queryKey: getGetBusinessSpotlightQueryKey(), retry: false } as any });
   const { data: groupSpotlight }    = useGetGroupSpotlight({ query: { queryKey: getGetGroupSpotlightQueryKey(), retry: false } as any });
   const { data: comic }             = useGetComic({ query: { queryKey: getGetComicQueryKey(), retry: false } as any });
+  const { data: puzzles }           = useGetPuzzles({ query: { queryKey: getGetPuzzlesQueryKey(), retry: false } as any });
   const { data: churchData }        = useListChurches({ query: { queryKey: getListChurchesQueryKey() } });
   const [calEvents, setCalEvents]   = useState<CalendarEvent[]>([]);
   const [issueSettings, setIssueSettings] = useState({ issueNumber: "01", issueYear: 2026, issueMonth: 5 });
@@ -575,6 +577,27 @@ export function PrintView() {
           {comic.caption && (
             <p style={{ fontFamily: FONT_MONO, fontSize: "7pt", color: INK_MUTED, textAlign: "center", marginTop: "4pt", fontStyle: "italic" }}>{comic.caption}</p>
           )}
+        </div>
+      )}
+
+      {/* ══ Puzzles ══ */}
+      {puzzles && (puzzles.crosswordUrl || puzzles.wordSearchUrl) && (
+        <div style={{ marginBottom: "18pt", marginTop: "14pt" }}>
+          <SectionLabel>Puzzles</SectionLabel>
+          <div style={{ display: "grid", gridTemplateColumns: puzzles.crosswordUrl && puzzles.wordSearchUrl ? "1fr 1fr" : "1fr", gap: "12pt" }}>
+            {puzzles.crosswordUrl && (
+              <div>
+                <p style={{ fontFamily: FONT_MONO, fontSize: "7pt", color: INK_MUTED, textAlign: "center", marginBottom: "4pt", textTransform: "uppercase", letterSpacing: "0.1em" }}>Crossword</p>
+                <img src={puzzles.crosswordUrl} alt="Crossword puzzle" style={{ display: "block", width: "100%", height: "auto" }} />
+              </div>
+            )}
+            {puzzles.wordSearchUrl && (
+              <div>
+                <p style={{ fontFamily: FONT_MONO, fontSize: "7pt", color: INK_MUTED, textAlign: "center", marginBottom: "4pt", textTransform: "uppercase", letterSpacing: "0.1em" }}>Word Search</p>
+                <img src={puzzles.wordSearchUrl} alt="Word search puzzle" style={{ display: "block", width: "100%", height: "auto" }} />
+              </div>
+            )}
+          </div>
         </div>
       )}
 

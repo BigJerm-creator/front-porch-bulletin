@@ -41,6 +41,8 @@ import type {
   MyRoleResponse,
   Obituary,
   ObituaryBody,
+  Puzzles,
+  PuzzlesBody,
   SetUserRoleBody,
   Spotlight,
   SpotlightBody,
@@ -2283,6 +2285,165 @@ export const usePublishSpotlight = <
   TContext
 > => {
   return useMutation(getPublishSpotlightMutationOptions(options));
+};
+
+/**
+ * @summary Get the current puzzles
+ */
+export const getGetPuzzlesUrl = () => {
+  return `/api/puzzles`;
+};
+
+export const getPuzzles = async (options?: RequestInit): Promise<Puzzles> => {
+  return customFetch<Puzzles>(getGetPuzzlesUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetPuzzlesQueryKey = () => {
+  return [`/api/puzzles`] as const;
+};
+
+export const getGetPuzzlesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getPuzzles>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getPuzzles>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetPuzzlesQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getPuzzles>>> = ({
+    signal,
+  }) => getPuzzles({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getPuzzles>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetPuzzlesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getPuzzles>>
+>;
+export type GetPuzzlesQueryError = ErrorType<void>;
+
+/**
+ * @summary Get the current puzzles
+ */
+
+export function useGetPuzzles<
+  TData = Awaited<ReturnType<typeof getPuzzles>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getPuzzles>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetPuzzlesQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Replace the puzzles (requires auth)
+ */
+export const getUpdatePuzzlesUrl = () => {
+  return `/api/puzzles`;
+};
+
+export const updatePuzzles = async (
+  puzzlesBody: PuzzlesBody,
+  options?: RequestInit,
+): Promise<Puzzles> => {
+  return customFetch<Puzzles>(getUpdatePuzzlesUrl(), {
+    ...options,
+    method: "PUT",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(puzzlesBody),
+  });
+};
+
+export const getUpdatePuzzlesMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updatePuzzles>>,
+    TError,
+    { data: BodyType<PuzzlesBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updatePuzzles>>,
+  TError,
+  { data: BodyType<PuzzlesBody> },
+  TContext
+> => {
+  const mutationKey = ["updatePuzzles"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updatePuzzles>>,
+    { data: BodyType<PuzzlesBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return updatePuzzles(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdatePuzzlesMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updatePuzzles>>
+>;
+export type UpdatePuzzlesMutationBody = BodyType<PuzzlesBody>;
+export type UpdatePuzzlesMutationError = ErrorType<void>;
+
+/**
+ * @summary Replace the puzzles (requires auth)
+ */
+export const useUpdatePuzzles = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updatePuzzles>>,
+    TError,
+    { data: BodyType<PuzzlesBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updatePuzzles>>,
+  TError,
+  { data: BodyType<PuzzlesBody> },
+  TContext
+> => {
+  return useMutation(getUpdatePuzzlesMutationOptions(options));
 };
 
 /**

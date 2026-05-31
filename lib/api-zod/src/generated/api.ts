@@ -706,6 +706,35 @@ export const PublishSpotlightResponse = zod.object({
 });
 
 /**
+ * @summary Get the current puzzles
+ */
+export const GetPuzzlesResponse = zod.object({
+  id: zod.number(),
+  crosswordUrl: zod.string().nullish(),
+  wordSearchUrl: zod.string().nullish(),
+  status: zod.string(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Replace the puzzles (requires auth)
+ */
+export const UpdatePuzzlesBody = zod.object({
+  crosswordUrl: zod.string().nullish(),
+  wordSearchUrl: zod.string().nullish(),
+});
+
+export const UpdatePuzzlesResponse = zod.object({
+  id: zod.number(),
+  crosswordUrl: zod.string().nullish(),
+  wordSearchUrl: zod.string().nullish(),
+  status: zod.string(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+
+/**
  * @summary Get the current comic
  */
 export const GetComicResponse = zod.object({

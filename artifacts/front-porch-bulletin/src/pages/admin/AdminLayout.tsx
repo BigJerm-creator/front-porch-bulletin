@@ -1,7 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { useClerk, useUser } from "@clerk/react";
 import { useGetMyRole, getGetMyRoleQueryKey } from "@workspace/api-client-react";
-import { FileText, Users, LogOut, LayoutDashboard, Star, Church, Printer, CalendarDays, Building2, Info, Send, Laugh } from "lucide-react";
+import { FileText, Users, LogOut, LayoutDashboard, Star, Church, Printer, CalendarDays, Building2, Info, Send, Laugh, Puzzle } from "lucide-react";
 import logoSrc from "@assets/The_(1)_1775854639167.png";
 import { BulkEmailDialog } from "@/components/admin/BulkEmailDialog";
 import { useState, useEffect, useCallback } from "react";
@@ -66,6 +66,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: "/admin/churches", label: "Churches", icon: Church },
     { href: "/admin/calendar", label: "Calendar", icon: CalendarDays },
     { href: "/admin/comic", label: "Comics", icon: Laugh },
+    { href: "/admin/puzzles", label: "Puzzles", icon: Puzzle },
   ];
 
   if (roleData?.isAdmin) {

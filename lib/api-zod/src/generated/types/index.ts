@@ -33,6 +33,8 @@ export * from "./myRoleResponse";
 export * from "./obituary";
 export * from "./obituaryBody";
 export * from "./photo";
+export * from "./puzzles";
+export * from "./puzzlesBody";
 export * from "./setUserRoleBody";
 export * from "./setUserRoleBodyRole";
 export * from "./spotlight";

@@ -6,6 +6,7 @@ import {
   useGetGroupSpotlight, getGetGroupSpotlightQueryKey,
   useListArticles, getListArticlesQueryKey,
   useGetComic, getGetComicQueryKey,
+  useGetPuzzles, getGetPuzzlesQueryKey,
 } from "@workspace/api-client-react";
 import { Layout } from "@/components/layout/Layout";
 import { ArticleTeaser } from "@/components/ArticleTeaser";
@@ -40,6 +41,7 @@ export default function Home() {
   const { data: h4Data,        isLoading: isLoadingH4 }        = useListArticles({ category: "4H News",      limit: 10 }, { query: { queryKey: getListArticlesQueryKey({ category: "4H News",      limit: 10 }) } });
   const { data: communityData, isLoading: isLoadingCommunity } = useListArticles({ category: "Community",    limit: 10 }, { query: { queryKey: getListArticlesQueryKey({ category: "Community",    limit: 10 }) } });
   const { data: comic }        = useGetComic({ query: { queryKey: getGetComicQueryKey(), retry: false } as any });
+  const { data: puzzles }      = useGetPuzzles({ query: { queryKey: getGetPuzzlesQueryKey(), retry: false } as any });
 
   const isLoading = isLoadingFeatured || isLoadingSpotlight || isLoadingBusiness || isLoadingGroup || isLoadingLibrary || isLoadingH4 || isLoadingCommunity;
 
@@ -472,6 +474,27 @@ export default function Home() {
                   {comic.caption && (
                     <p className="font-mono text-[10px] text-foreground/50 italic text-center mt-2">{comic.caption}</p>
                   )}
+                </div>
+              )}
+
+              {/* ── Puzzles ── */}
+              {puzzles && (puzzles.crosswordUrl || puzzles.wordSearchUrl) && (
+                <div className="mb-8 pb-8 border-b-2 border-foreground">
+                  <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Puzzles</div>
+                  <div className={`grid gap-6 ${puzzles.crosswordUrl && puzzles.wordSearchUrl ? "grid-cols-2" : "grid-cols-1"}`}>
+                    {puzzles.crosswordUrl && (
+                      <div>
+                        <p className="font-mono text-[10px] uppercase tracking-widest text-foreground/50 text-center mb-2">Crossword</p>
+                        <img src={puzzles.crosswordUrl} alt="Crossword puzzle" className="block w-full h-auto" />
+                      </div>
+                    )}
+                    {puzzles.wordSearchUrl && (
+                      <div>
+                        <p className="font-mono text-[10px] uppercase tracking-widest text-foreground/50 text-center mb-2">Word Search</p>
+                        <img src={puzzles.wordSearchUrl} alt="Word search puzzle" className="block w-full h-auto" />
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
 

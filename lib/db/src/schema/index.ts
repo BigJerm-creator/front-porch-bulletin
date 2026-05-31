@@ -10,3 +10,4 @@ export * from "./calendarEvents";
 export * from "./about";
 export * from "./issueSettings";
 export * from "./comics";
+export * from "./puzzles";

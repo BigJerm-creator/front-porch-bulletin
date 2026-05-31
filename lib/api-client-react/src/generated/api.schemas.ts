@@ -235,6 +235,20 @@ export interface ComicBody {
   caption?: string | null;
 }
 
+export interface Puzzles {
+  id: number;
+  crosswordUrl?: string | null;
+  wordSearchUrl?: string | null;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PuzzlesBody {
+  crosswordUrl?: string | null;
+  wordSearchUrl?: string | null;
+}
+
 export type ListArticlesParams = {
   category?: string;
   featured?: boolean;
