@@ -406,6 +406,23 @@ paths:
         "404":
           description: No business spotlight found
 
+  /business-spotlight/publish:
+    patch:
+      operationId: publishBusinessSpotlight
+      tags: [spotlight]
+      summary: Commit staged disable for business spotlight (requires auth)
+      responses:
+        "200":
+          description: Updated business spotlight
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BusinessSpotlight"
+        "401":
+          description: Unauthorized
+        "404":
+          description: No business spotlight found
+
   /group-spotlight:
     get:
       operationId: getGroupSpotlight
@@ -455,6 +472,23 @@ paths:
         "404":
           description: No group spotlight found
 
+  /group-spotlight/publish:
+    patch:
+      operationId: publishGroupSpotlight
+      tags: [spotlight]
+      summary: Commit staged disable for group spotlight (requires auth)
+      responses:
+        "200":
+          description: Updated group spotlight
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GroupSpotlight"
+        "401":
+          description: Unauthorized
+        "404":
+          description: No group spotlight found
+
   /spotlight:
     get:
       operationId: getSpotlight
@@ -492,6 +526,23 @@ paths:
       operationId: toggleSpotlight
       tags: [spotlight]
       summary: Toggle student spotlight visibility (requires auth)
+      responses:
+        "200":
+          description: Updated spotlight
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Spotlight"
+        "401":
+          description: Unauthorized
+        "404":
+          description: No spotlight found
+
+  /spotlight/publish:
+    patch:
+      operationId: publishSpotlight
+      tags: [spotlight]
+      summary: Commit staged disable for student spotlight (requires auth)
       responses:
         "200":
           description: Updated spotlight

@@ -68,6 +68,7 @@ router.put("/", requireApproved, async (req, res) => {
   }
 });
 
+// Stage or cancel: published/draft → pending-disable, pending-disable → published, disabled → published
 router.patch("/", requireApproved, async (req, res) => {
   const [latest] = await db
     .select()
@@ -80,10 +81,45 @@ router.patch("/", requireApproved, async (req, res) => {
     return;
   }
 
-  const newStatus = latest.status === "disabled" ? "published" : "disabled";
+  let newStatus: string;
+  if (latest.status === "disabled") {
+    newStatus = "published";
+  } else if (latest.status === "pending-disable") {
+    newStatus = "published";
+  } else {
+    newStatus = "pending-disable";
+  }
+
   const [updated] = await db
     .update(businessSpotlightTable)
     .set({ status: newStatus, updatedAt: new Date() })
+    .where(eq(businessSpotlightTable.id, latest.id))
+    .returning();
+
+  res.json(updated);
+});
+
+// Commit: pending-disable → disabled
+router.patch("/publish", requireApproved, async (req, res) => {
+  const [latest] = await db
+    .select()
+    .from(businessSpotlightTable)
+    .orderBy(desc(businessSpotlightTable.updatedAt))
+    .limit(1);
+
+  if (!latest) {
+    res.status(404).json({ error: "No business spotlight found" });
+    return;
+  }
+
+  if (latest.status !== "pending-disable") {
+    res.json(latest);
+    return;
+  }
+
+  const [updated] = await db
+    .update(businessSpotlightTable)
+    .set({ status: "disabled", updatedAt: new Date() })
     .where(eq(businessSpotlightTable.id, latest.id))
     .returning();
 

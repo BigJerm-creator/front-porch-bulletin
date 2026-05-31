@@ -3,6 +3,7 @@ import {
   useGetGroupSpotlight,
   useUpdateGroupSpotlight,
   useToggleGroupSpotlight,
+  usePublishGroupSpotlight,
   getGetGroupSpotlightQueryKey,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -10,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { Save, Users, Eye, EyeOff } from "lucide-react";
+import { Save, Users, Eye, EyeOff, Clock, AlertTriangle } from "lucide-react";
 import { MultiImageUpload, type Photo } from "@/components/admin/MultiImageUpload";
 
 export default function AdminGroupSpotlight() {
@@ -19,18 +20,37 @@ export default function AdminGroupSpotlight() {
   });
   const updateSpotlight = useUpdateGroupSpotlight();
   const toggleSpotlight = useToggleGroupSpotlight();
+  const publishSpotlight = usePublishGroupSpotlight();
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const isEnabled = data?.status !== "disabled";
+  const status = data?.status;
+  const isPendingDisable = status === "pending-disable";
+  const isDisabled = status === "disabled";
 
   const handleToggle = async () => {
     try {
       await toggleSpotlight.mutateAsync();
       queryClient.invalidateQueries({ queryKey: getGetGroupSpotlightQueryKey() });
-      toast({ title: isEnabled ? "Spotlight hidden" : "Spotlight enabled", description: isEnabled ? "The group spotlight is now hidden from this issue." : "The group spotlight is now visible." });
+      if (isDisabled) {
+        toast({ title: "Spotlight enabled", description: "The group spotlight is now live." });
+      } else if (isPendingDisable) {
+        toast({ title: "Stage cancelled", description: "The group spotlight will remain on the current edition." });
+      } else {
+        toast({ title: "Disable staged", description: "Spotlight is still visible. Click \"Publish & Hide\" to remove it from the public edition." });
+      }
     } catch {
       toast({ variant: "destructive", title: "Error", description: "Failed to update spotlight visibility." });
+    }
+  };
+
+  const handlePublish = async () => {
+    try {
+      await publishSpotlight.mutateAsync();
+      queryClient.invalidateQueries({ queryKey: getGetGroupSpotlightQueryKey() });
+      toast({ title: "Spotlight hidden", description: "The group spotlight has been removed from the public edition." });
+    } catch {
+      toast({ variant: "destructive", title: "Error", description: "Failed to publish spotlight changes." });
     }
   };
 
@@ -90,10 +110,16 @@ export default function AdminGroupSpotlight() {
               onClick={handleToggle}
               disabled={toggleSpotlight.isPending}
               variant="outline"
-              className={`rounded-none border-2 uppercase tracking-widest font-bold h-12 px-5 transition-all ${isEnabled ? "border-foreground bg-white text-foreground hover:bg-foreground/5" : "border-foreground/30 bg-foreground/5 text-foreground/40"}`}
+              className={`rounded-none border-2 uppercase tracking-widest font-bold h-12 px-5 transition-all ${
+                isDisabled
+                  ? "border-foreground/30 bg-foreground/5 text-foreground/40"
+                  : isPendingDisable
+                  ? "border-amber-500 bg-amber-50 text-amber-700 hover:bg-amber-100"
+                  : "border-foreground bg-white text-foreground hover:bg-foreground/5"
+              }`}
             >
-              {isEnabled ? <Eye className="mr-2 h-4 w-4" /> : <EyeOff className="mr-2 h-4 w-4" />}
-              {isEnabled ? "Enabled" : "Disabled"}
+              {isDisabled ? <EyeOff className="mr-2 h-4 w-4" /> : isPendingDisable ? <Clock className="mr-2 h-4 w-4" /> : <Eye className="mr-2 h-4 w-4" />}
+              {isDisabled ? "Hidden" : isPendingDisable ? "Cancel Stage" : "Stage Disable"}
             </Button>
           )}
           <Button
@@ -105,6 +131,27 @@ export default function AdminGroupSpotlight() {
           </Button>
         </div>
       </header>
+
+      {isPendingDisable && (
+        <div className="border-2 border-amber-500 bg-amber-50 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="font-bold text-sm uppercase tracking-widest text-amber-800">Staged for Disable</p>
+              <p className="text-sm font-serif text-amber-700 mt-0.5">
+                This spotlight is still visible to the public. Click "Publish &amp; Hide" to remove it from the current edition.
+              </p>
+            </div>
+          </div>
+          <Button
+            onClick={handlePublish}
+            disabled={publishSpotlight.isPending}
+            className="rounded-none shrink-0 border-2 border-amber-700 bg-amber-700 text-white hover:bg-amber-800 uppercase tracking-widest font-bold h-10 px-4 text-xs shadow-none"
+          >
+            Publish &amp; Hide
+          </Button>
+        </div>
+      )}
 
       {isLoading ? (
         <div className="space-y-4">

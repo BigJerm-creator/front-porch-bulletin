@@ -1559,6 +1559,87 @@ export const useToggleBusinessSpotlight = <
 };
 
 /**
+ * @summary Commit staged disable for business spotlight (requires auth)
+ */
+export const getPublishBusinessSpotlightUrl = () => {
+  return `/api/business-spotlight/publish`;
+};
+
+export const publishBusinessSpotlight = async (
+  options?: RequestInit,
+): Promise<BusinessSpotlight> => {
+  return customFetch<BusinessSpotlight>(getPublishBusinessSpotlightUrl(), {
+    ...options,
+    method: "PATCH",
+  });
+};
+
+export const getPublishBusinessSpotlightMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof publishBusinessSpotlight>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof publishBusinessSpotlight>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ["publishBusinessSpotlight"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof publishBusinessSpotlight>>,
+    void
+  > = () => {
+    return publishBusinessSpotlight(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PublishBusinessSpotlightMutationResult = NonNullable<
+  Awaited<ReturnType<typeof publishBusinessSpotlight>>
+>;
+
+export type PublishBusinessSpotlightMutationError = ErrorType<void>;
+
+/**
+ * @summary Commit staged disable for business spotlight (requires auth)
+ */
+export const usePublishBusinessSpotlight = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof publishBusinessSpotlight>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof publishBusinessSpotlight>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(getPublishBusinessSpotlightMutationOptions(options));
+};
+
+/**
  * @summary Get the current group spotlight
  */
 export const getGetGroupSpotlightUrl = () => {
@@ -1801,6 +1882,87 @@ export const useToggleGroupSpotlight = <
 };
 
 /**
+ * @summary Commit staged disable for group spotlight (requires auth)
+ */
+export const getPublishGroupSpotlightUrl = () => {
+  return `/api/group-spotlight/publish`;
+};
+
+export const publishGroupSpotlight = async (
+  options?: RequestInit,
+): Promise<GroupSpotlight> => {
+  return customFetch<GroupSpotlight>(getPublishGroupSpotlightUrl(), {
+    ...options,
+    method: "PATCH",
+  });
+};
+
+export const getPublishGroupSpotlightMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof publishGroupSpotlight>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof publishGroupSpotlight>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ["publishGroupSpotlight"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof publishGroupSpotlight>>,
+    void
+  > = () => {
+    return publishGroupSpotlight(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PublishGroupSpotlightMutationResult = NonNullable<
+  Awaited<ReturnType<typeof publishGroupSpotlight>>
+>;
+
+export type PublishGroupSpotlightMutationError = ErrorType<void>;
+
+/**
+ * @summary Commit staged disable for group spotlight (requires auth)
+ */
+export const usePublishGroupSpotlight = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof publishGroupSpotlight>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof publishGroupSpotlight>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(getPublishGroupSpotlightMutationOptions(options));
+};
+
+/**
  * @summary Get the current student spotlight
  */
 export const getGetSpotlightUrl = () => {
@@ -2040,6 +2202,87 @@ export const useToggleSpotlight = <
   TContext
 > => {
   return useMutation(getToggleSpotlightMutationOptions(options));
+};
+
+/**
+ * @summary Commit staged disable for student spotlight (requires auth)
+ */
+export const getPublishSpotlightUrl = () => {
+  return `/api/spotlight/publish`;
+};
+
+export const publishSpotlight = async (
+  options?: RequestInit,
+): Promise<Spotlight> => {
+  return customFetch<Spotlight>(getPublishSpotlightUrl(), {
+    ...options,
+    method: "PATCH",
+  });
+};
+
+export const getPublishSpotlightMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof publishSpotlight>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof publishSpotlight>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ["publishSpotlight"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof publishSpotlight>>,
+    void
+  > = () => {
+    return publishSpotlight(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PublishSpotlightMutationResult = NonNullable<
+  Awaited<ReturnType<typeof publishSpotlight>>
+>;
+
+export type PublishSpotlightMutationError = ErrorType<void>;
+
+/**
+ * @summary Commit staged disable for student spotlight (requires auth)
+ */
+export const usePublishSpotlight = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof publishSpotlight>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof publishSpotlight>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(getPublishSpotlightMutationOptions(options));
 };
 
 /**
