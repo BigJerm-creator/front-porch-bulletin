@@ -291,7 +291,7 @@ export function PrintView() {
 
       {/* Business Spotlight — full width */}
       {businessSpotlight && (
-        <div style={{ marginBottom: "18pt", paddingBottom: "14pt", borderBottom: RULE_DOUBLE }}>
+        <div style={{ marginBottom: "18pt", paddingBottom: "14pt", borderBottom: RULE_DOUBLE, breakBefore: "page" }}>
           <SectionLabel>Business Spotlight</SectionLabel>
           <div>
             {businessSpotlight.photoUrl && (
@@ -383,7 +383,7 @@ export function PrintView() {
       {/* 4H News + Community — shown only when at least one has articles */}
       {h4Articles.length > 0 && communityArticles.length > 0 ? (
         /* Both have articles — two-column side-by-side */
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0", borderTop: RULE, borderBottom: RULE, marginBottom: "18pt", paddingTop: "10pt", paddingBottom: "10pt" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0", borderTop: RULE, borderBottom: RULE, marginBottom: "18pt", paddingTop: "10pt", paddingBottom: "10pt", breakBefore: "page" }}>
           <div style={{ paddingRight: "14pt", borderRight: RULE }}>
             <SectionLabel>4H News</SectionLabel>
             {h4Articles.map((art, i) => (
@@ -419,7 +419,7 @@ export function PrintView() {
         </div>
       ) : h4Articles.length > 0 ? (
         /* Only 4H — full width */
-        <div style={{ borderTop: RULE, borderBottom: RULE, marginBottom: "18pt", paddingTop: "10pt", paddingBottom: "10pt" }}>
+        <div style={{ borderTop: RULE, borderBottom: RULE, marginBottom: "18pt", paddingTop: "10pt", paddingBottom: "10pt", breakBefore: "page" }}>
           <SectionLabel>4H News</SectionLabel>
           {h4Articles.map((art, i) => (
             <div key={art.id} style={{ marginBottom: "12pt", paddingBottom: "10pt", borderBottom: i < h4Articles.length - 1 ? RULE_LIGHT : "none" }}>
@@ -441,7 +441,7 @@ export function PrintView() {
         </div>
       ) : communityArticles.length > 0 ? (
         /* Only Community — full width */
-        <div style={{ borderTop: RULE, borderBottom: RULE, marginBottom: "18pt", paddingTop: "10pt", paddingBottom: "10pt" }}>
+        <div style={{ borderTop: RULE, borderBottom: RULE, marginBottom: "18pt", paddingTop: "10pt", paddingBottom: "10pt", breakBefore: "page" }}>
           <SectionLabel>Community</SectionLabel>
           {communityArticles.map((art, i) => (
             <div key={art.id} style={{ marginBottom: "12pt", paddingBottom: "10pt", borderBottom: i < communityArticles.length - 1 ? RULE_LIGHT : "none" }}>
