@@ -258,7 +258,7 @@ export function PrintView() {
             <ArticleByline author={mainArticle.author} />
             <div style={{ fontSize: "11pt", lineHeight: 1.6, textAlign: "justify" }}>
               {/* Spotlight floated right — article text wraps alongside it from the top */}
-              {spotlight && spotlight.status !== "disabled" && (
+              {spotlight && spotlight.status !== "disabled" && spotlight.status !== "pending-disable" && (
                 <div style={{ float: "right", marginLeft: "14pt", marginBottom: "5pt", width: "200pt", borderTop: RULE_DOUBLE, paddingTop: "6pt" }}>
                   <SectionLabel>Student Spotlight</SectionLabel>
                   <PhotoBox url={spotlight.photoUrl} alt={spotlight.name} credit={spotlight.photoCredit} natural />
@@ -292,7 +292,7 @@ export function PrintView() {
       <div style={{ borderTop: RULE_DOUBLE, marginTop: "18pt", marginBottom: "14pt" }} />
 
       {/* Business Spotlight — full width */}
-      {businessSpotlight && businessSpotlight.status !== "disabled" && (
+      {businessSpotlight && businessSpotlight.status !== "disabled" && businessSpotlight.status !== "pending-disable" && (
         <div style={{ marginBottom: "18pt", paddingBottom: "14pt", borderBottom: RULE_DOUBLE, breakBefore: "page" }}>
           <SectionLabel>Business Spotlight</SectionLabel>
           <div>
@@ -322,7 +322,7 @@ export function PrintView() {
       )}
 
       {/* Group Spotlight — full width */}
-      {groupSpotlight && groupSpotlight.status !== "disabled" && (
+      {groupSpotlight && groupSpotlight.status !== "disabled" && groupSpotlight.status !== "pending-disable" && (
         <div style={{ marginBottom: "18pt", paddingBottom: "14pt", borderBottom: RULE_DOUBLE }}>
           <SectionLabel>Group Spotlight</SectionLabel>
           <div>
