@@ -1478,6 +1478,87 @@ export const useUpdateBusinessSpotlight = <
 };
 
 /**
+ * @summary Toggle business spotlight visibility (requires auth)
+ */
+export const getToggleBusinessSpotlightUrl = () => {
+  return `/api/business-spotlight`;
+};
+
+export const toggleBusinessSpotlight = async (
+  options?: RequestInit,
+): Promise<BusinessSpotlight> => {
+  return customFetch<BusinessSpotlight>(getToggleBusinessSpotlightUrl(), {
+    ...options,
+    method: "PATCH",
+  });
+};
+
+export const getToggleBusinessSpotlightMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof toggleBusinessSpotlight>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof toggleBusinessSpotlight>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ["toggleBusinessSpotlight"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof toggleBusinessSpotlight>>,
+    void
+  > = () => {
+    return toggleBusinessSpotlight(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type ToggleBusinessSpotlightMutationResult = NonNullable<
+  Awaited<ReturnType<typeof toggleBusinessSpotlight>>
+>;
+
+export type ToggleBusinessSpotlightMutationError = ErrorType<void>;
+
+/**
+ * @summary Toggle business spotlight visibility (requires auth)
+ */
+export const useToggleBusinessSpotlight = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof toggleBusinessSpotlight>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof toggleBusinessSpotlight>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(getToggleBusinessSpotlightMutationOptions(options));
+};
+
+/**
  * @summary Get the current group spotlight
  */
 export const getGetGroupSpotlightUrl = () => {
@@ -1639,6 +1720,87 @@ export const useUpdateGroupSpotlight = <
 };
 
 /**
+ * @summary Toggle group spotlight visibility (requires auth)
+ */
+export const getToggleGroupSpotlightUrl = () => {
+  return `/api/group-spotlight`;
+};
+
+export const toggleGroupSpotlight = async (
+  options?: RequestInit,
+): Promise<GroupSpotlight> => {
+  return customFetch<GroupSpotlight>(getToggleGroupSpotlightUrl(), {
+    ...options,
+    method: "PATCH",
+  });
+};
+
+export const getToggleGroupSpotlightMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof toggleGroupSpotlight>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof toggleGroupSpotlight>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ["toggleGroupSpotlight"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof toggleGroupSpotlight>>,
+    void
+  > = () => {
+    return toggleGroupSpotlight(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type ToggleGroupSpotlightMutationResult = NonNullable<
+  Awaited<ReturnType<typeof toggleGroupSpotlight>>
+>;
+
+export type ToggleGroupSpotlightMutationError = ErrorType<void>;
+
+/**
+ * @summary Toggle group spotlight visibility (requires auth)
+ */
+export const useToggleGroupSpotlight = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof toggleGroupSpotlight>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof toggleGroupSpotlight>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(getToggleGroupSpotlightMutationOptions(options));
+};
+
+/**
  * @summary Get the current student spotlight
  */
 export const getGetSpotlightUrl = () => {
@@ -1797,6 +1959,87 @@ export const useUpdateSpotlight = <
   TContext
 > => {
   return useMutation(getUpdateSpotlightMutationOptions(options));
+};
+
+/**
+ * @summary Toggle student spotlight visibility (requires auth)
+ */
+export const getToggleSpotlightUrl = () => {
+  return `/api/spotlight`;
+};
+
+export const toggleSpotlight = async (
+  options?: RequestInit,
+): Promise<Spotlight> => {
+  return customFetch<Spotlight>(getToggleSpotlightUrl(), {
+    ...options,
+    method: "PATCH",
+  });
+};
+
+export const getToggleSpotlightMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof toggleSpotlight>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof toggleSpotlight>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ["toggleSpotlight"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof toggleSpotlight>>,
+    void
+  > = () => {
+    return toggleSpotlight(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type ToggleSpotlightMutationResult = NonNullable<
+  Awaited<ReturnType<typeof toggleSpotlight>>
+>;
+
+export type ToggleSpotlightMutationError = ErrorType<void>;
+
+/**
+ * @summary Toggle student spotlight visibility (requires auth)
+ */
+export const useToggleSpotlight = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof toggleSpotlight>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof toggleSpotlight>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(getToggleSpotlightMutationOptions(options));
 };
 
 /**

@@ -451,6 +451,28 @@ export const UpdateBusinessSpotlightResponse = zod.object({
 });
 
 /**
+ * @summary Toggle business spotlight visibility (requires auth)
+ */
+export const ToggleBusinessSpotlightResponse = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  businessType: zod.string(),
+  description: zod.string(),
+  photoUrl: zod.string().nullish(),
+  photos: zod
+    .array(
+      zod.object({
+        url: zod.string(),
+        credit: zod.string(),
+      }),
+    )
+    .nullish(),
+  status: zod.string(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+
+/**
  * @summary Get the current group spotlight
  */
 export const GetGroupSpotlightResponse = zod.object({
@@ -510,6 +532,28 @@ export const UpdateGroupSpotlightResponse = zod.object({
 });
 
 /**
+ * @summary Toggle group spotlight visibility (requires auth)
+ */
+export const ToggleGroupSpotlightResponse = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  groupType: zod.string(),
+  description: zod.string(),
+  photoUrl: zod.string().nullish(),
+  photos: zod
+    .array(
+      zod.object({
+        url: zod.string(),
+        credit: zod.string(),
+      }),
+    )
+    .nullish(),
+  status: zod.string(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+
+/**
  * @summary Get the current student spotlight
  */
 export const GetSpotlightResponse = zod.object({
@@ -527,6 +571,7 @@ export const GetSpotlightResponse = zod.object({
       }),
     )
     .nullish(),
+  status: zod.string(),
   createdAt: zod.coerce.date(),
   updatedAt: zod.coerce.date(),
 });
@@ -565,6 +610,30 @@ export const UpdateSpotlightResponse = zod.object({
       }),
     )
     .nullish(),
+  status: zod.string(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Toggle student spotlight visibility (requires auth)
+ */
+export const ToggleSpotlightResponse = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  school: zod.string(),
+  grade: zod.string(),
+  description: zod.string(),
+  photoUrl: zod.string().nullish(),
+  photos: zod
+    .array(
+      zod.object({
+        url: zod.string(),
+        credit: zod.string(),
+      }),
+    )
+    .nullish(),
+  status: zod.string(),
   createdAt: zod.coerce.date(),
   updatedAt: zod.coerce.date(),
 });

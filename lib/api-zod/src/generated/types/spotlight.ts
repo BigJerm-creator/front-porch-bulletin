@@ -15,6 +15,7 @@ export interface Spotlight {
   description: string;
   photoUrl?: string | null;
   photos?: Photo[] | null;
+  status: string;
   createdAt: Date;
   updatedAt: Date;
 }
