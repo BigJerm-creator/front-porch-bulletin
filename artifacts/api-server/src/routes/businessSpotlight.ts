@@ -20,19 +20,19 @@ router.get("/", async (req, res) => {
     }
   }
 
-  const [published] = await db
+  const [visible] = await db
     .select()
     .from(businessSpotlightTable)
-    .where(eq(businessSpotlightTable.status, "published"))
+    .where(ne(businessSpotlightTable.status, "disabled"))
     .orderBy(desc(businessSpotlightTable.updatedAt))
     .limit(1);
 
-  if (!published) {
+  if (!visible) {
     res.status(404).json({ error: "No business spotlight set" });
     return;
   }
 
-  res.json(published);
+  res.json(visible);
 });
 
 router.put("/", requireApproved, async (req, res) => {

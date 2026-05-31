@@ -20,19 +20,19 @@ router.get("/", async (req, res) => {
     }
   }
 
-  const [published] = await db
+  const [visible] = await db
     .select()
     .from(groupSpotlightTable)
-    .where(eq(groupSpotlightTable.status, "published"))
+    .where(ne(groupSpotlightTable.status, "disabled"))
     .orderBy(desc(groupSpotlightTable.updatedAt))
     .limit(1);
 
-  if (!published) {
+  if (!visible) {
     res.status(404).json({ error: "No group spotlight set" });
     return;
   }
 
-  res.json(published);
+  res.json(visible);
 });
 
 router.put("/", requireApproved, async (req, res) => {
