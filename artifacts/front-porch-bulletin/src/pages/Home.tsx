@@ -339,11 +339,11 @@ export default function Home() {
                           {art.photoUrl && (
                             <>
                               <div className="block md:hidden w-full mb-2">
-                                <img src={art.photoUrl} alt={art.title} className="w-full block" />
+                                <img src={art.photoUrl} alt={art.title} className="w-full h-48 object-cover block" />
                                 {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
                               </div>
-                              <div className="hidden md:block float-left mr-3 mb-1 max-w-[42%]">
-                                <img src={art.photoUrl} alt={art.title} className="block max-w-full h-auto" />
+                              <div className="hidden md:block float-left mr-3 mb-1 w-[42%]">
+                                <img src={art.photoUrl} alt={art.title} className="block w-full h-44 object-cover" />
                                 {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
                               </div>
                             </>
