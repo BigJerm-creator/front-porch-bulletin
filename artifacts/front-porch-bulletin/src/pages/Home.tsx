@@ -369,9 +369,11 @@ export default function Home() {
               {libraryArticles.length > 0 && (
                 <div className="mb-8 pb-8 border-b-2 border-foreground">
                   <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Library News</div>
-                  <div className="flex flex-col gap-8 divide-y divide-foreground/30">
+
+                  {/* Mobile: stacked */}
+                  <div className="flex flex-col gap-8 divide-y divide-foreground/30 md:hidden">
                     {libraryArticles.map((art, i) => (
-                      <article key={art.id} className={`overflow-hidden${i > 0 ? " pt-6" : ""}`}>
+                      <article key={art.id} className={i > 0 ? "pt-6" : ""}>
                         <Link href={`/articles/${art.id}`}>
                           <h3 className="font-headline font-bold text-2xl leading-tight mb-1 hover:underline underline-offset-4 decoration-1">{isStaff && art.status === 'draft' && <DraftBadge />}{art.title}</h3>
                         </Link>
@@ -379,26 +381,64 @@ export default function Home() {
                         <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wide text-foreground/50 border-t border-b border-foreground/20 py-1 mb-2">
                           <span>By <span className="italic">{art.author}</span></span>
                         </div>
+                        {art.photoUrl && (
+                          <div className="w-full mb-2">
+                            <img src={art.photoUrl} alt={art.title} className="w-full block h-[200px] object-cover" />
+                            {art.photoCredit && <p className="font-mono text-[7px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
+                          </div>
+                        )}
                         <div className="font-serif text-sm leading-relaxed text-foreground/80">
-                          {art.photoUrl && (
-                            <>
-                              <div className="block md:hidden w-full mb-2">
-                                <img src={art.photoUrl} alt={art.title} className="w-full block h-[200px] object-cover" />
-                                {art.photoCredit && <p className="font-mono text-[7px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
-                              </div>
-                              <div className="hidden md:block float-left mr-3 mb-1 w-[30%]">
-                                <img src={art.photoUrl} alt={art.title} className="block w-full h-[200px] object-cover" />
-                                {art.photoCredit && <p className="font-mono text-[7px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
-                              </div>
-                            </>
-                          )}
-                          {art.content.split('\n\n').map((para, i) => (
-                            <p key={i} className={i > 0 ? "mt-2" : ""}>{para}</p>
+                          {art.content.split('\n\n').map((para, j) => (
+                            <p key={j} className={j > 0 ? "mt-2" : ""}>{para}</p>
                           ))}
-                          <div className="clear-both" />
                         </div>
                       </article>
                     ))}
+                  </div>
+
+                  {/* Desktop: photo-left | articles | photo-right */}
+                  <div className="hidden md:flex gap-4 items-start">
+                    {/* Left photo — first article with a photo */}
+                    {(() => {
+                      const art = libraryArticles[0];
+                      return art?.photoUrl ? (
+                        <div className="w-[30%] shrink-0">
+                          <img src={art.photoUrl} alt={art.title} className="block w-full h-[200px] object-cover" />
+                          {art.photoCredit && <p className="font-mono text-[7px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
+                        </div>
+                      ) : null;
+                    })()}
+
+                    {/* Center: all articles, text only */}
+                    <div className="flex-1 min-w-0 flex flex-col gap-6 divide-y divide-foreground/30">
+                      {libraryArticles.map((art, i) => (
+                        <article key={art.id} className={i > 0 ? "pt-6" : ""}>
+                          <Link href={`/articles/${art.id}`}>
+                            <h3 className="font-headline font-bold text-2xl leading-tight mb-1 hover:underline underline-offset-4 decoration-1">{isStaff && art.status === 'draft' && <DraftBadge />}{art.title}</h3>
+                          </Link>
+                          {art.subtitle && <p className="font-headline italic text-base text-foreground/70 mb-1">{art.subtitle}</p>}
+                          <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wide text-foreground/50 border-t border-b border-foreground/20 py-1 mb-2">
+                            <span>By <span className="italic">{art.author}</span></span>
+                          </div>
+                          <div className="font-serif text-sm leading-relaxed text-foreground/80">
+                            {art.content.split('\n\n').map((para, j) => (
+                              <p key={j} className={j > 0 ? "mt-2" : ""}>{para}</p>
+                            ))}
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+
+                    {/* Right photo — second article with a photo */}
+                    {(() => {
+                      const art = libraryArticles[1];
+                      return art?.photoUrl ? (
+                        <div className="w-[30%] shrink-0">
+                          <img src={art.photoUrl} alt={art.title} className="block w-full h-[200px] object-cover" />
+                          {art.photoCredit && <p className="font-mono text-[7px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
+                        </div>
+                      ) : null;
+                    })()}
                   </div>
                 </div>
               )}
