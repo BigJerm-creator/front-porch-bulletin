@@ -565,7 +565,7 @@ export function PrintView() {
 
       {/* ══ Comics ══ */}
       {comic?.imageUrl && (
-        <div style={{ breakBefore: "page", pageBreakBefore: "always", marginBottom: "18pt" }}>
+        <div style={{ marginBottom: "18pt", marginTop: "14pt" }}>
           <SectionLabel>Comics</SectionLabel>
           <img
             src={comic.imageUrl}
