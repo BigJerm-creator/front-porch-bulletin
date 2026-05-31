@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import logoSrc from "@assets/The_(1)_1775854639167.png";
+import comicSrc from "@assets/Comic_1780247384752.jpg";
 import {
   useGetFeaturedArticles,
   useGetSpotlight, getGetSpotlightQueryKey,
@@ -565,7 +566,7 @@ export function PrintView() {
       <div style={{ breakBefore: "page", pageBreakBefore: "always", marginBottom: "18pt" }}>
         <SectionLabel>Comics</SectionLabel>
         <img
-          src="/comic-bob-marley.png"
+          src={comicSrc}
           alt="Bob + Marley comic strip"
           style={{ display: "block", width: "100%", height: "auto" }}
         />
