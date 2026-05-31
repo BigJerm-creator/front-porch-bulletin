@@ -398,16 +398,30 @@ export default function Home() {
 
                   {/* Desktop: photo-left | articles | photo-right */}
                   {(() => {
-                    const withPhotos = libraryArticles.filter(a => a.photoUrl);
-                    const leftArt = withPhotos[0];
-                    const rightArt = withPhotos[1];
+                    type PhotoEntry = { url: string; credit?: string };
+                    // Prefer a single article that has two photos uploaded
+                    const multiPhotoArt = libraryArticles.find(a => {
+                      const p = (a as any).photos as PhotoEntry[] | null;
+                      return p && p.length >= 2;
+                    });
+                    let leftPhoto: PhotoEntry | null = null;
+                    let rightPhoto: PhotoEntry | null = null;
+                    if (multiPhotoArt) {
+                      const p = (multiPhotoArt as any).photos as PhotoEntry[];
+                      leftPhoto = p[0];
+                      rightPhoto = p[1];
+                    } else {
+                      const withPhotos = libraryArticles.filter(a => a.photoUrl);
+                      if (withPhotos[0]) leftPhoto = { url: withPhotos[0].photoUrl!, credit: (withPhotos[0] as any).photoCredit ?? undefined };
+                      if (withPhotos[1]) rightPhoto = { url: withPhotos[1].photoUrl!, credit: (withPhotos[1] as any).photoCredit ?? undefined };
+                    }
                     return (
                       <div className="hidden md:flex gap-4 items-start">
-                        {/* Left photo — first article that has a photo */}
-                        {leftArt && (
+                        {/* Left photo */}
+                        {leftPhoto && (
                           <div className="w-[30%] shrink-0">
-                            <img src={leftArt.photoUrl!} alt={leftArt.title} className="block w-full h-auto" />
-                            {leftArt.photoCredit && <p className="font-mono text-[7px] text-right text-foreground/40 italic mt-0.5">Photo: {leftArt.photoCredit}</p>}
+                            <img src={leftPhoto.url} alt="Library photo" className="block w-full h-auto" />
+                            {leftPhoto.credit && <p className="font-mono text-[7px] text-right text-foreground/40 italic mt-0.5">Photo: {leftPhoto.credit}</p>}
                           </div>
                         )}
 
@@ -431,11 +445,11 @@ export default function Home() {
                           ))}
                         </div>
 
-                        {/* Right photo — second article that has a photo */}
-                        {rightArt && (
+                        {/* Right photo */}
+                        {rightPhoto && (
                           <div className="w-[30%] shrink-0">
-                            <img src={rightArt.photoUrl!} alt={rightArt.title} className="block w-full h-auto" />
-                            {rightArt.photoCredit && <p className="font-mono text-[7px] text-right text-foreground/40 italic mt-0.5">Photo: {rightArt.photoCredit}</p>}
+                            <img src={rightPhoto.url} alt="Library photo" className="block w-full h-auto" />
+                            {rightPhoto.credit && <p className="font-mono text-[7px] text-right text-foreground/40 italic mt-0.5">Photo: {rightPhoto.credit}</p>}
                           </div>
                         )}
                       </div>
