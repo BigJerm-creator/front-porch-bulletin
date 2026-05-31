@@ -28,10 +28,11 @@ router.get("/", async (req, res) => {
   const conditions = [];
   if (!includeArchived) {
     conditions.push(eq(articlesTable.archived, false));
-    if (!isStaff) {
+    if (isStaff) {
+      conditions.push(eq(articlesTable.status, "draft"));
+    } else {
       conditions.push(eq(articlesTable.status, "published"));
     }
-    // staff sees both draft and published
   }
   if (category) conditions.push(eq(articlesTable.category, category));
   if (featured !== undefined) conditions.push(eq(articlesTable.featured, featured));
