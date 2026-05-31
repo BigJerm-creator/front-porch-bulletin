@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { db, groupSpotlightTable } from "@workspace/db";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, ne } from "drizzle-orm";
 import { requireApproved, checkIsApprovedStaff } from "../middlewares/auth";
 
 const router = Router();
@@ -9,15 +9,13 @@ router.get("/", async (req, res) => {
   const isStaff = await checkIsApprovedStaff(req);
 
   if (isStaff) {
-    const [draft] = await db
+    const [latest] = await db
       .select()
       .from(groupSpotlightTable)
-      .where(eq(groupSpotlightTable.status, "draft"))
       .orderBy(desc(groupSpotlightTable.updatedAt))
       .limit(1);
-
-    if (draft) {
-      res.json(draft);
+    if (latest) {
+      res.json(latest);
       return;
     }
   }
@@ -47,27 +45,49 @@ router.put("/", requireApproved, async (req, res) => {
   const syncedPhotoUrl = photos && photos.length > 0 ? photos[0].url : (photoUrl ?? null);
   const syncedPhotoCredit = photos && photos.length > 0 ? (photos[0].credit || null) : (photoCredit ?? null);
 
-  const [existingDraft] = await db
+  const [existing] = await db
     .select()
     .from(groupSpotlightTable)
-    .where(eq(groupSpotlightTable.status, "draft"))
+    .where(ne(groupSpotlightTable.status, "disabled"))
     .orderBy(desc(groupSpotlightTable.updatedAt))
     .limit(1);
 
-  if (existingDraft) {
+  if (existing) {
     const [updated] = await db
       .update(groupSpotlightTable)
       .set({ name, groupType, description, photoUrl: syncedPhotoUrl, photoCredit: syncedPhotoCredit, photos: photos ?? null, updatedAt: new Date() })
-      .where(eq(groupSpotlightTable.id, existingDraft.id))
+      .where(eq(groupSpotlightTable.id, existing.id))
       .returning();
     res.json(updated);
   } else {
     const [created] = await db
       .insert(groupSpotlightTable)
-      .values({ name, groupType, description, photoUrl: syncedPhotoUrl, photoCredit: syncedPhotoCredit, photos: photos ?? null, status: "draft" })
+      .values({ name, groupType, description, photoUrl: syncedPhotoUrl, photoCredit: syncedPhotoCredit, photos: photos ?? null, status: "published" })
       .returning();
     res.json(created);
   }
+});
+
+router.patch("/", requireApproved, async (req, res) => {
+  const [latest] = await db
+    .select()
+    .from(groupSpotlightTable)
+    .orderBy(desc(groupSpotlightTable.updatedAt))
+    .limit(1);
+
+  if (!latest) {
+    res.status(404).json({ error: "No group spotlight found" });
+    return;
+  }
+
+  const newStatus = latest.status === "disabled" ? "published" : "disabled";
+  const [updated] = await db
+    .update(groupSpotlightTable)
+    .set({ status: newStatus, updatedAt: new Date() })
+    .where(eq(groupSpotlightTable.id, latest.id))
+    .returning();
+
+  res.json(updated);
 });
 
 export default router;

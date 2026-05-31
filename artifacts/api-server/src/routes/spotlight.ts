@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { db, spotlightTable } from "@workspace/db";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, ne } from "drizzle-orm";
 import { requireApproved, checkIsApprovedStaff } from "../middlewares/auth";
 
 const router = Router();
@@ -9,15 +9,13 @@ router.get("/", async (req, res) => {
   const isStaff = await checkIsApprovedStaff(req);
 
   if (isStaff) {
-    const [draft] = await db
+    const [latest] = await db
       .select()
       .from(spotlightTable)
-      .where(eq(spotlightTable.status, "draft"))
       .orderBy(desc(spotlightTable.updatedAt))
       .limit(1);
-
-    if (draft) {
-      res.json(draft);
+    if (latest) {
+      res.json(latest);
       return;
     }
   }
@@ -47,27 +45,49 @@ router.put("/", requireApproved, async (req, res) => {
   const syncedPhotoUrl = photos && photos.length > 0 ? photos[0].url : (photoUrl ?? null);
   const syncedPhotoCredit = photos && photos.length > 0 ? (photos[0].credit || null) : (photoCredit ?? null);
 
-  const [existingDraft] = await db
+  const [existing] = await db
     .select()
     .from(spotlightTable)
-    .where(eq(spotlightTable.status, "draft"))
+    .where(ne(spotlightTable.status, "disabled"))
     .orderBy(desc(spotlightTable.updatedAt))
     .limit(1);
 
-  if (existingDraft) {
+  if (existing) {
     const [updated] = await db
       .update(spotlightTable)
       .set({ name, school, grade, description, photoUrl: syncedPhotoUrl, photoCredit: syncedPhotoCredit, photos: photos ?? null, updatedAt: new Date() })
-      .where(eq(spotlightTable.id, existingDraft.id))
+      .where(eq(spotlightTable.id, existing.id))
       .returning();
     res.json(updated);
   } else {
     const [created] = await db
       .insert(spotlightTable)
-      .values({ name, school, grade, description, photoUrl: syncedPhotoUrl, photoCredit: syncedPhotoCredit, photos: photos ?? null, status: "draft" })
+      .values({ name, school, grade, description, photoUrl: syncedPhotoUrl, photoCredit: syncedPhotoCredit, photos: photos ?? null, status: "published" })
       .returning();
     res.json(created);
   }
+});
+
+router.patch("/", requireApproved, async (req, res) => {
+  const [latest] = await db
+    .select()
+    .from(spotlightTable)
+    .orderBy(desc(spotlightTable.updatedAt))
+    .limit(1);
+
+  if (!latest) {
+    res.status(404).json({ error: "No spotlight found" });
+    return;
+  }
+
+  const newStatus = latest.status === "disabled" ? "published" : "disabled";
+  const [updated] = await db
+    .update(spotlightTable)
+    .set({ status: newStatus, updatedAt: new Date() })
+    .where(eq(spotlightTable.id, latest.id))
+    .returning();
+
+  res.json(updated);
 });
 
 export default router;
