@@ -561,6 +561,16 @@ export function PrintView() {
         </div>
       )}
 
+      {/* ══ Comics ══ */}
+      <div style={{ breakBefore: "page", pageBreakBefore: "always", marginBottom: "18pt" }}>
+        <SectionLabel>Comics</SectionLabel>
+        <img
+          src="/comic-bob-marley.png"
+          alt="Bob + Marley comic strip"
+          style={{ display: "block", width: "100%", height: "auto" }}
+        />
+      </div>
+
       {/* ══ Church & Calendar — always own page ══ */}
       <div style={{ breakBefore: "page", pageBreakBefore: "always" }}>
 
