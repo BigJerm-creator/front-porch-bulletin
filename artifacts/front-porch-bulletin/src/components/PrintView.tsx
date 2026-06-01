@@ -393,7 +393,7 @@ export function PrintView() {
             {h4Articles.map((art, i) => (
               <div key={art.id} style={{ marginBottom: "12pt", paddingBottom: "10pt", borderBottom: i < h4Articles.length - 1 ? RULE_LIGHT : "none" }}>
                 {art.photoUrl && (
-                  <img src={art.photoUrl} alt={art.title} style={{ display: "block", maxWidth: "50%", height: "auto", marginBottom: "4pt" }} />
+                  <img src={art.photoUrl} alt={art.title} style={{ display: "block", maxWidth: "30%", height: "auto", marginBottom: "4pt" }} />
                 )}
                 <h3 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 3pt" }}>{art.title}</h3>
                 {art.subtitle && <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "10pt", margin: "0 0 2pt", color: "#333" }}>{art.subtitle}</p>}
@@ -409,7 +409,7 @@ export function PrintView() {
             {communityArticles.map((art, i) => (
               <div key={art.id} style={{ marginBottom: "12pt", paddingBottom: "10pt", borderBottom: i < communityArticles.length - 1 ? RULE_LIGHT : "none" }}>
                 {art.photoUrl && (
-                  <img src={art.photoUrl} alt={art.title} style={{ display: "block", maxWidth: "50%", height: "auto", marginBottom: "4pt" }} />
+                  <img src={art.photoUrl} alt={art.title} style={{ display: "block", maxWidth: "30%", height: "auto", marginBottom: "4pt" }} />
                 )}
                 <h3 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 3pt" }}>{art.title}</h3>
                 {art.subtitle && <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "10pt", margin: "0 0 2pt", color: "#333" }}>{art.subtitle}</p>}
@@ -428,7 +428,7 @@ export function PrintView() {
           {h4Articles.map((art, i) => (
             <div key={art.id} style={{ marginBottom: "12pt", paddingBottom: "10pt", borderBottom: i < h4Articles.length - 1 ? RULE_LIGHT : "none" }}>
               {art.photoUrl && (
-                <div style={{ float: "left", marginRight: "10pt", marginBottom: "4pt", maxWidth: "42%" }}>
+                <div style={{ float: "left", marginRight: "10pt", marginBottom: "4pt", maxWidth: "30%" }}>
                   <img src={art.photoUrl} alt={art.title} style={{ display: "block", maxWidth: "100%", height: "auto" }} />
                   {art.photoCredit && <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "1pt 0 0" }}>Photo credit — {art.photoCredit}</p>}
                 </div>
@@ -450,7 +450,7 @@ export function PrintView() {
           {communityArticles.map((art, i) => (
             <div key={art.id} style={{ marginBottom: "12pt", paddingBottom: "10pt", borderBottom: i < communityArticles.length - 1 ? RULE_LIGHT : "none" }}>
               {art.photoUrl && (
-                <div style={{ float: "left", marginRight: "10pt", marginBottom: "4pt", maxWidth: "42%" }}>
+                <div style={{ float: "left", marginRight: "10pt", marginBottom: "4pt", maxWidth: "30%" }}>
                   <img src={art.photoUrl} alt={art.title} style={{ display: "block", maxWidth: "100%", height: "auto" }} />
                   {art.photoCredit && <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "1pt 0 0" }}>Photo credit — {art.photoCredit}</p>}
                 </div>
