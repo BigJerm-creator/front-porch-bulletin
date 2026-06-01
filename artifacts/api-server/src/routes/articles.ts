@@ -83,7 +83,7 @@ router.post("/", requireApproved, async (req, res) => {
 router.get("/featured", async (req, res) => {
   const isStaff = await checkIsApprovedStaff(req);
   const featuredWhere = isStaff
-    ? and(eq(articlesTable.archived, false), eq(articlesTable.status, "draft"))
+    ? eq(articlesTable.archived, false)
     : and(eq(articlesTable.archived, false), eq(articlesTable.status, "published"));
 
   const articles = await db
