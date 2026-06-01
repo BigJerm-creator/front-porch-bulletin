@@ -25,9 +25,19 @@ function formatTime(timeStr: string) {
   return m === 0 ? `${hour} ${ampm}` : `${hour}:${String(m).padStart(2, "0")} ${ampm}`;
 }
 
-export function CalendarEvents() {
-  const [viewYear,  setViewYear]  = useState(2026);
-  const [viewMonth, setViewMonth] = useState(5);
+type CalendarEventsProps = {
+  initialYear?: number;
+  initialMonth?: number;
+};
+
+export function CalendarEvents({ initialYear = 2026, initialMonth = 5 }: CalendarEventsProps) {
+  const [viewYear,  setViewYear]  = useState(initialYear);
+  const [viewMonth, setViewMonth] = useState(initialMonth);
+
+  useEffect(() => {
+    setViewYear(initialYear);
+    setViewMonth(initialMonth);
+  }, [initialYear, initialMonth]);
   const [events,    setEvents]    = useState<CalendarEvent[]>([]);
   const [loading,   setLoading]   = useState(true);
 

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   useGetFeaturedArticles,
   useGetSpotlight, getGetSpotlightQueryKey,
@@ -16,6 +16,8 @@ import { CalendarEvents } from "@/components/CalendarEvents";
 import { PrintView } from "@/components/PrintView";
 import { Link } from "wouter";
 import { useUser } from "@clerk/react";
+
+const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 
 const isLetter = (art: { category: string }) =>
   art.category?.toLowerCase() === "letters";
@@ -42,6 +44,19 @@ export default function Home() {
   const { data: communityData, isLoading: isLoadingCommunity } = useListArticles({ category: "Community",    limit: 10 }, { query: { queryKey: getListArticlesQueryKey({ category: "Community",    limit: 10 }) } });
   const { data: comic }        = useGetComic({ query: { queryKey: getGetComicQueryKey(), retry: false } as any });
   const { data: puzzles }      = useGetPuzzles({ query: { queryKey: getGetPuzzlesQueryKey(), retry: false } as any });
+
+  const [issueSettings, setIssueSettings] = useState({ issueYear: 2026, issueMonth: 5 });
+  useEffect(() => {
+    fetch(`${BASE}/api/issue-settings`)
+      .then(r => r.json())
+      .then(data => {
+        setIssueSettings({
+          issueYear:  data.issueYear  ?? 2026,
+          issueMonth: data.issueMonth ?? 5,
+        });
+      })
+      .catch(() => {});
+  }, []);
 
   const isLoading = isLoadingFeatured || isLoadingSpotlight || isLoadingBusiness || isLoadingGroup || isLoadingLibrary || isLoadingH4 || isLoadingCommunity;
 
@@ -530,7 +545,7 @@ export default function Home() {
 
               {/* ── Community Calendar ── */}
               <div className="mt-8 border-t-2 border-foreground pt-6">
-                <CalendarEvents />
+                <CalendarEvents initialYear={issueSettings.issueYear} initialMonth={issueSettings.issueMonth} />
               </div>
             </>
           )}
