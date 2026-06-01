@@ -488,37 +488,36 @@ export function PrintView() {
         return (
           <div style={{ marginBottom: "18pt", paddingBottom: "14pt", borderBottom: RULE_DOUBLE }}>
             <SectionLabel>Library News</SectionLabel>
-            <div style={{ display: "flex", gap: "12pt", alignItems: "flex-start" }}>
-              {/* Left photo */}
-              {leftPhoto && (
-                <div style={{ width: "28%", flexShrink: 0 }}>
-                  <img src={leftPhoto.url} alt="Library photo" style={{ display: "block", width: "100%", height: "auto" }} />
-                  {leftPhoto.credit && <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "1pt 0 0" }}>Photo credit — {leftPhoto.credit}</p>}
-                </div>
-              )}
-              {/* Center: articles */}
-              <div style={{ flex: 1, minWidth: 0 }}>
-                {libraryArticles.map((art, i) => (
-                  <div key={art.id} style={{ marginBottom: "14pt", paddingBottom: "12pt", borderBottom: i < libraryArticles.length - 1 ? RULE_LIGHT : "none" }}>
-                    <h3 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 3pt" }}>{art.title}</h3>
-                    {art.subtitle && <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "10pt", margin: "0 0 2pt", color: "#333" }}>{art.subtitle}</p>}
-                    <ArticleByline author={art.author} />
-                    <div style={{ fontSize: "9.5pt", lineHeight: 1.5, textAlign: "justify" }}>
-                      {art.content.split('\n\n').map((para, j) => (
-                        <p key={j} style={{ margin: j === 0 ? "0" : "6pt 0 0", breakInside: "avoid" }}>{para}</p>
-                      ))}
-                    </div>
+            {/* Photos side by side above articles */}
+            {(leftPhoto || rightPhoto) && (
+              <div style={{ display: "flex", gap: "10pt", marginBottom: "10pt" }}>
+                {leftPhoto && (
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <img src={leftPhoto.url} alt="Library photo" style={{ display: "block", width: "100%", height: "auto" }} />
+                    {leftPhoto.credit && <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "1pt 0 0" }}>Photo credit — {leftPhoto.credit}</p>}
                   </div>
-                ))}
+                )}
+                {rightPhoto && (
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <img src={rightPhoto.url} alt="Library photo" style={{ display: "block", width: "100%", height: "auto" }} />
+                    {rightPhoto.credit && <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "1pt 0 0" }}>Photo credit — {rightPhoto.credit}</p>}
+                  </div>
+                )}
               </div>
-              {/* Right photo */}
-              {rightPhoto && (
-                <div style={{ width: "28%", flexShrink: 0 }}>
-                  <img src={rightPhoto.url} alt="Library photo" style={{ display: "block", width: "100%", height: "auto" }} />
-                  {rightPhoto.credit && <p style={{ fontFamily: FONT_MONO, fontSize: "5.5pt", fontStyle: "italic", color: INK_MUTED, textAlign: "right", margin: "1pt 0 0" }}>Photo credit — {rightPhoto.credit}</p>}
+            )}
+            {/* Articles below */}
+            {libraryArticles.map((art, i) => (
+              <div key={art.id} style={{ marginBottom: "14pt", paddingBottom: "12pt", borderBottom: i < libraryArticles.length - 1 ? RULE_LIGHT : "none" }}>
+                <h3 style={{ fontFamily: FONT_HEADLINE, fontWeight: "bold", fontSize: "15pt", lineHeight: 1.1, margin: "0 0 3pt" }}>{art.title}</h3>
+                {art.subtitle && <p style={{ fontFamily: FONT_HEADLINE, fontStyle: "italic", fontSize: "10pt", margin: "0 0 2pt", color: "#333" }}>{art.subtitle}</p>}
+                <ArticleByline author={art.author} />
+                <div style={{ fontSize: "9.5pt", lineHeight: 1.5, textAlign: "justify" }}>
+                  {art.content.split('\n\n').map((para, j) => (
+                    <p key={j} style={{ margin: j === 0 ? "0" : "6pt 0 0", breakInside: "avoid" }}>{para}</p>
+                  ))}
                 </div>
-              )}
-            </div>
+              </div>
+            ))}
           </div>
         );
       })()}

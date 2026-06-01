@@ -370,36 +370,9 @@ export default function Home() {
                 <div className="mb-8 pb-8 border-b-2 border-foreground">
                   <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Library News</div>
 
-                  {/* Mobile: stacked */}
-                  <div className="flex flex-col gap-8 divide-y divide-foreground/30 md:hidden">
-                    {libraryArticles.map((art, i) => (
-                      <article key={art.id} className={i > 0 ? "pt-6" : ""}>
-                        <Link href={`/articles/${art.id}`}>
-                          <h3 className="font-headline font-bold text-2xl leading-tight mb-1 hover:underline underline-offset-4 decoration-1">{isStaff && art.status === 'draft' && <DraftBadge />}{art.title}</h3>
-                        </Link>
-                        {art.subtitle && <p className="font-headline italic text-base text-foreground/70 mb-1">{art.subtitle}</p>}
-                        <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wide text-foreground/50 border-t border-b border-foreground/20 py-1 mb-2">
-                          <span>By <span className="italic">{art.author}</span></span>
-                        </div>
-                        {art.photoUrl && (
-                          <div className="w-full mb-2">
-                            <img src={art.photoUrl} alt={art.title} className="w-full block h-auto" />
-                            {art.photoCredit && <p className="font-mono text-[7px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
-                          </div>
-                        )}
-                        <div className="font-serif text-sm leading-relaxed text-foreground/80">
-                          {art.content.split('\n\n').map((para, j) => (
-                            <p key={j} className={j > 0 ? "mt-2" : ""}>{para}</p>
-                          ))}
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-
-                  {/* Desktop: photo-left | articles | photo-right */}
+                  {/* Photos side by side above articles */}
                   {(() => {
                     type PhotoEntry = { url: string; credit?: string };
-                    // Prefer a single article that has two photos uploaded
                     const multiPhotoArt = libraryArticles.find(a => {
                       const p = (a as any).photos as PhotoEntry[] | null;
                       return p && p.length >= 2;
@@ -416,17 +389,24 @@ export default function Home() {
                       if (withPhotos[1]) rightPhoto = { url: withPhotos[1].photoUrl!, credit: (withPhotos[1] as any).photoCredit ?? undefined };
                     }
                     return (
-                      <div className="hidden md:flex gap-4 items-start">
-                        {/* Left photo */}
-                        {leftPhoto && (
-                          <div className="w-[30%] shrink-0">
-                            <img src={leftPhoto.url} alt="Library photo" className="block w-full h-auto" />
-                            {leftPhoto.credit && <p className="font-mono text-[7px] text-right text-foreground/40 italic mt-0.5">Photo: {leftPhoto.credit}</p>}
+                      <>
+                        {(leftPhoto || rightPhoto) && (
+                          <div className="flex gap-3 mb-5">
+                            {leftPhoto && (
+                              <div className="flex-1 min-w-0">
+                                <img src={leftPhoto.url} alt="Library photo" className="block w-full h-auto" />
+                                {leftPhoto.credit && <p className="font-mono text-[7px] text-right text-foreground/40 italic mt-0.5">Photo: {leftPhoto.credit}</p>}
+                              </div>
+                            )}
+                            {rightPhoto && (
+                              <div className="flex-1 min-w-0">
+                                <img src={rightPhoto.url} alt="Library photo" className="block w-full h-auto" />
+                                {rightPhoto.credit && <p className="font-mono text-[7px] text-right text-foreground/40 italic mt-0.5">Photo: {rightPhoto.credit}</p>}
+                              </div>
+                            )}
                           </div>
                         )}
-
-                        {/* Center: all articles, text only */}
-                        <div className="flex-1 min-w-0 flex flex-col gap-6 divide-y divide-foreground/30">
+                        <div className="flex flex-col gap-6 divide-y divide-foreground/30">
                           {libraryArticles.map((art, i) => (
                             <article key={art.id} className={i > 0 ? "pt-6" : ""}>
                               <Link href={`/articles/${art.id}`}>
@@ -444,15 +424,7 @@ export default function Home() {
                             </article>
                           ))}
                         </div>
-
-                        {/* Right photo */}
-                        {rightPhoto && (
-                          <div className="w-[30%] shrink-0">
-                            <img src={rightPhoto.url} alt="Library photo" className="block w-full h-auto" />
-                            {rightPhoto.credit && <p className="font-mono text-[7px] text-right text-foreground/40 italic mt-0.5">Photo: {rightPhoto.credit}</p>}
-                          </div>
-                        )}
-                      </div>
+                      </>
                     );
                   })()}
                 </div>
