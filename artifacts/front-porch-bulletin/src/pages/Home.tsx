@@ -391,7 +391,7 @@ export default function Home() {
                     return (
                       <>
                         {(leftPhoto || rightPhoto) && (
-                          <div className="flex gap-3 mb-5">
+                          <div className="flex gap-3 mb-5 w-1/2">
                             {leftPhoto && (
                               <div className="flex-1 min-w-0">
                                 <img src={leftPhoto.url} alt="Library photo" className="block w-full h-auto" />

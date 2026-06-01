@@ -490,7 +490,7 @@ export function PrintView() {
             <SectionLabel>Library News</SectionLabel>
             {/* Photos side by side above articles */}
             {(leftPhoto || rightPhoto) && (
-              <div style={{ display: "flex", gap: "10pt", marginBottom: "10pt" }}>
+              <div style={{ display: "flex", gap: "10pt", marginBottom: "10pt", width: "50%" }}>
                 {leftPhoto && (
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <img src={leftPhoto.url} alt="Library photo" style={{ display: "block", width: "100%", height: "auto" }} />
