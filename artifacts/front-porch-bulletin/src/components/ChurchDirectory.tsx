@@ -1,4 +1,5 @@
 import { useListChurches, getListChurchesQueryKey } from "@workspace/api-client-react";
+import { ZoomableImage } from "@/components/ZoomableImage";
 
 export function ChurchDirectory() {
   const { data, isLoading } = useListChurches({ query: { queryKey: getListChurchesQueryKey() } });
@@ -37,7 +38,7 @@ export function ChurchDirectory() {
         {churches.map((church) => (
           <div key={church.id} className="border-l-2 border-foreground/30 pl-3 overflow-hidden">
             {church.photoUrl && (
-              <img
+              <ZoomableImage
                 src={church.photoUrl}
                 alt={church.name}
                 className="float-left mr-2 mb-1 border border-foreground/30 object-cover"

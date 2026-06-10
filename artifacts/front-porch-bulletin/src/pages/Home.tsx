@@ -10,6 +10,7 @@ import {
 } from "@workspace/api-client-react";
 import { Layout } from "@/components/layout/Layout";
 import { ArticleTeaser } from "@/components/ArticleTeaser";
+import { ZoomableImage } from "@/components/ZoomableImage";
 import { NewspaperSkeleton } from "@/components/ui/newspaper-skeleton";
 import { ChurchDirectory } from "@/components/ChurchDirectory";
 import { CalendarEvents } from "@/components/CalendarEvents";
@@ -92,7 +93,7 @@ export default function Home() {
         <div className="font-mono text-[10px] uppercase tracking-widest border-b border-foreground pb-1 mb-2">Student Spotlight</div>
         {spotlight.photoUrl && (
           <div className="w-full overflow-hidden border border-foreground mb-2">
-            <img src={spotlight.photoUrl} alt={spotlight.name} className="w-full block" />
+            <ZoomableImage src={spotlight.photoUrl} alt={spotlight.name} className="w-full block" />
           </div>
         )}
         <h3 className="font-headline font-bold text-base leading-tight mb-0.5">{spotlight.name}</h3>
@@ -143,7 +144,7 @@ export default function Home() {
                           <div className="font-mono text-[10px] uppercase tracking-widest border-b border-foreground pb-1 mb-2">Student Spotlight</div>
                           {spotlight.photoUrl && (
                             <div className="w-full overflow-hidden border border-foreground mb-2">
-                              <img src={spotlight.photoUrl} alt={spotlight.name} className="w-full block" />
+                              <ZoomableImage src={spotlight.photoUrl} alt={spotlight.name} className="w-full block" />
                             </div>
                           )}
                           <h3 className="font-headline font-bold text-base leading-tight mb-0.5">{spotlight.name}</h3>
@@ -155,13 +156,13 @@ export default function Home() {
                       {mainArticle.photoUrl && (
                         <>
                           <div className="block md:hidden w-full mb-3">
-                            <img src={mainArticle.photoUrl} alt={mainArticle.title} className="w-full block" />
+                            <ZoomableImage src={mainArticle.photoUrl} alt={mainArticle.title} className="w-full block" />
                             {mainArticle.photoCredit && (
                               <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {mainArticle.photoCredit}</p>
                             )}
                           </div>
                           <div className="hidden md:block float-left mr-4 mb-2 max-w-[40%]">
-                            <img src={mainArticle.photoUrl} alt={mainArticle.title} className="block max-w-full h-auto" />
+                            <ZoomableImage src={mainArticle.photoUrl} alt={mainArticle.title} className="block max-w-full h-auto" />
                             {mainArticle.photoCredit && (
                               <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {mainArticle.photoCredit}</p>
                             )}
@@ -195,11 +196,11 @@ export default function Home() {
                       <>
                         {/* Mobile: full-width photo above text */}
                         <div className="block md:hidden w-full overflow-hidden border border-foreground/20 mb-3">
-                          <img src={businessSpotlight.photoUrl} alt={businessSpotlight.name} className="w-full block" />
+                          <ZoomableImage src={businessSpotlight.photoUrl} alt={businessSpotlight.name} className="w-full block" />
                         </div>
                         {/* Desktop: floated left */}
                         <div className="hidden md:block float-left mr-6 mb-3 overflow-hidden border border-foreground/20" style={{ width: "280px" }}>
-                          <img src={businessSpotlight.photoUrl} alt={businessSpotlight.name} className="w-full block" />
+                          <ZoomableImage src={businessSpotlight.photoUrl} alt={businessSpotlight.name} className="w-full block" />
                         </div>
                       </>
                     )}
@@ -230,11 +231,11 @@ export default function Home() {
                       <>
                         {/* Mobile: full-width photo above text */}
                         <div className="block md:hidden w-full overflow-hidden border border-foreground/20 mb-3">
-                          <img src={groupSpotlight.photoUrl} alt={groupSpotlight.name} className="w-full block" />
+                          <ZoomableImage src={groupSpotlight.photoUrl} alt={groupSpotlight.name} className="w-full block" />
                         </div>
                         {/* Desktop: floated left */}
                         <div className="hidden md:block float-left mr-6 mb-3 overflow-hidden border border-foreground/20" style={{ width: "280px" }}>
-                          <img src={groupSpotlight.photoUrl} alt={groupSpotlight.name} className="w-full block" />
+                          <ZoomableImage src={groupSpotlight.photoUrl} alt={groupSpotlight.name} className="w-full block" />
                         </div>
                       </>
                     )}
@@ -278,13 +279,13 @@ export default function Home() {
                       {page2Article.photoUrl && (
                         <>
                           <div className="block md:hidden w-full mb-3">
-                            <img src={page2Article.photoUrl} alt={page2Article.title} className="w-full block" />
+                            <ZoomableImage src={page2Article.photoUrl} alt={page2Article.title} className="w-full block" />
                             {page2Article.photoCredit && (
                               <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {page2Article.photoCredit}</p>
                             )}
                           </div>
                           <div className="hidden md:block float-left mr-4 mb-2 max-w-[45%]">
-                            <img src={page2Article.photoUrl} alt={page2Article.title} className="block max-w-full h-auto" />
+                            <ZoomableImage src={page2Article.photoUrl} alt={page2Article.title} className="block max-w-full h-auto" />
                             {page2Article.photoCredit && (
                               <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {page2Article.photoCredit}</p>
                             )}
@@ -318,11 +319,11 @@ export default function Home() {
                           {art.photoUrl && (
                             <>
                               <div className="block md:hidden w-full mb-2">
-                                <img src={art.photoUrl} alt={art.title} className="w-full block" />
+                                <ZoomableImage src={art.photoUrl} alt={art.title} className="w-full block" />
                                 {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
                               </div>
                               <div className="hidden md:block float-left mr-3 mb-1 max-w-[42%]">
-                                <img src={art.photoUrl} alt={art.title} className="block max-w-full h-auto" />
+                                <ZoomableImage src={art.photoUrl} alt={art.title} className="block max-w-full h-auto" />
                                 {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
                               </div>
                             </>
@@ -358,11 +359,11 @@ export default function Home() {
                           {art.photoUrl && (
                             <>
                               <div className="block md:hidden w-full mb-2">
-                                <img src={art.photoUrl} alt={art.title} className="w-full h-48 object-cover block" />
+                                <ZoomableImage src={art.photoUrl} alt={art.title} className="w-full h-48 object-cover block" />
                                 {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
                               </div>
                               <div className="hidden md:block float-left mr-3 mb-1 w-[30%]">
-                                <img src={art.photoUrl} alt={art.title} className="block w-full object-cover" style={{ height: "400px" }} />
+                                <ZoomableImage src={art.photoUrl} alt={art.title} className="block w-full object-cover" style={{ height: "400px" }} />
                                 {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
                               </div>
                             </>
@@ -409,13 +410,13 @@ export default function Home() {
                           <div className="flex gap-3 mb-5 w-3/4">
                             {leftPhoto && (
                               <div className="flex-1 min-w-0">
-                                <img src={leftPhoto.url} alt="Library photo" className="block w-full h-auto" />
+                                <ZoomableImage src={leftPhoto.url} alt="Library photo" className="block w-full h-auto" />
                                 {leftPhoto.credit && <p className="font-mono text-[7px] text-right text-foreground/40 italic mt-0.5">Photo: {leftPhoto.credit}</p>}
                               </div>
                             )}
                             {rightPhoto && (
                               <div className="flex-1 min-w-0">
-                                <img src={rightPhoto.url} alt="Library photo" className="block w-full h-auto" />
+                                <ZoomableImage src={rightPhoto.url} alt="Library photo" className="block w-full h-auto" />
                                 {rightPhoto.credit && <p className="font-mono text-[7px] text-right text-foreground/40 italic mt-0.5">Photo: {rightPhoto.credit}</p>}
                               </div>
                             )}
@@ -467,11 +468,11 @@ export default function Home() {
                           {art.photoUrl && (
                             <>
                               <div className="block md:hidden w-full mb-3">
-                                <img src={art.photoUrl} alt={art.title} className="w-full block" />
+                                <ZoomableImage src={art.photoUrl} alt={art.title} className="w-full block" />
                                 {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
                               </div>
                               <div className="hidden md:block float-left mr-4 mb-2 max-w-[45%]">
-                                <img src={art.photoUrl} alt={art.title} className="block max-w-full h-auto" />
+                                <ZoomableImage src={art.photoUrl} alt={art.title} className="block max-w-full h-auto" />
                                 {art.photoCredit && <p className="font-mono text-[8px] text-right text-foreground/40 italic mt-0.5">Photo: {art.photoCredit}</p>}
                               </div>
                             </>
@@ -508,7 +509,7 @@ export default function Home() {
               {comic?.imageUrl && (
                 <div className="mb-8 pb-8 border-b-2 border-foreground">
                   <div className="font-mono text-xs uppercase tracking-widest border-b-2 border-foreground pb-1 mb-5">Comics</div>
-                  <img
+                  <ZoomableImage
                     src={comic.imageUrl}
                     alt="Comic strip"
                     className="block w-1/2 mx-auto"
@@ -527,13 +528,13 @@ export default function Home() {
                     {puzzles.crosswordUrl && (
                       <div>
                         <p className="font-mono text-[10px] uppercase tracking-widest text-foreground/50 text-center mb-2">Crossword</p>
-                        <img src={puzzles.crosswordUrl} alt="Crossword puzzle" className="block w-full h-auto" />
+                        <ZoomableImage src={puzzles.crosswordUrl} alt="Crossword puzzle" className="block w-full h-auto" />
                       </div>
                     )}
                     {puzzles.wordSearchUrl && (
                       <div>
                         <p className="font-mono text-[10px] uppercase tracking-widest text-foreground/50 text-center mb-2">Word Search</p>
-                        <img src={puzzles.wordSearchUrl} alt="Word search puzzle" className="block w-full h-auto" />
+                        <ZoomableImage src={puzzles.wordSearchUrl} alt="Word search puzzle" className="block w-full h-auto" />
                       </div>
                     )}
                   </div>

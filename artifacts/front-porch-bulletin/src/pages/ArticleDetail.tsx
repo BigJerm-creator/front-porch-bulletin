@@ -4,6 +4,7 @@ import { NewspaperSkeleton } from "@/components/ui/newspaper-skeleton";
 import { Link, useParams } from "wouter";
 import { formatDate, formatDateline } from "@/lib/format";
 import { ArticleTeaser } from "@/components/ArticleTeaser";
+import { ZoomableImage } from "@/components/ZoomableImage";
 import type { ReactNode } from "react";
 
 interface Photo {
@@ -21,7 +22,7 @@ function renderWithPhotos(text: string, photos: Photo[]): ReactNode[] {
       if (photo) {
         return (
           <figure key={i} className="my-6 mx-auto not-prose">
-            <img
+            <ZoomableImage
               src={photo.url}
               alt=""
               className="w-full border border-foreground/20 object-contain"
@@ -105,7 +106,7 @@ export default function ArticleDetail() {
 
         {article.photoUrl && (
           <figure className="mb-8">
-            <img src={article.photoUrl} alt={article.title} className="w-full object-contain border border-foreground/20" />
+            <ZoomableImage src={article.photoUrl} alt={article.title} className="w-full object-contain border border-foreground/20" />
             {(article as any).photoCredit && (
               <figcaption className="font-mono text-xs text-foreground/50 italic text-right mt-1">
                 Picture Credit — {(article as any).photoCredit}

@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { Article } from "@workspace/api-client-react";
 import { formatDateline } from "@/lib/format";
+import { ZoomableImage } from "@/components/ZoomableImage";
 
 type ArticleSize = "hero" | "feature" | "standard";
 
@@ -49,7 +50,7 @@ export function ArticleTeaser({ article, featured = false, size, photoFit = "con
           {/* Hero: full-width photo above text */}
           {resolvedSize === "hero" && article.photoUrl && (
             <div className="w-full overflow-hidden border border-foreground/20 mb-3 bg-muted">
-              <img
+              <ZoomableImage
                 src={article.photoUrl}
                 alt={article.title}
                 className="w-full"
@@ -65,7 +66,7 @@ export function ArticleTeaser({ article, featured = false, size, photoFit = "con
 
           {/* Standard / Feature: photo floats left, text wraps */}
           {floatPhoto && article.photoUrl && (
-            <img
+            <ZoomableImage
               src={article.photoUrl}
               alt={article.title}
               className="float-left border border-foreground/20 mr-3 mb-1 object-cover"
