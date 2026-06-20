@@ -71,14 +71,6 @@ catalog:
 
 autoInstallPeers: false
 
-onlyBuiltDependencies:
-  - '@swc/core'
-  - '@clerk/shared'
-  - esbuild
-  - msw
-  - sharp
-  - unrs-resolver
-  - workerd
 
 overrides:
   react: "19.1.0"
