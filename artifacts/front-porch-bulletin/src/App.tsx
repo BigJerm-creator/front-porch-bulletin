@@ -4,7 +4,10 @@ import { Switch, Route, useLocation, Router as WouterRouter, Redirect } from 'wo
 import { QueryClient, QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { setAuthTokenGetter } from "@workspace/api-client-react";
+import { setAuthTokenGetter, setBaseUrl } from "@workspace/api-client-react";
+
+const apiUrl = import.meta.env.VITE_API_URL ?? "";
+if (apiUrl) setBaseUrl(apiUrl);
 
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/Home";
