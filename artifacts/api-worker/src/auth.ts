@@ -59,7 +59,12 @@ export async function verifyJWT(token: string, secret: string): Promise<Record<s
 // ── Session helpers ──────────────────────────────────────────────────────────
 
 export async function getUserId(c: Context<{ Bindings: Env }>): Promise<string | null> {
-  const token = getCookie(c, "session");
+  // Bearer token from Authorization header (used by the SPA across origins)
+  const authHeader = c.req.header("Authorization");
+  const bearerToken = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null;
+  // Fallback: httpOnly session cookie (same-origin deployments)
+  const cookieToken = getCookie(c, "session");
+  const token = bearerToken || cookieToken;
   if (!token) return null;
   try {
     const payload = await verifyJWT(token, c.env.JWT_SECRET);

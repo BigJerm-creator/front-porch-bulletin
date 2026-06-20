@@ -46,10 +46,11 @@ app.get("/healthz", (c) => c.json({ status: "ok" }));
 // ─── Google OAuth ─────────────────────────────────────────────────────────────
 app.get("/auth/google", (c) => {
   const state = crypto.randomUUID();
-  const siteUrl = c.env.SITE_URL || "https://frontporchbulletin.com";
+  // The OAuth callback must land on THIS Worker, so use the request origin
+  const workerOrigin = new URL(c.req.url).origin;
   const params = new URLSearchParams({
     client_id: c.env.GOOGLE_CLIENT_ID,
-    redirect_uri: `${siteUrl}/auth/google/callback`,
+    redirect_uri: `${workerOrigin}/auth/google/callback`,
     response_type: "code",
     scope: "openid email profile",
     state,
@@ -63,13 +64,13 @@ app.get("/auth/google", (c) => {
 
 app.get("/auth/google/callback", async (c) => {
   const { code, state, error } = c.req.query();
+  const workerOrigin = new URL(c.req.url).origin;
+  const frontendUrl = (c.env.SITE_URL || "https://frontporchbulletin.com").replace(/\/$/, "");
 
-  if (error) return c.redirect("/sign-in?error=access_denied");
+  if (error) return c.redirect(`${frontendUrl}/sign-in?error=access_denied`);
 
   const storedState = getCookie(c, "oauth_state");
-  if (!state || state !== storedState) return c.redirect("/sign-in?error=invalid_state");
-
-  const siteUrl = c.env.SITE_URL || "https://frontporchbulletin.com";
+  if (!state || state !== storedState) return c.redirect(`${frontendUrl}/sign-in?error=invalid_state`);
 
   // Exchange code for access token
   const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
@@ -79,19 +80,19 @@ app.get("/auth/google/callback", async (c) => {
       code,
       client_id: c.env.GOOGLE_CLIENT_ID,
       client_secret: c.env.GOOGLE_CLIENT_SECRET,
-      redirect_uri: `${siteUrl}/auth/google/callback`,
+      redirect_uri: `${workerOrigin}/auth/google/callback`,
       grant_type: "authorization_code",
     }),
   });
 
-  if (!tokenRes.ok) return c.redirect("/sign-in?error=token_exchange_failed");
+  if (!tokenRes.ok) return c.redirect(`${frontendUrl}/sign-in?error=token_exchange_failed`);
   const tokens = await tokenRes.json() as { access_token: string };
 
   // Fetch Google user profile
   const userRes = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
     headers: { Authorization: `Bearer ${tokens.access_token}` },
   });
-  if (!userRes.ok) return c.redirect("/sign-in?error=profile_fetch_failed");
+  if (!userRes.ok) return c.redirect(`${frontendUrl}/sign-in?error=profile_fetch_failed`);
   const googleUser = await userRes.json() as { id: string; email: string; name: string; picture: string };
 
   const db = drizzle(c.env.DB);
@@ -123,24 +124,24 @@ app.get("/auth/google/callback", async (c) => {
     exp: Math.floor(Date.now() / 1000) + SESSION_MAX_AGE,
   }, c.env.JWT_SECRET);
 
-  const cookieOpts = { secure: true, sameSite: "Lax" as const, path: "/", maxAge: SESSION_MAX_AGE };
+  deleteCookie(c, "oauth_state", { path: "/" });
 
-  setCookie(c, "session", jwt, { ...cookieOpts, httpOnly: true });
-  // user_info is readable by JS (not httpOnly) for display purposes only
-  setCookie(c, "user_info", encodeURIComponent(JSON.stringify({
+  // Redirect back to the SPA with the token in the URL.
+  // The frontend stores it in localStorage and sends it as a Bearer token.
+  const userParam = encodeURIComponent(JSON.stringify({
     name: googleUser.name,
     email: googleUser.email,
     picture: googleUser.picture,
-  })), cookieOpts);
-  deleteCookie(c, "oauth_state", { path: "/" });
-
-  return c.redirect("/admin");
+  }));
+  return c.redirect(`${frontendUrl}/admin?token=${jwt}&user=${userParam}`);
 });
 
 app.get("/auth/signout", (c) => {
+  // Cookie-based sessions (same-origin): clear them
   deleteCookie(c, "session", { path: "/" });
   deleteCookie(c, "user_info", { path: "/" });
-  return c.redirect("/");
+  const siteUrl = (c.env.SITE_URL || "https://frontporchbulletin.com").replace(/\/$/, "");
+  return c.redirect(`${siteUrl}/`);
 });
 
 // ─── Articles ─────────────────────────────────────────────────────────────────

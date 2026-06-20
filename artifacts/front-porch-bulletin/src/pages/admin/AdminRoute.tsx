@@ -54,12 +54,12 @@ export default function AdminRoute() {
               Please check back later or contact the editor.
             </p>
           </div>
-          <a
-            href="/auth/signout"
+          <button
+            onClick={() => { localStorage.removeItem("session_token"); localStorage.removeItem("user_info"); window.location.href = "/sign-in"; }}
             className="mt-6 inline-block text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
           >
             Sign out
-          </a>
+          </button>
         </div>
       </div>
     );

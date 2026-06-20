@@ -165,12 +165,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="p-3 border-t-2 border-foreground space-y-2">
           <p className="text-xs font-bold font-headline truncate">{currentUser?.name || "Staff Member"}</p>
           <p className="text-xs uppercase tracking-widest text-primary font-bold">{roleData?.isAdmin ? "Editor-in-Chief" : (roleData?.role || "Pending")}</p>
-          <a
-            href="/auth/signout"
+          <button
+            onClick={() => {
+              localStorage.removeItem("session_token");
+              localStorage.removeItem("user_info");
+              window.location.href = "/sign-in";
+            }}
             className="flex items-center gap-2 text-xs uppercase tracking-widest font-bold text-foreground/60 hover:text-foreground transition-colors"
           >
             <LogOut className="h-3 w-3" /> Clock Out
-          </a>
+          </button>
         </div>
       </aside>
 

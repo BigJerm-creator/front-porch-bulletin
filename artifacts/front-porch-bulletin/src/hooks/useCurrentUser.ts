@@ -4,21 +4,18 @@ export interface CurrentUser {
   picture: string;
 }
 
-function readUserInfoCookie(): CurrentUser | null {
-  if (typeof document === "undefined") return null;
-  const match = document.cookie.match(/(?:^|; )user_info=([^;]*)/);
-  if (!match) return null;
+export function useCurrentUser(): CurrentUser | null {
+  if (typeof localStorage === "undefined") return null;
+  const stored = localStorage.getItem("user_info");
+  if (!stored) return null;
   try {
-    return JSON.parse(decodeURIComponent(match[1]));
+    return JSON.parse(decodeURIComponent(stored));
   } catch {
     return null;
   }
 }
 
-export function useCurrentUser(): CurrentUser | null {
-  return readUserInfoCookie();
-}
-
 export function useIsSignedIn(): boolean {
-  return readUserInfoCookie() !== null;
+  if (typeof localStorage === "undefined") return false;
+  return !!localStorage.getItem("session_token");
 }

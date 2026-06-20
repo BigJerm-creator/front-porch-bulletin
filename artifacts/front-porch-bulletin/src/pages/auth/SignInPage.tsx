@@ -3,6 +3,9 @@ import { useLocation } from "wouter";
 import logo from "@assets/The_(1)_1775854639167.png";
 import { useIsSignedIn } from "@/hooks/useCurrentUser";
 
+// Auth routes live on the Worker, which may be a different origin than the SPA
+const API_URL = (import.meta.env.VITE_API_URL ?? "").replace(/\/$/, "");
+
 export default function SignInPage() {
   const [, setLocation] = useLocation();
   const isSignedIn = useIsSignedIn();
@@ -44,7 +47,7 @@ export default function SignInPage() {
           </p>
 
           <a
-            href="/auth/google"
+            href={`${API_URL}/auth/google`}
             className="flex items-center justify-center gap-3 w-full border-2 border-foreground bg-white hover:bg-[#f5f0e8] px-6 py-3 font-headline font-bold uppercase tracking-widest text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
           >
             <svg viewBox="0 0 24 24" className="h-5 w-5 shrink-0" aria-hidden="true">
