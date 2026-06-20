@@ -1,0 +1,13 @@
+name = "front-porch-bulletin-api"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "front-porch-bulletin-db"
+database_id = "dd609a13-c864-426d-a3f0-1571b0891ffc"
+
+[[r2_buckets]]
+binding = "STORAGE"
+bucket_name = "front-porch-bulletin-storage"

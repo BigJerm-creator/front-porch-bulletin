@@ -3,3 +3,8 @@ compatibility_date = "2025-01-01"
 
 [assets]
 directory = "artifacts/front-porch-bulletin/dist/public"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "front-porch-bulletin-db"
+database_id = "dd609a13-c864-426d-a3f0-1571b0891ffc"
