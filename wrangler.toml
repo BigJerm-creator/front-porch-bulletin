@@ -1,0 +1,5 @@
+name = "front-porch-bulletin"
+compatibility_date = "2025-01-01"
+
+[assets]
+directory = "artifacts/front-porch-bulletin/dist/public"
