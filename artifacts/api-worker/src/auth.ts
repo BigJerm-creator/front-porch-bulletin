@@ -1,4 +1,4 @@
-import { createClerkClient } from "@clerk/backend";
+import { createClerkClient, verifyToken } from "@clerk/backend";
 import type { Context } from "hono";
 import { drizzle } from "drizzle-orm/d1";
 import { eq } from "drizzle-orm";
@@ -14,10 +14,10 @@ export async function getUserId(c: Context<{ Bindings: Env }>): Promise<string |
   const token = authHeader?.replace("Bearer ", "");
   if (!token) return null;
   try {
-    const clerk = getClerk(c.env);
-    const payload = await clerk.verifyToken(token);
+    const payload = await verifyToken(token, { secretKey: c.env.CLERK_SECRET_KEY });
     return payload.sub ?? null;
-  } catch {
+  } catch (err) {
+    console.error("Clerk token verification failed:", err);
     return null;
   }
 }
