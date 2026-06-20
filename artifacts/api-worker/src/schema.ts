@@ -100,8 +100,10 @@ export const newsletterSubscribersTable = sqliteTable("newsletter_subscribers", 
 
 export const userRolesTable = sqliteTable("user_roles", {
   id: integer("id").primaryKey({ autoIncrement: true }),
-  clerkUserId: text("clerk_user_id").notNull().unique(),
+  userId: text("clerk_user_id").notNull().unique(), // stores Google user ID
   role: text("role").notNull().default("approved_user"),
+  name: text("name"),
+  email: text("email"),
   grantedAt: text("granted_at").notNull().$defaultFn(() => new Date().toISOString()),
 });
 

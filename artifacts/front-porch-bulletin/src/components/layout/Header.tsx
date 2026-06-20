@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "wouter";
-import { Show } from "@clerk/react";
+import { useIsSignedIn } from "@/hooks/useCurrentUser";
 import logoSrc from "@assets/The_(1)_1775854639167.png";
 
 const EMAIL = "TheFrontPorchBulletin@gmail.com";
@@ -11,6 +11,7 @@ const MONTH_NAMES = ["January","February","March","April","May","June","July","A
 export function Header() {
   const [issueNum,  setIssueNum]  = useState("01");
   const [issueDate, setIssueDate] = useState("May 2026");
+  const isSignedIn = useIsSignedIn();
 
   useEffect(() => {
     fetch(`${BASE}/api/issue-settings`)
@@ -31,16 +32,15 @@ export function Header() {
         <span className="shrink-0 whitespace-nowrap">Issue {issueNum} / {issueDate}</span>
         <span className="flex-1 border-t border-foreground mt-0.5" />
         <div className="print:hidden shrink-0">
-          <Show when="signed-in">
+          {isSignedIn ? (
             <Link href="/admin" className="border border-foreground px-2 py-0.5 hover:bg-foreground hover:text-background transition-colors whitespace-nowrap" data-testid="link-admin">
               Admin
             </Link>
-          </Show>
-          <Show when="signed-out">
+          ) : (
             <Link href="/sign-in" className="border border-foreground px-2 py-0.5 hover:bg-foreground hover:text-background transition-colors whitespace-nowrap" data-testid="link-staff-login">
               Staff Login
             </Link>
-          </Show>
+          )}
         </div>
         <span className="flex-1 border-t border-foreground mt-0.5" />
         <span className="shrink-0 whitespace-nowrap">Page 01</span>

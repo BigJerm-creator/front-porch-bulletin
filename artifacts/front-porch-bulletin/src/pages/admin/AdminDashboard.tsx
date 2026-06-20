@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { useUser } from "@clerk/react";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useGetArticlesSummary, getGetArticlesSummaryQueryKey, useGetMyRole, getGetMyRoleQueryKey, useListChurches, getListChurchesQueryKey, useGetSpotlight, getGetSpotlightQueryKey } from "@workspace/api-client-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FileText, Star, Church, Info, Users, ArrowRight, PlusCircle, Newspaper } from "lucide-react";
@@ -45,7 +45,7 @@ function SectionCard({
 }
 
 export default function AdminDashboard() {
-  const { user } = useUser();
+  const currentUser = useCurrentUser();
   const { data: summary, isLoading: summaryLoading } = useGetArticlesSummary({ query: { queryKey: getGetArticlesSummaryQueryKey() } });
   const { data: roleData } = useGetMyRole({ query: { queryKey: getGetMyRoleQueryKey() } });
   const { data: churches, isLoading: churchesLoading } = useListChurches({ query: { queryKey: getListChurchesQueryKey() } });
@@ -57,7 +57,7 @@ export default function AdminDashboard() {
         <div className="flex justify-between items-end gap-4">
           <div>
             <h1 className="text-5xl font-headline font-bold uppercase tracking-widest mb-2">Editorial Desk</h1>
-            <p className="text-2xl text-muted-foreground italic font-serif">Good to see you, {user?.firstName || "Editor"}.</p>
+            <p className="text-2xl text-muted-foreground italic font-serif">Good to see you, {currentUser?.name?.split(" ")[0] || "Editor"}.</p>
           </div>
           <div className="text-right hidden sm:block shrink-0">
             <div className="text-xs uppercase tracking-widest font-bold text-muted-foreground border-b-2 border-foreground/30 pb-1 mb-1">Today's Edition</div>

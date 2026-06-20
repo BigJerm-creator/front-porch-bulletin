@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { useClerk, useUser } from "@clerk/react";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useGetMyRole, getGetMyRoleQueryKey } from "@workspace/api-client-react";
 import { FileText, Users, LogOut, LayoutDashboard, Star, Church, Printer, CalendarDays, Building2, Info, Send, Laugh, Puzzle } from "lucide-react";
 import logoSrc from "@assets/The_(1)_1775854639167.png";
@@ -10,8 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
-  const { signOut } = useClerk();
-  const { user } = useUser();
+  const currentUser = useCurrentUser();
   const { data: roleData } = useGetMyRole({ query: { queryKey: getGetMyRoleQueryKey() } });
   const { toast } = useToast();
 
@@ -164,14 +163,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </nav>
 
         <div className="p-3 border-t-2 border-foreground space-y-2">
-          <p className="text-xs font-bold font-headline truncate">{user?.fullName || "Staff Member"}</p>
+          <p className="text-xs font-bold font-headline truncate">{currentUser?.name || "Staff Member"}</p>
           <p className="text-xs uppercase tracking-widest text-primary font-bold">{roleData?.isAdmin ? "Editor-in-Chief" : (roleData?.role || "Pending")}</p>
-          <button
-            onClick={() => signOut()}
+          <a
+            href="/auth/signout"
             className="flex items-center gap-2 text-xs uppercase tracking-widest font-bold text-foreground/60 hover:text-foreground transition-colors"
           >
             <LogOut className="h-3 w-3" /> Clock Out
-          </button>
+          </a>
         </div>
       </aside>
 

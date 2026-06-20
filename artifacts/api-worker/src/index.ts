@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { getCookie, setCookie, deleteCookie } from "hono/cookie";
 import { drizzle } from "drizzle-orm/d1";
 import { eq, desc, and, sql, asc } from "drizzle-orm";
 import { Resend } from "resend";
@@ -12,19 +13,23 @@ import {
 } from "./schema";
 import {
   requireAuth, requireApproved, requireAdmin,
-  checkIsApprovedStaff, checkIsAdmin, getUserId,
+  checkIsApprovedStaff, checkIsAdmin, getUserId, signJWT, verifyJWT,
 } from "./auth";
 
 export type Env = {
   DB: D1Database;
   STORAGE: R2Bucket;
-  CLERK_SECRET_KEY: string;
+  GOOGLE_CLIENT_ID: string;
+  GOOGLE_CLIENT_SECRET: string;
+  JWT_SECRET: string;
   RESEND_API_KEY: string;
   FROM_EMAIL: string;
   SITE_URL: string;
   STRIPE_SECRET_KEY: string;
   STRIPE_WEBHOOK_SECRET: string;
 };
+
+const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -38,18 +43,104 @@ app.use("*", cors({
 // ─── Health ───────────────────────────────────────────────────────────────────
 app.get("/healthz", (c) => c.json({ status: "ok" }));
 
-// ─── Auth Debug (temporary) ───────────────────────────────────────────────────
-app.get("/api/debug/auth", async (c) => {
-  const authHeader = c.req.header("Authorization");
-  const token = authHeader?.replace("Bearer ", "");
-  if (!token) return c.json({ error: "No Authorization header", hasKey: !!c.env.CLERK_SECRET_KEY });
-  try {
-    const { verifyToken } = await import("@clerk/backend");
-    const payload = await verifyToken(token, { secretKey: c.env.CLERK_SECRET_KEY });
-    return c.json({ success: true, sub: payload.sub, hasKey: !!c.env.CLERK_SECRET_KEY });
-  } catch (err: any) {
-    return c.json({ error: err?.message ?? String(err), hasKey: !!c.env.CLERK_SECRET_KEY });
+// ─── Google OAuth ─────────────────────────────────────────────────────────────
+app.get("/auth/google", (c) => {
+  const state = crypto.randomUUID();
+  const siteUrl = c.env.SITE_URL || "https://frontporchbulletin.com";
+  const params = new URLSearchParams({
+    client_id: c.env.GOOGLE_CLIENT_ID,
+    redirect_uri: `${siteUrl}/auth/google/callback`,
+    response_type: "code",
+    scope: "openid email profile",
+    state,
+    access_type: "online",
+  });
+  setCookie(c, "oauth_state", state, {
+    httpOnly: true, secure: true, sameSite: "Lax", path: "/", maxAge: 600,
+  });
+  return c.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params}`);
+});
+
+app.get("/auth/google/callback", async (c) => {
+  const { code, state, error } = c.req.query();
+
+  if (error) return c.redirect("/sign-in?error=access_denied");
+
+  const storedState = getCookie(c, "oauth_state");
+  if (!state || state !== storedState) return c.redirect("/sign-in?error=invalid_state");
+
+  const siteUrl = c.env.SITE_URL || "https://frontporchbulletin.com";
+
+  // Exchange code for access token
+  const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      code,
+      client_id: c.env.GOOGLE_CLIENT_ID,
+      client_secret: c.env.GOOGLE_CLIENT_SECRET,
+      redirect_uri: `${siteUrl}/auth/google/callback`,
+      grant_type: "authorization_code",
+    }),
+  });
+
+  if (!tokenRes.ok) return c.redirect("/sign-in?error=token_exchange_failed");
+  const tokens = await tokenRes.json() as { access_token: string };
+
+  // Fetch Google user profile
+  const userRes = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
+    headers: { Authorization: `Bearer ${tokens.access_token}` },
+  });
+  if (!userRes.ok) return c.redirect("/sign-in?error=profile_fetch_failed");
+  const googleUser = await userRes.json() as { id: string; email: string; name: string; picture: string };
+
+  const db = drizzle(c.env.DB);
+
+  // Bootstrap: if no users exist yet, make this person the first admin
+  const [existing] = await db.select().from(userRolesTable).where(eq(userRolesTable.userId, googleUser.id));
+  const totalAdmins = await db.select({ count: sql<number>`count(*)` }).from(userRolesTable);
+
+  if (!existing && Number(totalAdmins[0]?.count ?? 0) === 0) {
+    await db.insert(userRolesTable).values({
+      userId: googleUser.id,
+      role: "admin",
+      name: googleUser.name,
+      email: googleUser.email,
+    });
+  } else if (existing) {
+    // Update name/email on each login in case they changed
+    await db.update(userRolesTable)
+      .set({ name: googleUser.name, email: googleUser.email })
+      .where(eq(userRolesTable.userId, googleUser.id));
   }
+
+  // Create session JWT
+  const jwt = await signJWT({
+    sub: googleUser.id,
+    email: googleUser.email,
+    name: googleUser.name,
+    picture: googleUser.picture,
+    exp: Math.floor(Date.now() / 1000) + SESSION_MAX_AGE,
+  }, c.env.JWT_SECRET);
+
+  const cookieOpts = { secure: true, sameSite: "Lax" as const, path: "/", maxAge: SESSION_MAX_AGE };
+
+  setCookie(c, "session", jwt, { ...cookieOpts, httpOnly: true });
+  // user_info is readable by JS (not httpOnly) for display purposes only
+  setCookie(c, "user_info", encodeURIComponent(JSON.stringify({
+    name: googleUser.name,
+    email: googleUser.email,
+    picture: googleUser.picture,
+  })), cookieOpts);
+  deleteCookie(c, "oauth_state", { path: "/" });
+
+  return c.redirect("/admin");
+});
+
+app.get("/auth/signout", (c) => {
+  deleteCookie(c, "session", { path: "/" });
+  deleteCookie(c, "user_info", { path: "/" });
+  return c.redirect("/");
 });
 
 // ─── Articles ─────────────────────────────────────────────────────────────────
@@ -299,11 +390,7 @@ app.delete("/api/churches/:id", async (c) => {
 });
 
 // ─── Spotlight helpers ────────────────────────────────────────────────────────
-function spotlightRoutes<T extends { id: number; status: string }>(
-  app: Hono<{ Bindings: Env }>,
-  path: string,
-  table: any,
-) {
+function spotlightRoutes(app: Hono<{ Bindings: Env }>, path: string, table: any) {
   app.get(`/api/${path}`, async (c) => {
     const db = drizzle(c.env.DB);
     const isStaff = await checkIsApprovedStaff(c);
@@ -320,32 +407,34 @@ function spotlightRoutes<T extends { id: number; status: string }>(
     const body = await c.req.json();
     const existing = await db.select().from(table).limit(1);
     if (existing.length > 0) {
-      const [row] = await db.update(table).set({ ...body, updatedAt: new Date().toISOString() }).where(eq(table.id, existing[0].id)).returning();
-      return c.json(row);
+      const upd = await (db.update(table).set({ ...body, updatedAt: new Date().toISOString() }).where(eq(table.id, existing[0].id)).returning() as unknown as Promise<any[]>);
+      return c.json(upd[0]);
     }
-    const [row] = await db.insert(table).values({ ...body, status: "draft" }).returning();
-    return c.json(row, 201);
+    const ins = await (db.insert(table).values({ ...body, status: "draft" }).returning() as unknown as Promise<any[]>);
+    return c.json(ins[0], 201);
   });
 
   app.patch(`/api/${path}`, async (c) => {
     const auth = await requireApproved(c);
     if (auth instanceof Response) return auth;
     const db = drizzle(c.env.DB);
-    const [row] = await db.select().from(table).limit(1);
+    const sel = await (db.select().from(table).limit(1) as unknown as Promise<any[]>);
+    const row = sel[0];
     if (!row) return c.json({ error: "Not found" }, 404);
     const newStatus = row.status === "published" ? "pending-disable" : "published";
-    const [updated] = await db.update(table).set({ status: newStatus, updatedAt: new Date().toISOString() }).where(eq(table.id, row.id)).returning();
-    return c.json(updated);
+    const upd = await (db.update(table).set({ status: newStatus, updatedAt: new Date().toISOString() }).where(eq(table.id, row.id)).returning() as unknown as Promise<any[]>);
+    return c.json(upd[0]);
   });
 
   app.patch(`/api/${path}/publish`, async (c) => {
     const auth = await requireApproved(c);
     if (auth instanceof Response) return auth;
     const db = drizzle(c.env.DB);
-    const [row] = await db.select().from(table).where(eq(table.status, "pending-disable")).limit(1);
+    const pend = await (db.select().from(table).where(eq(table.status, "pending-disable")).limit(1) as unknown as Promise<any[]>);
+    const row = pend[0];
     if (!row) return c.json({ error: "Not found" }, 404);
-    const [updated] = await db.update(table).set({ status: "disabled", updatedAt: new Date().toISOString() }).where(eq(table.id, row.id)).returning();
-    return c.json(updated);
+    const upd2 = await (db.update(table).set({ status: "disabled", updatedAt: new Date().toISOString() }).where(eq(table.id, row.id)).returning() as unknown as Promise<any[]>);
+    return c.json(upd2[0]);
   });
 }
 
@@ -355,11 +444,28 @@ spotlightRoutes(app, "group-spotlight", groupSpotlightTable);
 
 // ─── Admin ────────────────────────────────────────────────────────────────────
 app.get("/api/admin/me", async (c) => {
-  const userId = await getUserId(c);
-  if (!userId) return c.json({ error: "Unauthorized" }, 401);
+  const token = getCookie(c, "session");
+  if (!token) return c.json({ error: "Unauthorized" }, 401);
+
+  let payload: Record<string, unknown>;
+  try {
+    payload = await verifyJWT(token, c.env.JWT_SECRET);
+  } catch {
+    return c.json({ error: "Unauthorized" }, 401);
+  }
+
+  const userId = payload.sub as string;
   const db = drizzle(c.env.DB);
-  const [roleRow] = await db.select().from(userRolesTable).where(eq(userRolesTable.clerkUserId, userId));
-  return c.json({ clerkUserId: userId, role: roleRow?.role ?? null, isAdmin: roleRow?.role === "admin", isApproved: !!roleRow });
+  const [roleRow] = await db.select().from(userRolesTable).where(eq(userRolesTable.userId, userId));
+  return c.json({
+    userId,
+    name: payload.name ?? null,
+    email: payload.email ?? null,
+    picture: payload.picture ?? null,
+    role: roleRow?.role ?? null,
+    isAdmin: roleRow?.role === "admin",
+    isApproved: !!roleRow,
+  });
 });
 
 app.get("/api/admin/users", async (c) => {
@@ -367,21 +473,29 @@ app.get("/api/admin/users", async (c) => {
   if (auth instanceof Response) return auth;
   const db = drizzle(c.env.DB);
   const users = await db.select().from(userRolesTable);
-  return c.json({ users });
+  return c.json({
+    users: users.map((u) => ({
+      clerkUserId: u.userId,
+      role: u.role,
+      name: u.name,
+      email: u.email,
+      grantedAt: u.grantedAt,
+    })),
+  });
 });
 
 app.put("/api/admin/users/:clerkUserId/role", async (c) => {
   const auth = await requireAdmin(c);
   if (auth instanceof Response) return auth;
   const db = drizzle(c.env.DB);
-  const clerkUserId = c.req.param("clerkUserId");
+  const userId = c.req.param("clerkUserId");
   const { role } = await c.req.json();
-  const existing = await db.select().from(userRolesTable).where(eq(userRolesTable.clerkUserId, clerkUserId));
+  const existing = await db.select().from(userRolesTable).where(eq(userRolesTable.userId, userId));
   let result;
   if (existing.length > 0) {
-    [result] = await db.update(userRolesTable).set({ role }).where(eq(userRolesTable.clerkUserId, clerkUserId)).returning();
+    [result] = await db.update(userRolesTable).set({ role }).where(eq(userRolesTable.userId, userId)).returning();
   } else {
-    [result] = await db.insert(userRolesTable).values({ clerkUserId, role }).returning();
+    [result] = await db.insert(userRolesTable).values({ userId, role }).returning();
   }
   return c.json(result);
 });
@@ -390,8 +504,8 @@ app.delete("/api/admin/users/:clerkUserId/role", async (c) => {
   const auth = await requireAdmin(c);
   if (auth instanceof Response) return auth;
   const db = drizzle(c.env.DB);
-  const clerkUserId = c.req.param("clerkUserId");
-  await db.delete(userRolesTable).where(eq(userRolesTable.clerkUserId, clerkUserId));
+  const userId = c.req.param("clerkUserId");
+  await db.delete(userRolesTable).where(eq(userRolesTable.userId, userId));
   return new Response(null, { status: 204 });
 });
 
@@ -566,12 +680,7 @@ app.post("/api/letter-to-editor", async (c) => {
 });
 
 // ─── Donate ───────────────────────────────────────────────────────────────────
-app.get("/api/donate/config", (c) => {
-  return c.json({
-    amounts: [5, 10, 25, 50, 100],
-    currency: "usd",
-  });
-});
+app.get("/api/donate/config", (c) => c.json({ amounts: [5, 10, 25, 50, 100], currency: "usd" }));
 
 app.post("/api/donate/create-session", async (c) => {
   if (!c.env.STRIPE_SECRET_KEY) return c.json({ error: "Stripe not configured" }, 503);
@@ -594,8 +703,6 @@ app.post("/api/storage/uploads/request-url", async (c) => {
   const { filename, contentType } = await c.req.json();
   if (!filename || !contentType) return c.json({ error: "filename and contentType are required" }, 400);
   const key = `uploads/${crypto.randomUUID()}-${filename}`;
-  // Generate a presigned URL via R2 (Workers R2 doesn't natively do presigned URLs yet — return key for direct upload)
-  // Frontend will POST to /api/storage/upload/:key instead
   return c.json({ uploadUrl: `/api/storage/upload/${encodeURIComponent(key)}`, publicUrl: `/api/storage/public-objects/${key}`, key });
 });
 

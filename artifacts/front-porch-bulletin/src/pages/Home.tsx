@@ -16,7 +16,7 @@ import { ChurchDirectory } from "@/components/ChurchDirectory";
 import { CalendarEvents } from "@/components/CalendarEvents";
 import { PrintView } from "@/components/PrintView";
 import { Link } from "wouter";
-import { useUser } from "@clerk/react";
+import { useIsSignedIn } from "@/hooks/useCurrentUser";
 
 const BASE = import.meta.env.BASE_URL.replace(/\/$/, "");
 
@@ -32,8 +32,7 @@ function DraftBadge() {
 }
 
 export default function Home() {
-  const { user } = useUser();
-  const isStaff = !!user;
+  const isStaff = useIsSignedIn();
 
   const { data: featuredData, isLoading: isLoadingFeatured } = useGetFeaturedArticles();
   const { data: spotlight,         isLoading: isLoadingSpotlight }         = useGetSpotlight({ query: { queryKey: getGetSpotlightQueryKey(), retry: false } as any });
