@@ -21,7 +21,6 @@
     }
   },
   "dependencies": {
-    "@rollup/rollup-win32-x64-msvc": "^4.62.0",
     "stripe": "20.0.0",
     "stripe-replit-sync": "1.0.0"
   }
