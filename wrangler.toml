@@ -1,4 +1,4 @@
-name = "front-porch-bulletin"
+name = "front-porch-bulletin-api"
 compatibility_date = "2025-01-01"
 
 [assets]
