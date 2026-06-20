@@ -38,6 +38,20 @@ app.use("*", cors({
 // ─── Health ───────────────────────────────────────────────────────────────────
 app.get("/healthz", (c) => c.json({ status: "ok" }));
 
+// ─── Auth Debug (temporary) ───────────────────────────────────────────────────
+app.get("/api/debug/auth", async (c) => {
+  const authHeader = c.req.header("Authorization");
+  const token = authHeader?.replace("Bearer ", "");
+  if (!token) return c.json({ error: "No Authorization header", hasKey: !!c.env.CLERK_SECRET_KEY });
+  try {
+    const { verifyToken } = await import("@clerk/backend");
+    const payload = await verifyToken(token, { secretKey: c.env.CLERK_SECRET_KEY });
+    return c.json({ success: true, sub: payload.sub, hasKey: !!c.env.CLERK_SECRET_KEY });
+  } catch (err: any) {
+    return c.json({ error: err?.message ?? String(err), hasKey: !!c.env.CLERK_SECRET_KEY });
+  }
+});
+
 // ─── Articles ─────────────────────────────────────────────────────────────────
 app.get("/api/articles", async (c) => {
   const db = drizzle(c.env.DB);
